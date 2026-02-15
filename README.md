@@ -3,13 +3,13 @@
 This repository contains the backend and frontend for the Axiomata project.
 
 ## Structure
-
+```
 unit-2-fullstack-project-axiomata/
 ├─ README.md
 ├─ .gitignore
 ├─ axiomata-backend/ # Spring Boot backend
 └─ react-front-end-app/ # React frontend
-
+```
 ## Backend
 
 - Spring Boot 3.5.10
