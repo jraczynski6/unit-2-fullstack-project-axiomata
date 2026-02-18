@@ -32,6 +32,28 @@ public class Character {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    // Use a HashSet to store unique factions for this character.
+    @ManyToMany
+    @JoinTable(
+            name = "character_factions",
+            joinColumns = @JoinColumn(name = "character_id"),
+            inverseJoinColumns = @JoinColumn(name = "faction_id")
+    )
+    private java.util.Set<Faction> factions = new java.util.HashSet<>();
+
+    // Automatically set timestamps
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+
     // Constructors
     public Character() {}
 

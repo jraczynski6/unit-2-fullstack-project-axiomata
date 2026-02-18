@@ -32,14 +32,16 @@ public class World {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    // Automatically set timestamps
     @PrePersist
     protected void onCreate() {
-        createdAt = updatedAt = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     // Getters and setters

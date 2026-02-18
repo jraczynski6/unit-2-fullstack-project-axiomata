@@ -3,25 +3,25 @@ package com.example.axiomata_backend.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
-@Table(name = "factions")
-public class Faction {
+@Table(name = "items")
+public class Item {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "world_id", nullable = false)
-    private Long worldId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "world_id", nullable = false)
+    private World world;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "location_id")
+    private Location location;
 
     @Column(nullable = false)
     private String name;
-
-    @Column(nullable = false)
-    private String type;
 
     @Column(columnDefinition = "TEXT")
     private String description;
@@ -32,26 +32,19 @@ public class Faction {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @ManyToMany(mappedBy = "factions")
-    private Set<Character> members = new HashSet<>();
-
-
-    // Automatically set timestamps
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
-
     // Constructors
-
-    public Faction() {}
+    public Item() {}
 
     // Getters and setters
 
@@ -63,12 +56,20 @@ public class Faction {
         this.id = id;
     }
 
-    public Long getWorldId() {
-        return worldId;
+    public World getWorld() {
+        return world;
     }
 
-    public void setWorldId(Long worldId) {
-        this.worldId = worldId;
+    public void setWorld(World world) {
+        this.world = world;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
     public String getName() {
@@ -77,14 +78,6 @@ public class Faction {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public String getDescription() {
