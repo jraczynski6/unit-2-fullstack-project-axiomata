@@ -3,34 +3,38 @@ package com.example.axiomata_backend.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "world")
-public class World {
+@Table(name = "factions")
+public class Faction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "world_id", nullable = false)
+    private Long worldId;
 
     @Column(nullable = false)
     private String name;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
+    @Column(nullable = false)
+    private String type;
 
     @Column(columnDefinition = "TEXT")
-    private String attributes;
+    private String description;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @ManyToMany(mappedBy = "factions")
+    private Set<Character> members = new HashSet<>();
+
 
     // Automatically set timestamps
     @PrePersist
@@ -44,6 +48,11 @@ public class World {
         this.updatedAt = LocalDateTime.now();
     }
 
+
+    // Constructors
+
+    public Faction() {}
+
     // Getters and setters
 
     public Long getId() {
@@ -54,12 +63,12 @@ public class World {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public Long getWorldId() {
+        return worldId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setWorldId(Long worldId) {
+        this.worldId = worldId;
     }
 
     public String getName() {
@@ -70,20 +79,20 @@ public class World {
         this.name = name;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getAttributes() {
-        return attributes;
-    }
-
-    public void setAttributes(String attributes) {
-        this.attributes = attributes;
     }
 
     public LocalDateTime getCreatedAt() {

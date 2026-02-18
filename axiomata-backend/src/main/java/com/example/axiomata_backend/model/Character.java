@@ -3,19 +3,22 @@ package com.example.axiomata_backend.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @Entity
-@Table(name = "world")
-public class World {
+@Table(name = "characters") // "character" is a reserved keyword in SQL
+public class Character {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "world_id", nullable = false)
+    private World world;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "location_id")
+    private Location location;
 
     @Column(nullable = false)
     private String name;
@@ -23,14 +26,20 @@ public class World {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(columnDefinition = "TEXT")
-    private String attributes;
-
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    // Use a HashSet to store unique factions for this character.
+    @ManyToMany
+    @JoinTable(
+            name = "character_factions",
+            joinColumns = @JoinColumn(name = "character_id"),
+            inverseJoinColumns = @JoinColumn(name = "faction_id")
+    )
+    private java.util.Set<Faction> factions = new java.util.HashSet<>();
 
     // Automatically set timestamps
     @PrePersist
@@ -44,6 +53,10 @@ public class World {
         this.updatedAt = LocalDateTime.now();
     }
 
+
+    // Constructors
+    public Character() {}
+
     // Getters and setters
 
     public Long getId() {
@@ -54,12 +67,20 @@ public class World {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public World getWorld() {
+        return world;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setWorld(World world) {
+        this.world = world;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
     public String getName() {
@@ -76,14 +97,6 @@ public class World {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getAttributes() {
-        return attributes;
-    }
-
-    public void setAttributes(String attributes) {
-        this.attributes = attributes;
     }
 
     public LocalDateTime getCreatedAt() {

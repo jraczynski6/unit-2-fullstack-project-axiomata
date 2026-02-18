@@ -3,30 +3,36 @@ package com.example.axiomata_backend.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @Entity
-@Table(name = "world")
-public class World {
+@Table(name = "locations")
+public class Location {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // each location belongs to one world, but a world can have many locations
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "world_id", nullable = false)
+    private World world;
+
+    // Optional parent region (null if this location is a region itself)
+    // This is a self-referential many-to-one relationship
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_id")
+    private Location region;
 
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    private String type;
+
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(columnDefinition = "TEXT")
-    private String attributes;
-
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
@@ -44,6 +50,9 @@ public class World {
         this.updatedAt = LocalDateTime.now();
     }
 
+    // Constructors
+    public Location() {}
+
     // Getters and setters
 
     public Long getId() {
@@ -54,12 +63,20 @@ public class World {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public World getWorld() {
+        return world;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setWorld(World world) {
+        this.world = world;
+    }
+
+    public Location getRegion() {
+        return region;
+    }
+
+    public void setRegion(Location region) {
+        this.region = region;
     }
 
     public String getName() {
@@ -70,20 +87,20 @@ public class World {
         this.name = name;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getAttributes() {
-        return attributes;
-    }
-
-    public void setAttributes(String attributes) {
-        this.attributes = attributes;
     }
 
     public LocalDateTime getCreatedAt() {
