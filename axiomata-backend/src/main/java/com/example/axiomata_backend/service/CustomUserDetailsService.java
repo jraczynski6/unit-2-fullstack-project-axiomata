@@ -3,7 +3,6 @@ package com.example.axiomata_backend.service;
 import com.example.axiomata_backend.model.User;
 import com.example.axiomata_backend.repository.UserRepository;
 import eu.fraho.spring.securityJwt.base.dto.JwtUser;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
