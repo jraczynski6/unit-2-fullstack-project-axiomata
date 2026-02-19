@@ -29,13 +29,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // 1. Get the Authorization header from the request
         final String authHeader = request.getHeader("Authorization");
 
+        // Debug: log incoming request and header
+        System.out.println("JWT Filter: Incoming request " + request.getMethod() + " " + request.getRequestURI());
+        System.out.println("Authorization header: " + authHeader);
+
         String username = null;
         String jwt = null;
 
         // 2. Check if header starts with "Bearer"
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            jwt = authHeader.substring(7);
-            username = jwtUtil.extractUsername(jwt); // get username from token
+            jwt = authHeader.substring(7).trim(); // trim removes newline or spaces
+            System.out.println("JWT Filter: Token received = " + jwt);
+
+            try {
+                username = jwtUtil.extractUsername(jwt); // get username from token
+                System.out.println("JWT Filter: Username extracted = " + username);
+            } catch (Exception e) {
+                System.out.println("JWT Filter: Error extracting username - " + e.getMessage());
+            }
+        } else {
+            System.out.println("JWT Filter: No Bearer token found or header malformed");
         }
 
         // 3. proceed if user is not already authenticated
@@ -57,6 +70,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 // 7. Set authentication
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+                System.out.println("JWT Filter: SecurityContext set for " + username);
+            } else {
+                System.out.println("JWT Filter: Token invalid or expired");
             }
         }
 
