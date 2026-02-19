@@ -61,4 +61,4 @@ public class JwtUtil {
 }
 // TODO: Add JWT Authentication Filter
 // TODO: Configure Spring Security: permit /api/auth/**, secure other endpoints, add JWT filter to security chain
-// TODO: Boilerplate Controllers for entities
+// TODO: Boilerplate Controllers for entity
