@@ -101,20 +101,6 @@ public class LocationService {
 
     //Mapping
     private LocationResponseDto mapToResponse(Location location) {
-
-        Long regionId = location.getRegion() != null
-                ? location.getRegion().getId()
-                : null;
-
-        return new LocationResponseDto(
-                location.getId(),
-                location.getWorld().getId(),
-                regionId,
-                location.getName(),
-                location.getType(),
-                location.getDescription(),
-                location.getCreatedAt(),
-                location.getUpdatedAt()
-        );
+        return new LocationResponseDto(location);
     }
 }

@@ -2,6 +2,7 @@ package com.example.axiomata_backend.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -35,17 +36,16 @@ public class World {
     // Child entities - cascade delete
 
     @OneToMany(mappedBy = "world", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Location> locations;
+    private List<Location> locations = new ArrayList<>();
 
     @OneToMany(mappedBy = "world", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Faction> factions;
+    private List<Faction> factions = new ArrayList<>();
 
     @OneToMany(mappedBy = "world", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Character> characters;
+    private List<Character> characters = new ArrayList<>();
 
     @OneToMany(mappedBy = "world", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Item> items;
-
+    private List<Item> items = new ArrayList<>();
 
     // Automatically set timestamps
 

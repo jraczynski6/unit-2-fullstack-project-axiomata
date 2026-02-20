@@ -1,34 +1,30 @@
 package com.example.axiomata_backend.dto;
 
+import com.example.axiomata_backend.model.Location;
 import java.time.LocalDateTime;
 
 public class LocationResponseDto {
+    private final Long id;
+    private final Long worldId;
+    private final Long regionId;
+    private final String name;
+    private final String type;
+    private final String description;
+    private final LocalDateTime createdAt;
+    private final LocalDateTime updatedAt;
 
-    private Long id;
-    private Long worldId;
-    private Long regionId;
-    private String name;
-    private String type;
-    private String description;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
-    public LocationResponseDto() {}
-
-    public LocationResponseDto(Long id, Long worldId, Long regionId,
-                               String name, String type, String description,
-                               LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.id = id;
-        this.worldId = worldId;
-        this.regionId = regionId;
-        this.name = name;
-        this.type = type;
-        this.description = description;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+    // **New constructor taking a Location entity**
+    public LocationResponseDto(Location location) {
+        this.id = location.getId();
+        this.worldId = location.getWorld().getId();
+        this.regionId = location.getRegion() != null ? location.getRegion().getId() : null;
+        this.name = location.getName();
+        this.type = location.getType();
+        this.description = location.getDescription();
+        this.createdAt = location.getCreatedAt();
+        this.updatedAt = location.getUpdatedAt();
     }
 
-    // Getters only for read-only usage
     public Long getId() { return id; }
     public Long getWorldId() { return worldId; }
     public Long getRegionId() { return regionId; }
