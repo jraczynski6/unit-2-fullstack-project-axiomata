@@ -6,10 +6,10 @@ import com.example.axiomata_backend.model.User;
 import com.example.axiomata_backend.security.JwtUtil;
 import com.example.axiomata_backend.service.UserService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.security.core.Authentication;
+
 
 @RestController
 @RequestMapping("/api/auth")
@@ -46,5 +46,20 @@ public class AuthController {
 
         // Generate JWT token
         return jwtUtil.generateToken(user.getUsername());
+    }
+
+    @DeleteMapping("/me")
+    public String deleteCurrentUser(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new IllegalStateException("User not authenticated");
+        }
+
+        String username = authentication.getName(); // gets the logged-in username
+        User user = userService.findByUsername(username)
+                .orElseThrow(() -> new IllegalStateException("User not found"));
+
+        userService.deleteUser(user.getId());
+
+        return "User and all associated worlds deleted successfully";
     }
 }

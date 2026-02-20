@@ -1,6 +1,5 @@
 package com.example.axiomata_backend.repository;
 
-
 import com.example.axiomata_backend.model.World;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

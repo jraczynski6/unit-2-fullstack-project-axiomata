@@ -38,4 +38,16 @@ public class UserService {
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
+
+
+     // Delete a user by ID.
+     // CascadeType.ALL/orphanRemoval on worlds,
+     // deleting the user deletes all worlds and their children.
+    public void deleteUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("User not found"));
+
+        // This triggers cascade delete down the entity hierarchy
+        userRepository.delete(user);
+    }
 }
