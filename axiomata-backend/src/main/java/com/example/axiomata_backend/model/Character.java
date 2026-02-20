@@ -3,6 +3,7 @@ package com.example.axiomata_backend.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "characters") // "character" is a reserved keyword in SQL
@@ -113,5 +114,13 @@ public class Character {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Set<Faction> getFactions() {
+        return factions;
+    }
+
+    public void setFactions(Set<Faction> factions) {
+        this.factions = factions;
     }
 }

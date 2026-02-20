@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -60,9 +61,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // 5. Create authentication token manually
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(
-                                username, // principal is just username now
-                                null,     // no credentials
-                                null      // no roles for MVP
+                                username,
+                                null,
+                                java.util.List.of(new SimpleGrantedAuthority("ROLE_USER"))
                         );
 
                 // 6. Set request details
