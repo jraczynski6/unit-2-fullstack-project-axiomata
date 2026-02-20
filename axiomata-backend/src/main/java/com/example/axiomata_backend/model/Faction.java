@@ -1,7 +1,6 @@
 package com.example.axiomata_backend.model;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,8 +13,9 @@ public class Faction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "world_id", nullable = false)
-    private Long worldId;
+    @ManyToOne(fetch = FetchType.LAZY) // Link to World entity
+    @JoinColumn(name = "world_id", nullable = false)
+    private World world;
 
     @Column(nullable = false)
     private String name;
@@ -32,9 +32,8 @@ public class Faction {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @ManyToMany(mappedBy = "factions")
+    @ManyToMany(mappedBy = "factions") // Link to Character entity
     private Set<Character> members = new HashSet<>();
-
 
     // Automatically set timestamps
     @PrePersist
@@ -48,13 +47,10 @@ public class Faction {
         this.updatedAt = LocalDateTime.now();
     }
 
-
     // Constructors
-
     public Faction() {}
 
     // Getters and setters
-
     public Long getId() {
         return id;
     }
@@ -63,12 +59,12 @@ public class Faction {
         this.id = id;
     }
 
-    public Long getWorldId() {
-        return worldId;
+    public World getWorld() {
+        return world;
     }
 
-    public void setWorldId(Long worldId) {
-        this.worldId = worldId;
+    public void setWorld(World world) {
+        this.world = world;
     }
 
     public String getName() {
@@ -109,5 +105,13 @@ public class Faction {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Set<Character> getMembers() {
+        return members;
+    }
+
+    public void setMembers(Set<Character> members) {
+        this.members = members;
     }
 }

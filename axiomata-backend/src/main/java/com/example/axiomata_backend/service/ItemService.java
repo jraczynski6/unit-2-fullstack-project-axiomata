@@ -9,10 +9,10 @@ import com.example.axiomata_backend.repository.ItemRepository;
 import com.example.axiomata_backend.repository.LocationRepository;
 import com.example.axiomata_backend.repository.WorldRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
 
 @Service
 public class ItemService {
@@ -29,39 +29,40 @@ public class ItemService {
         this.locationRepository = locationRepository;
     }
 
-    // Create a new item
+    // --- CRUD Operations ---
+
+    @Transactional
     public ItemResponseDto createItem(ItemRequestDto dto) {
         Item item = mapDtoToEntity(dto);
-        itemRepository.save(item);
-        return mapEntityToDto(item);
+        Item saved = itemRepository.save(item);
+        return new ItemResponseDto(saved);
     }
 
-    // Get an item by ID
+    @Transactional(readOnly = true)
     public ItemResponseDto getItem(Long id) {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Item not found with id " + id));
-        return mapEntityToDto(item);
+        return new ItemResponseDto(item);
     }
 
-    // Get items by world ID
+    @Transactional(readOnly = true)
     public List<ItemResponseDto> getItemsByWorld(Long worldId) {
-        World world = worldRepository.findById(worldId)
-                .orElseThrow(() -> new RuntimeException("World not found with id " + worldId));
-        return itemRepository.findByWorld(world)
-                .stream()
-                .map(this::mapEntityToDto)
+        List<Item> items = itemRepository.findByWorldId(worldId);
+        return items.stream()
+                .map(ItemResponseDto::new)
                 .collect(Collectors.toList());
     }
 
-    // Update an existing item
+    @Transactional
     public ItemResponseDto updateItem(Long id, ItemRequestDto dto) {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Item not found with id " + id));
 
+        // Update fields
         if (dto.getName() != null) item.setName(dto.getName());
         if (dto.getDescription() != null) item.setDescription(dto.getDescription());
 
-        // Update world if different
+        // Update world if changed
         if (dto.getWorldId() != null && !dto.getWorldId().equals(item.getWorld().getId())) {
             World world = worldRepository.findById(dto.getWorldId())
                     .orElseThrow(() -> new RuntimeException("World not found with id " + dto.getWorldId()));
@@ -77,28 +78,28 @@ public class ItemService {
             item.setLocation(null);
         }
 
-        itemRepository.save(item);
-        return mapEntityToDto(item);
+        Item updated = itemRepository.save(item);
+        return new ItemResponseDto(updated);
     }
 
-    // Delete an item
+    @Transactional
     public void deleteItem(Long id) {
         if (!itemRepository.existsById(id)) {
             throw new RuntimeException("Item not found with id " + id);
         }
-        itemRepository.deleteById(id);
+        itemRepository.deleteById(id); // cascades if configured in Location/World relationships
     }
 
-    // Mapping methods
-    public Item mapDtoToEntity(ItemRequestDto dto) {
+    // --- Mapper: DTO → Entity ---
+    private Item mapDtoToEntity(ItemRequestDto dto) {
         Item item = new Item();
 
-        // world is required
+        // Required world
         World world = worldRepository.findById(dto.getWorldId())
                 .orElseThrow(() -> new RuntimeException("World not found with id " + dto.getWorldId()));
         item.setWorld(world);
 
-        // location is optional
+        // Optional location
         if (dto.getLocationId() != null) {
             Location location = locationRepository.findById(dto.getLocationId())
                     .orElseThrow(() -> new RuntimeException("Location not found with id " + dto.getLocationId()));
@@ -109,17 +110,5 @@ public class ItemService {
         item.setDescription(dto.getDescription());
 
         return item;
-    }
-
-    public ItemResponseDto mapEntityToDto(Item item) {
-        ItemResponseDto dto = new ItemResponseDto();
-        dto.setId(item.getId());
-        dto.setWorldId(item.getWorld().getId());
-        dto.setLocationId(item.getLocation() != null ? item.getLocation().getId() : null);
-        dto.setName(item.getName());
-        dto.setDescription(item.getDescription());
-        dto.setCreatedAt(item.getCreatedAt());
-        dto.setUpdatedAt(item.getUpdatedAt());
-        return dto;
     }
 }
