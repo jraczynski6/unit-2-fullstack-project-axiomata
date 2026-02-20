@@ -62,3 +62,20 @@ public class WorldService {
         worldRepository.delete(world);
     }
 }
+
+/*
+==========================
+Axiomata Backend TODOs
+==========================
+TODO: Verify ownership checks for world entity CRUD operations.
+TODO: Implement delete account endpoint for users.
+TODO: Add authentication error handling (401/403) with JSON messages.
+TODO: Validate delete operations with parent-child relationships.
+TODO: Design Misc container handling strategy for orphaned entities (Phase 2).
+TODO: Configure cascade deletes from parent to children where appropriate.
+TODO: Add validation dependency (jakarta.validation / Hibernate Validator).
+TODO: Create global exception handler with @ControllerAdvice.
+TODO: Allow requests from frontend origin (CORS configuration).
+TODO: Add field validation annotations (@NotNull, @Size, etc.) to DTOs.
+TODO: Ensure proper HTTP status codes for all responses (201, 204, 400, 401, 403).
+*/
