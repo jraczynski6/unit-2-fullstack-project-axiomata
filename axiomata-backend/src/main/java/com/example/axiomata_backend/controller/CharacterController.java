@@ -6,6 +6,7 @@ import com.example.axiomata_backend.service.CharacterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -30,7 +31,10 @@ public class CharacterController {
     @GetMapping("/{id}")
     public ResponseEntity<CharacterResponseDto> getCharacterById(@PathVariable Long id) {
         CharacterResponseDto character = characterService.getCharacterById(id);
-        return ResponseEntity.ok(character);
+        if (character == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Character not found");
+        }
+        return ResponseEntity.ok(character); // 200 OK
     }
 
     // Read all by World
@@ -45,13 +49,16 @@ public class CharacterController {
     public ResponseEntity<CharacterResponseDto> updateCharacter(@PathVariable Long id,
                                                                 @RequestBody CharacterRequestDto dto) {
         CharacterResponseDto updated = characterService.updateCharacter(id, dto);
-        return ResponseEntity.ok(updated);
+        if (updated == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Character not found");
+        }
+        return ResponseEntity.ok(updated); // 200 OK
     }
 
     // Delete a character
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCharacter(@PathVariable Long id) {
-        characterService.deleteCharacter(id);
-        return ResponseEntity.noContent().build();
+    @ResponseStatus(HttpStatus.NO_CONTENT) // 204 No Content
+    public void deleteCharacter(@PathVariable Long id) {
+        characterService.deleteCharacter(id); // service should throw ResponseStatusException if not found
     }
 }

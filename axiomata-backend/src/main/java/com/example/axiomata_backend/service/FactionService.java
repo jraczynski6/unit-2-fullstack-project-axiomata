@@ -6,8 +6,10 @@ import com.example.axiomata_backend.model.Faction;
 import com.example.axiomata_backend.model.World;
 import com.example.axiomata_backend.repository.FactionRepository;
 import com.example.axiomata_backend.repository.WorldRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,7 +38,7 @@ public class FactionService {
     @Transactional(readOnly = true)
     public FactionResponseDto getFactionById(Long id) {
         Faction faction = factionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Faction not found with id " + id));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Faction not found with id " + id));
         return new FactionResponseDto(faction);
     }
 
@@ -51,7 +53,7 @@ public class FactionService {
     @Transactional
     public FactionResponseDto updateFaction(Long id, FactionRequestDto dto) {
         Faction faction = factionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Faction not found with id " + id));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Faction not found with id " + id));
 
         faction.setName(dto.getName());
         faction.setType(dto.getType());
@@ -60,7 +62,7 @@ public class FactionService {
         // Update world if changed
         if (dto.getWorldId() != null && !faction.getWorld().getId().equals(dto.getWorldId())) {
             World world = worldRepository.findById(dto.getWorldId())
-                    .orElseThrow(() -> new RuntimeException("World not found with id " + dto.getWorldId()));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "World not found with id " + dto.getWorldId()));
             faction.setWorld(world);
         }
 
@@ -71,7 +73,7 @@ public class FactionService {
     @Transactional
     public void deleteFaction(Long id) {
         if (!factionRepository.existsById(id)) {
-            throw new RuntimeException("Faction not found with id " + id);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Faction not found with id " + id);
         }
         factionRepository.deleteById(id); // cascades to Character relationships if configured
     }
@@ -87,7 +89,7 @@ public class FactionService {
 
         // Set World entity
         World world = worldRepository.findById(dto.getWorldId())
-                .orElseThrow(() -> new RuntimeException("World not found with id " + dto.getWorldId()));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "World not found with id " + dto.getWorldId()));
         faction.setWorld(world);
 
         return faction;

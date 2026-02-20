@@ -5,8 +5,12 @@ import com.example.axiomata_backend.dto.WorldResponseDto;
 import com.example.axiomata_backend.model.User;
 import com.example.axiomata_backend.repository.UserRepository;
 import com.example.axiomata_backend.service.WorldService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -24,56 +28,64 @@ public class WorldController {
 
     // GET /api/worlds - Get all worlds for logged-in user
     @GetMapping
-    public List<WorldResponseDto> getAllWorlds(Authentication authentication) {
+    public ResponseEntity<List<WorldResponseDto>> getAllWorlds(Authentication authentication) {
         User user = getAuthenticatedUser(authentication);
-        return worldService.getWorldsByUser(user.getId());
+        List<WorldResponseDto> worlds = worldService.getWorldsByUser(user.getId());
+        return ResponseEntity.ok(worlds); // 200 OK
     }
 
     // GET /api/worlds/{id} - Get world by ID (must belong to logged-in user)
     @GetMapping("/{id}")
-    public WorldResponseDto getWorldById(@PathVariable Long id, Authentication authentication) {
+    public ResponseEntity<WorldResponseDto> getWorldById(@PathVariable Long id, Authentication authentication) {
         User user = getAuthenticatedUser(authentication);
         WorldResponseDto worldDto = worldService.getWorldById(id);
+
         if (!worldDto.getUsername().equals(user.getUsername())) {
-            throw new IllegalStateException("Unauthorized access to world");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Unauthorized access to world");
         }
-        return worldDto;
+
+        return ResponseEntity.ok(worldDto); // 200 OK
     }
 
     // POST /api/worlds - Create a new world for logged-in user
     @PostMapping
-    public WorldResponseDto createWorld(@RequestBody WorldRequestDto request, Authentication authentication) {
+    public ResponseEntity<WorldResponseDto> createWorld(@RequestBody @Valid WorldRequestDto request,
+                                                        Authentication authentication) {
         User user = getAuthenticatedUser(authentication);
-        return worldService.createWorld(user.getId(), request);
+        WorldResponseDto createdWorld = worldService.createWorld(user.getId(), request);
+        return new ResponseEntity<>(createdWorld, HttpStatus.CREATED); // 201 Created
     }
 
     // PUT /api/worlds/{id} - Update existing world (must belong to logged-in user)
     @PutMapping("/{id}")
-    public WorldResponseDto updateWorld(@PathVariable Long id,
-                                        @RequestBody WorldRequestDto request,
-                                        Authentication authentication) {
+    public ResponseEntity<WorldResponseDto> updateWorld(@PathVariable Long id,
+                                                        @RequestBody @Valid WorldRequestDto request,
+                                                        Authentication authentication) {
         User user = getAuthenticatedUser(authentication);
         WorldResponseDto updatedWorld = worldService.updateWorld(id, request);
+
         if (!updatedWorld.getUsername().equals(user.getUsername())) {
-            throw new IllegalStateException("Unauthorized access to world");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Unauthorized access to world");
         }
-        return updatedWorld;
+
+        return ResponseEntity.ok(updatedWorld); // 200 OK
     }
 
     // DELETE /api/worlds/{id} - Delete a world by ID (must belong to logged-in user)
     @DeleteMapping("/{id}")
-    public String deleteWorld(@PathVariable Long id, Authentication authentication) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteWorld(@PathVariable Long id, Authentication authentication) {
         User user = getAuthenticatedUser(authentication);
-        worldService.deleteWorldIfOwnedByUser(id, user.getId());
-        return "World with id " + id + " deleted successfully.";
+        worldService.deleteWorldIfOwnedByUser(id, user.getId()); // just call it
     }
 
     // Helper: Get authenticated User entity from Authentication object
     private User getAuthenticatedUser(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
-            throw new IllegalStateException("User not authenticated");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
         }
+
         return userRepository.findByUsername(authentication.getName())
-                .orElseThrow(() -> new IllegalStateException("User not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
 }

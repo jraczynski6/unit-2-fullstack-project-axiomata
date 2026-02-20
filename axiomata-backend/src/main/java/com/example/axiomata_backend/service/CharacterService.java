@@ -10,11 +10,12 @@ import com.example.axiomata_backend.repository.CharacterRepository;
 import com.example.axiomata_backend.repository.FactionRepository;
 import com.example.axiomata_backend.repository.LocationRepository;
 import com.example.axiomata_backend.repository.WorldRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,7 +48,7 @@ public class CharacterService {
     @Transactional(readOnly = true)
     public CharacterResponseDto getCharacterById(Long id) {
         Character character = characterRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Character not found with id " + id));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Character not found with id " + id));
         return new CharacterResponseDto(character);
     }
 
@@ -55,14 +56,14 @@ public class CharacterService {
     public List<CharacterResponseDto> getCharactersByWorldId(Long worldId) {
         List<Character> characters = characterRepository.findByWorldId(worldId);
         return characters.stream()
-                .map(CharacterResponseDto::new) // Use constructor reference
+                .map(CharacterResponseDto::new)
                 .collect(Collectors.toList());
     }
 
     @Transactional
     public CharacterResponseDto updateCharacter(Long id, CharacterRequestDto dto) {
         Character character = characterRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Character not found with id " + id));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Character not found with id " + id));
 
         mapDtoToEntity(dto, character);
         Character updated = characterRepository.save(character);
@@ -72,7 +73,7 @@ public class CharacterService {
     @Transactional
     public void deleteCharacter(Long id) {
         if (!characterRepository.existsById(id)) {
-            throw new RuntimeException("Character not found with id " + id);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Character not found with id " + id);
         }
         characterRepository.deleteById(id);
     }
@@ -87,13 +88,13 @@ public class CharacterService {
 
         // Set World (required)
         World world = worldRepository.findById(dto.getWorldId())
-                .orElseThrow(() -> new RuntimeException("World not found with id " + dto.getWorldId()));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "World not found with id " + dto.getWorldId()));
         character.setWorld(world);
 
         // Set Location (optional)
         if (dto.getLocationId() != null) {
             Location location = locationRepository.findById(dto.getLocationId())
-                    .orElseThrow(() -> new RuntimeException("Location not found with id " + dto.getLocationId()));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found with id " + dto.getLocationId()));
             character.setLocation(location);
         } else {
             character.setLocation(null);
@@ -111,7 +112,7 @@ public class CharacterService {
         if (dto.getFactionIds() != null && !dto.getFactionIds().isEmpty()) {
             for (Long fid : dto.getFactionIds()) {
                 Faction faction = factionRepository.findById(fid)
-                        .orElseThrow(() -> new RuntimeException("Faction not found with id " + fid));
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Faction not found with id " + fid));
                 character.getFactions().add(faction);
             }
         }

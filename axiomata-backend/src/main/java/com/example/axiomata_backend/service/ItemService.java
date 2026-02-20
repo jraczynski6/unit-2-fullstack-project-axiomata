@@ -8,8 +8,10 @@ import com.example.axiomata_backend.model.World;
 import com.example.axiomata_backend.repository.ItemRepository;
 import com.example.axiomata_backend.repository.LocationRepository;
 import com.example.axiomata_backend.repository.WorldRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,7 +43,7 @@ public class ItemService {
     @Transactional(readOnly = true)
     public ItemResponseDto getItem(Long id) {
         Item item = itemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Item not found with id " + id));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found with id " + id));
         return new ItemResponseDto(item);
     }
 
@@ -56,7 +58,7 @@ public class ItemService {
     @Transactional
     public ItemResponseDto updateItem(Long id, ItemRequestDto dto) {
         Item item = itemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Item not found with id " + id));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found with id " + id));
 
         // Update fields
         if (dto.getName() != null) item.setName(dto.getName());
@@ -65,14 +67,14 @@ public class ItemService {
         // Update world if changed
         if (dto.getWorldId() != null && !dto.getWorldId().equals(item.getWorld().getId())) {
             World world = worldRepository.findById(dto.getWorldId())
-                    .orElseThrow(() -> new RuntimeException("World not found with id " + dto.getWorldId()));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "World not found with id " + dto.getWorldId()));
             item.setWorld(world);
         }
 
         // Update location (nullable)
         if (dto.getLocationId() != null) {
             Location location = locationRepository.findById(dto.getLocationId())
-                    .orElseThrow(() -> new RuntimeException("Location not found with id " + dto.getLocationId()));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found with id " + dto.getLocationId()));
             item.setLocation(location);
         } else {
             item.setLocation(null);
@@ -85,9 +87,9 @@ public class ItemService {
     @Transactional
     public void deleteItem(Long id) {
         if (!itemRepository.existsById(id)) {
-            throw new RuntimeException("Item not found with id " + id);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found with id " + id);
         }
-        itemRepository.deleteById(id); // cascades if configured in Location/World relationships
+        itemRepository.deleteById(id);
     }
 
     // --- Mapper: DTO → Entity ---
@@ -96,13 +98,13 @@ public class ItemService {
 
         // Required world
         World world = worldRepository.findById(dto.getWorldId())
-                .orElseThrow(() -> new RuntimeException("World not found with id " + dto.getWorldId()));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "World not found with id " + dto.getWorldId()));
         item.setWorld(world);
 
         // Optional location
         if (dto.getLocationId() != null) {
             Location location = locationRepository.findById(dto.getLocationId())
-                    .orElseThrow(() -> new RuntimeException("Location not found with id " + dto.getLocationId()));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found with id " + dto.getLocationId()));
             item.setLocation(location);
         }
 

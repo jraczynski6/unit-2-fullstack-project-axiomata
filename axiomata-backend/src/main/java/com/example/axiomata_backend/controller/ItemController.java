@@ -5,6 +5,7 @@ import com.example.axiomata_backend.dto.ItemResponseDto;
 import com.example.axiomata_backend.service.ItemService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -28,7 +29,11 @@ public class ItemController {
     // Read an item by ID
     @GetMapping("/{id}")
     public ItemResponseDto getItem(@PathVariable Long id) {
-        return itemService.getItem(id);
+        ItemResponseDto item = itemService.getItem(id);
+        if (item == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found");
+        }
+        return item; // 200 OK
     }
 
     // Read items by world ID
@@ -40,7 +45,11 @@ public class ItemController {
     // Update an existing item
     @PutMapping("/{id}")
     public ItemResponseDto updateItem(@PathVariable Long id, @RequestBody ItemRequestDto dto) {
-        return itemService.updateItem(id, dto);
+        ItemResponseDto updated = itemService.updateItem(id, dto);
+        if (updated == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found");
+        }
+        return updated; // 200 OK
     }
 
     // Delete an item

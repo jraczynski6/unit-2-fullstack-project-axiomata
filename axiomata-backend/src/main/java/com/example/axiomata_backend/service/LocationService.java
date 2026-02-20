@@ -6,7 +6,9 @@ import com.example.axiomata_backend.model.Location;
 import com.example.axiomata_backend.model.World;
 import com.example.axiomata_backend.repository.LocationRepository;
 import com.example.axiomata_backend.repository.WorldRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,16 +28,16 @@ public class LocationService {
     public LocationResponseDto create(LocationRequestDto request) {
 
         World world = worldRepository.findById(request.getWorldId())
-                .orElseThrow(() -> new RuntimeException("World not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "World not found"));
 
         Location parentRegion = null;
         if (request.getRegionId() != null) {
             parentRegion = locationRepository.findById(request.getRegionId())
-                    .orElseThrow(() -> new RuntimeException("Parent region not found"));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Parent region not found"));
 
             // Ensure parent region is in same world
             if (!parentRegion.getWorld().getId().equals(world.getId())) {
-                throw new RuntimeException("Parent region must belong to same world");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Parent region must belong to same world");
             }
         }
 
@@ -51,7 +53,7 @@ public class LocationService {
         return mapToResponse(saved);
     }
 
-    // Read a location by ID
+    // Read all locations by World
     public List<LocationResponseDto> getByWorld(Long worldId) {
         return locationRepository.findByWorldId(worldId)
                 .stream()
@@ -59,9 +61,10 @@ public class LocationService {
                 .collect(Collectors.toList());
     }
 
+    // Read a location by ID
     public LocationResponseDto getById(Long id) {
         Location location = locationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Location not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found"));
 
         return mapToResponse(location);
     }
@@ -70,7 +73,7 @@ public class LocationService {
     public LocationResponseDto update(Long id, LocationRequestDto request) {
 
         Location location = locationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Location not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found"));
 
         location.setName(request.getName());
         location.setType(request.getType());
@@ -78,10 +81,10 @@ public class LocationService {
 
         if (request.getRegionId() != null) {
             Location parentRegion = locationRepository.findById(request.getRegionId())
-                    .orElseThrow(() -> new RuntimeException("Parent region not found"));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Parent region not found"));
 
             if (!parentRegion.getWorld().getId().equals(location.getWorld().getId())) {
-                throw new RuntimeException("Parent region must belong to same world");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Parent region must belong to same world");
             }
 
             location.setRegion(parentRegion);
@@ -96,10 +99,12 @@ public class LocationService {
 
     // Delete a location
     public void delete(Long id) {
-        locationRepository.deleteById(id);
+        Location location = locationRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found"));
+        locationRepository.delete(location);
     }
 
-    //Mapping
+    // Mapping helper
     private LocationResponseDto mapToResponse(Location location) {
         return new LocationResponseDto(location);
     }
