@@ -9,14 +9,12 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.Map;
-
 
 @RestController
 @RequestMapping("/api/auth")
@@ -32,14 +30,17 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
     }
 
+    // POST /api/auth/register - Register a new user
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody @Valid RegisterRequest request) {
+    @ResponseStatus(HttpStatus.CREATED) // 201 Created
+    public String register(@RequestBody @Valid RegisterRequest request) {
         userService.register(request.getUsername(), request.getEmail(), request.getPassword());
-        return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
+        return "User registered successfully";
     }
 
+    // POST /api/auth/login - Authenticate a user and return JWT
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody @Valid LoginRequest request) {
+    public Map<String, String> login(@RequestBody @Valid LoginRequest request) {
         User user = userService.findByUsername(request.getUsername())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
 
@@ -48,11 +49,12 @@ public class AuthController {
         }
 
         String token = jwtUtil.generateToken(user.getUsername());
-        return ResponseEntity.ok(Collections.singletonMap("token", token));
+        return Collections.singletonMap("token", token); // 200 OK
     }
 
+    // DELETE /api/auth/me - Delete currently authenticated user
     @DeleteMapping("/me")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.NO_CONTENT) // 204 No Content
     public void deleteCurrentUser(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");

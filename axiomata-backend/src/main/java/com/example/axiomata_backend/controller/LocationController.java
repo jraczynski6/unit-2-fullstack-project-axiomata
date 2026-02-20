@@ -7,7 +7,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -28,38 +27,34 @@ public class LocationController {
         return new ResponseEntity<>(created, HttpStatus.CREATED); // 201 Created
     }
 
-    // Get all locations by id
+    // Get a location by ID
     @GetMapping("/{id}")
     public ResponseEntity<LocationResponseDto> getById(@PathVariable Long id) {
         LocationResponseDto location = locationService.getById(id);
-        if (location == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found");
-        }
         return ResponseEntity.ok(location); // 200 OK
+        // ResourceNotFoundException will be thrown in service if not found
     }
 
-    // Get by World
+    // Get all locations for a specific world
     @GetMapping("/world/{worldId}")
     public ResponseEntity<List<LocationResponseDto>> getByWorld(@PathVariable Long worldId) {
         List<LocationResponseDto> locations = locationService.getByWorld(worldId);
         return ResponseEntity.ok(locations); // 200 OK
     }
 
-    // UPDATE
+    // Update a location by ID
     @PutMapping("/{id}")
     public ResponseEntity<LocationResponseDto> update(@PathVariable Long id,
                                                       @RequestBody @Valid LocationRequestDto request) {
         LocationResponseDto updated = locationService.update(id, request);
-        if (updated == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Location not found");
-        }
         return ResponseEntity.ok(updated); // 200 OK
+        // ResourceNotFoundException will be thrown in service if not found
     }
 
-    // DELETE
+    // Delete a location by ID
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT) // 204 No Content
     public void delete(@PathVariable Long id) {
-        locationService.delete(id); // assume service throws exception if not found
+        locationService.delete(id); // service throws ResourceNotFoundException if not found
     }
 }

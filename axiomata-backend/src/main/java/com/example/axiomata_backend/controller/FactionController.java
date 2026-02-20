@@ -1,14 +1,11 @@
 package com.example.axiomata_backend.controller;
 
-
 import com.example.axiomata_backend.dto.FactionRequestDto;
 import com.example.axiomata_backend.dto.FactionResponseDto;
 import com.example.axiomata_backend.service.FactionService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -24,43 +21,36 @@ public class FactionController {
 
     // Create a new faction
     @PostMapping
-    public ResponseEntity<FactionResponseDto> createFaction(@RequestBody @Valid FactionRequestDto dto) {
-        FactionResponseDto createdFaction = factionService.createFaction(dto);
-        return new ResponseEntity<>(createdFaction, HttpStatus.CREATED); // 201 Created
+    @ResponseStatus(HttpStatus.CREATED)
+    public FactionResponseDto createFaction(@RequestBody @Valid FactionRequestDto dto) {
+        return factionService.createFaction(dto); // 201 Created
     }
 
-    // Get a faction by id
+    // Get a faction by ID
     @GetMapping("/{id}")
-    public ResponseEntity<FactionResponseDto> getFaction(@PathVariable Long id) {
-        FactionResponseDto faction = factionService.getFactionById(id);
-        if (faction == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Faction not found");
-        }
-        return ResponseEntity.ok(faction); // 200 OK
+    public FactionResponseDto getFaction(@PathVariable Long id) {
+        return factionService.getFactionById(id); // 200 OK
+        // ResourceNotFoundException will be thrown in service if not found
     }
 
-    // Get factions by world id
+    // Get factions by world ID
     @GetMapping("/world/{worldId}")
-    public ResponseEntity<List<FactionResponseDto>> getFactionsByWorld(@PathVariable Long worldId) {
-        List<FactionResponseDto> factions = factionService.getFactionsByWorldId(worldId);
-        return ResponseEntity.ok(factions); // 200 OK
+    public List<FactionResponseDto> getFactionsByWorld(@PathVariable Long worldId) {
+        return factionService.getFactionsByWorldId(worldId); // 200 OK
     }
 
     // Update a faction
     @PutMapping("/{id}")
-    public ResponseEntity<FactionResponseDto> updateFaction(@PathVariable Long id,
-                                                            @RequestBody @Valid FactionRequestDto dto) {
-        FactionResponseDto updatedFaction = factionService.updateFaction(id, dto);
-        if (updatedFaction == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Faction not found");
-        }
-        return ResponseEntity.ok(updatedFaction); // 200 OK
+    public FactionResponseDto updateFaction(@PathVariable Long id,
+                                            @RequestBody @Valid FactionRequestDto dto) {
+        return factionService.updateFaction(id, dto); // 200 OK
+        // ResourceNotFoundException will be thrown in service if not found
     }
 
     // Delete a faction
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT) // 204 No Content
     public void deleteFaction(@PathVariable Long id) {
-        factionService.deleteFaction(id); // assume service throws ResponseStatusException if not found
+        factionService.deleteFaction(id); // ResourceNotFoundException if faction not found
     }
 }

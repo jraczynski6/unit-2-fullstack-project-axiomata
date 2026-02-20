@@ -1,12 +1,12 @@
 package com.example.axiomata_backend.service;
 
 import com.example.axiomata_backend.dto.*;
+import com.example.axiomata_backend.exception.AccessDeniedException;
+import com.example.axiomata_backend.exception.ResourceNotFoundException;
 import com.example.axiomata_backend.model.*;
 import com.example.axiomata_backend.repository.*;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,8 +24,13 @@ public class WorldService {
 
     @Transactional
     public WorldResponseDto createWorld(Long userId, WorldRequestDto request) {
+
+        if (request.getName() == null || request.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("World name cannot be blank");
+        }
+
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with ID " + userId + " not found"));
 
         World world = new World();
         world.setUser(user);
@@ -33,14 +38,18 @@ public class WorldService {
         world.setDescription(request.getDescription());
         world.setAttributes(request.getAttributes());
 
-        World savedWorld = worldRepository.save(world);
-        return mapToResponseDto(savedWorld);
+        return mapToResponseDto(worldRepository.save(world));
     }
 
     @Transactional
     public WorldResponseDto updateWorld(Long worldId, WorldRequestDto request) {
+
+        if (request.getName() == null || request.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("World name cannot be blank");
+        }
+
         World world = worldRepository.findById(worldId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "World not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("World with ID " + worldId + " not found"));
 
         world.setName(request.getName());
         world.setDescription(request.getDescription());
@@ -52,8 +61,7 @@ public class WorldService {
     @Transactional(readOnly = true)
     public WorldResponseDto getWorldById(Long worldId) {
         World world = worldRepository.findById(worldId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "World not found"));
-
+                .orElseThrow(() -> new ResourceNotFoundException("World with ID " + worldId + " not found"));
         return mapToResponseDto(world);
     }
 
@@ -68,43 +76,27 @@ public class WorldService {
     @Transactional
     public void deleteWorld(Long worldId) {
         World world = worldRepository.findById(worldId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "World not found"));
-
+                .orElseThrow(() -> new ResourceNotFoundException("World with ID " + worldId + " not found"));
         worldRepository.delete(world);
     }
 
     @Transactional
     public void deleteWorldIfOwnedByUser(Long worldId, Long userId) {
         World world = worldRepository.findById(worldId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "World not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("World with ID " + worldId + " not found"));
 
         if (!world.getUser().getId().equals(userId)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Unauthorized access to world");
+            throw new AccessDeniedException("Unauthorized access to world");
         }
 
         worldRepository.delete(world);
     }
 
     private WorldResponseDto mapToResponseDto(World world) {
-        List<LocationResponseDto> locations = world.getLocations()
-                .stream()
-                .map(LocationResponseDto::new)
-                .collect(Collectors.toList());
-
-        List<FactionResponseDto> factions = world.getFactions()
-                .stream()
-                .map(FactionResponseDto::new)
-                .collect(Collectors.toList());
-
-        List<CharacterResponseDto> characters = world.getCharacters()
-                .stream()
-                .map(CharacterResponseDto::new)
-                .collect(Collectors.toList());
-
-        List<ItemResponseDto> items = world.getItems()
-                .stream()
-                .map(ItemResponseDto::new)
-                .collect(Collectors.toList());
+        List<LocationResponseDto> locations = world.getLocations().stream().map(LocationResponseDto::new).collect(Collectors.toList());
+        List<FactionResponseDto> factions = world.getFactions().stream().map(FactionResponseDto::new).collect(Collectors.toList());
+        List<CharacterResponseDto> characters = world.getCharacters().stream().map(CharacterResponseDto::new).collect(Collectors.toList());
+        List<ItemResponseDto> items = world.getItems().stream().map(ItemResponseDto::new).collect(Collectors.toList());
 
         return new WorldResponseDto(
                 world.getId(),
@@ -121,18 +113,3 @@ public class WorldService {
         );
     }
 }
-/*
-========================== Axiomata Backend TODOs ==========================
-
-========================== Updated Critical Backend TODOs Before Frontend ==========================
-
-TODO (Optional): Start global exception handler for consistent error responses
- - Helps standardize error responses, but not blocking frontend development.
-========================== Remaining Backend TODOs ==========================
-
-TODO: Add authentication error handling (401/403) with JSON messages.
-TODO: Design Misc container handling strategy for orphaned entities (Phase 2).
-TODO: Add validation dependency (jakarta.validation / Hibernate Validator).
-TODO: Allow requests from frontend origin (CORS configuration).
-TODO: Add field validation annotations (@NotNull, @Size, etc.) to DTOs.
-*/

@@ -2,15 +2,15 @@ package com.example.axiomata_backend.controller;
 
 import com.example.axiomata_backend.dto.WorldRequestDto;
 import com.example.axiomata_backend.dto.WorldResponseDto;
+import com.example.axiomata_backend.exception.AccessDeniedException;
 import com.example.axiomata_backend.model.User;
 import com.example.axiomata_backend.repository.UserRepository;
 import com.example.axiomata_backend.service.WorldService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -41,7 +41,7 @@ public class WorldController {
         WorldResponseDto worldDto = worldService.getWorldById(id);
 
         if (!worldDto.getUsername().equals(user.getUsername())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Unauthorized access to world");
+            throw new AccessDeniedException("Unauthorized access to world"); // handled by global handler
         }
 
         return ResponseEntity.ok(worldDto); // 200 OK
@@ -65,7 +65,7 @@ public class WorldController {
         WorldResponseDto updatedWorld = worldService.updateWorld(id, request);
 
         if (!updatedWorld.getUsername().equals(user.getUsername())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Unauthorized access to world");
+            throw new AccessDeniedException("Unauthorized access to world"); // handled by global handler
         }
 
         return ResponseEntity.ok(updatedWorld); // 200 OK
@@ -76,16 +76,16 @@ public class WorldController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteWorld(@PathVariable Long id, Authentication authentication) {
         User user = getAuthenticatedUser(authentication);
-        worldService.deleteWorldIfOwnedByUser(id, user.getId()); // just call it
+        worldService.deleteWorldIfOwnedByUser(id, user.getId()); // just call service, exceptions handled globally
     }
 
     // Helper: Get authenticated User entity from Authentication object
     private User getAuthenticatedUser(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
+            throw new AccessDeniedException("User not authenticated");
         }
 
         return userRepository.findByUsername(authentication.getName())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found")); // could also make this a ResourceNotFoundException
     }
 }

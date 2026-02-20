@@ -3,10 +3,9 @@ package com.example.axiomata_backend.controller;
 import com.example.axiomata_backend.dto.CharacterRequestDto;
 import com.example.axiomata_backend.dto.CharacterResponseDto;
 import com.example.axiomata_backend.service.CharacterService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -22,43 +21,36 @@ public class CharacterController {
 
     // Create a new character
     @PostMapping
-    public ResponseEntity<CharacterResponseDto> createCharacter(@RequestBody CharacterRequestDto dto) {
-        CharacterResponseDto created = characterService.createCharacter(dto);
-        return new ResponseEntity<>(created, HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public CharacterResponseDto createCharacter(@RequestBody @Valid CharacterRequestDto dto) {
+        return characterService.createCharacter(dto); // 201 Created
     }
 
-    // Read by ID
+    // Read a character by ID
     @GetMapping("/{id}")
-    public ResponseEntity<CharacterResponseDto> getCharacterById(@PathVariable Long id) {
-        CharacterResponseDto character = characterService.getCharacterById(id);
-        if (character == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Character not found");
-        }
-        return ResponseEntity.ok(character); // 200 OK
+    public CharacterResponseDto getCharacterById(@PathVariable Long id) {
+        return characterService.getCharacterById(id); // 200 OK
+        // ResourceNotFoundException will be thrown in service if not found
     }
 
-    // Read all by World
+    // Read all characters by world ID
     @GetMapping("/world/{worldId}")
-    public ResponseEntity<List<CharacterResponseDto>> getCharactersByWorld(@PathVariable Long worldId) {
-        List<CharacterResponseDto> characters = characterService.getCharactersByWorldId(worldId);
-        return ResponseEntity.ok(characters);
+    public List<CharacterResponseDto> getCharactersByWorld(@PathVariable Long worldId) {
+        return characterService.getCharactersByWorldId(worldId); // 200 OK
     }
 
-    // Update existing character
+    // Update an existing character
     @PutMapping("/{id}")
-    public ResponseEntity<CharacterResponseDto> updateCharacter(@PathVariable Long id,
-                                                                @RequestBody CharacterRequestDto dto) {
-        CharacterResponseDto updated = characterService.updateCharacter(id, dto);
-        if (updated == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Character not found");
-        }
-        return ResponseEntity.ok(updated); // 200 OK
+    public CharacterResponseDto updateCharacter(@PathVariable Long id,
+                                                @RequestBody @Valid CharacterRequestDto dto) {
+        return characterService.updateCharacter(id, dto); // 200 OK
+        // ResourceNotFoundException will be thrown in service if not found
     }
 
     // Delete a character
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT) // 204 No Content
     public void deleteCharacter(@PathVariable Long id) {
-        characterService.deleteCharacter(id); // service should throw ResponseStatusException if not found
+        characterService.deleteCharacter(id); // ResourceNotFoundException if character not found
     }
 }
