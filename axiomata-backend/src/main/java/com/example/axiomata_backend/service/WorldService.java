@@ -131,20 +131,28 @@ public class WorldService {
         );
     }
 
-    /*
+/*
     ==========================
     Axiomata Backend TODOs
     ==========================
-    TODO: Verify ownership checks for world entity CRUD operations.
-    TODO: Implement delete account endpoint for users.
+
+    ==========================
+    Updated Critical Backend TODOs Before Frontend
+    ==========================
+    TODO: Implement delete operations with parent-child validation
+          - Prevent accidental deletion of entities that still have dependent children.
+    TODO: Ensure proper HTTP status codes for all endpoints (201, 204, 400, 401, 403)
+          - So the frontend can correctly interpret success and error responses.
+    TODO (Optional): Start global exception handler for consistent error responses
+          - Helps standardize error responses, but not blocking frontend development.
+
+    ==========================
+    Remaining Backend TODOs
+    ==========================
     TODO: Add authentication error handling (401/403) with JSON messages.
-    TODO: Validate delete operations with parent-child relationships.
     TODO: Design Misc container handling strategy for orphaned entities (Phase 2).
-    TODO: Configure cascade deletes from parent to children where appropriate.
     TODO: Add validation dependency (jakarta.validation / Hibernate Validator).
-    TODO: Create global exception handler with @ControllerAdvice.
     TODO: Allow requests from frontend origin (CORS configuration).
     TODO: Add field validation annotations (@NotNull, @Size, etc.) to DTOs.
-    TODO: Ensure proper HTTP status codes for all responses (201, 204, 400, 401, 403).
-    */
+*/
 }
