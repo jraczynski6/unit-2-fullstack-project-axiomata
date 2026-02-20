@@ -4,12 +4,13 @@ import java.util.Set;
 
 public class CharacterRequestDto {
 
-    private Long worldId;
-    private Long locationId;
-    private String name;
-    private String description;
-    private Set<Long> factionIds;
+    private Long worldId;          // ID of the world the character belongs to
+    private Long locationId;       // ID of the location (nullable)
+    private String name;           // Character name
+    private String description;    // Character description
+    private Set<Long> factionIds;  // Set of faction IDs (nullable or empty)
 
+    // --- Getters and Setters ---
     public Long getWorldId() {
         return worldId;
     }

@@ -59,6 +59,7 @@ public class CharacterService {
 
     // Update existing character
     public CharacterResponseDto updateCharacter(Long id, CharacterRequestDto dto) {
+        System.out.println("Updating character id=" + id + " with locationId=" + dto.getLocationId());
         Character character = characterRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Character not found"));
 
@@ -93,15 +94,17 @@ public class CharacterService {
         character.setName(dto.getName());
         character.setDescription(dto.getDescription());
 
-        // Set Factions
+        // Set Factions safely (mutate existing collection instead of replacing)
+        if (character.getFactions() == null) {
+            character.setFactions(new java.util.HashSet<>()); // initialize if null
+        }
+        character.getFactions().clear(); // remove existing
         if (dto.getFactionIds() != null && !dto.getFactionIds().isEmpty()) {
-            Set<Faction> factions = dto.getFactionIds().stream()
-                    .map(fid -> factionRepository.findById(fid)
-                            .orElseThrow(() -> new RuntimeException("Faction not found with ID: " + fid)))
-                    .collect(Collectors.toSet());
-            character.setFactions(factions);
-        } else {
-            character.setFactions(Set.of()); // empty set if null
+            for (Long fid : dto.getFactionIds()) {
+                Faction faction = factionRepository.findById(fid)
+                        .orElseThrow(() -> new RuntimeException("Faction not found with ID: " + fid));
+                character.getFactions().add(faction);
+            }
         }
     }
 
