@@ -113,7 +113,6 @@ public class WorldService {
         );
     }
 }
-
 /*
 ==========================
 Axiomata Backend TODOs
@@ -122,9 +121,6 @@ Axiomata Backend TODOs
 ==========================
 Critical Backend TODOs (Required Before Frontend)
 ==========================
-TODO: Allow requests from frontend origin (CORS configuration)
-      - Critical for frontend to connect if running on a different origin.
-
 TODO: (Optional): Add authentication error handling (401/403) with JSON messages
       - Ownership checks already enforce security;
 ==========================
