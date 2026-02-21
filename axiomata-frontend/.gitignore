@@ -1,31 +1,20 @@
-# Logs
-logs
-*.log
+# =========================
+# Frontend (Node / Vite)
+# =========================
+
+node_modules/
+dist/
+dist-ssr/
+*.local
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-
 # =========================
-# Spring Boot / Java
+# Backend (Spring Boot / Maven)
 # =========================
 
 target/
@@ -34,14 +23,34 @@ target/
 *.war
 *.ear
 
-# Maven
+# Maven wrapper jar (keep the scripts, ignore the jar)
 .mvn/wrapper/maven-wrapper.jar
 
-# Application secrets
+# Logs
+logs/
+*.log
+
+# Environment / secrets
+.env
 application-local.properties
 application-dev.properties
 application-prod.properties
-.env
 
-# OS files
+# =========================
+# IDE / OS
+# =========================
+
+.vscode/*
+!.vscode/extensions.json
+
+.idea/
+*.iml
+
+.DS_Store
 Thumbs.db
+
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
