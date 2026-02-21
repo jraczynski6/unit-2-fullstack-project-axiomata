@@ -33,9 +33,15 @@ public class AuthController {
     // POST /api/auth/register - Register a new user
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED) // 201 Created
-    public String register(@RequestBody @Valid RegisterRequest request) {
+    public Map<String, String> register(@RequestBody @Valid RegisterRequest request) {
+        // Create the user
         userService.register(request.getUsername(), request.getEmail(), request.getPassword());
-        return "User registered successfully";
+
+        // Generate JWT for the new user
+        String token = jwtUtil.generateToken(request.getUsername());
+
+        // Return token in the same format as login
+        return Collections.singletonMap("token", token);
     }
 
     // POST /api/auth/login - Authenticate a user and return JWT
