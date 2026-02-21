@@ -9,10 +9,20 @@ const api = axios.create({
 // request interceptor: attach JWT token if present
 api.interceptors.request.use((config) => {
   const token = getToken();
-  if (token) {
+
+  const isAuthRoute =
+    config.url?.includes("/auth/login") ||
+    config.url?.includes("/auth/register");
+
+  if (token && !isAuthRoute) {
     console.log("API request with token:", token);
     config.headers.Authorization = `Bearer ${token}`;
+  } else if (isAuthRoute) {
+    console.log("Auth route detected. No token attached:", config.url);
+  } else {
+    console.log("No token available for request:", config.url);
   }
+
   return config;
 });
 
