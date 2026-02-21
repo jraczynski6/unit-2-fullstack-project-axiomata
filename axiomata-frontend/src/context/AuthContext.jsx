@@ -1,43 +1,50 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
+// create context
 const AuthContext = createContext(null);
 
+// Provider component wraps the app and provides auth state
 export function AuthProvider({ children }) {
-    const [token, setToken] = useState(() => localStorage.getItem("token") || null);
+  // initialize token from localStorage if present
+  const [token, setToken] = useState(() => localStorage.getItem("token") || null);
 
-    // update Local storage when token changes
-    useEffect(() => {
-        if (token) {
-            localStorage.setItem("token", token);
-        } else {
-            localStorage.removeItem("token");
-        }
-    }, [token]);
+  // update localStorage whenever token changes
+  useEffect(() => {
+    if (token) {
+      localStorage.setItem("token", token);
+      console.log("Token stored in AuthContext and localStorage:", token);
+    } else {
+      localStorage.removeItem("token");
+      console.log("Token removed from AuthContext and localStorage");
+    }
+  }, [token]);
 
-    // login
-    const login = (newToken) => {
-        setToken(null);
-    };
+  // login function stores the JWT token
+  const login = (newToken) => {
+    console.log("AuthContext login called with token:", newToken);
+    setToken(newToken); // store token in state
+  };
 
-    // Logout
-    const logout = () => {
-        setToken(null);
-    };
+  // logout clears token
+  const logout = () => {
+    console.log("AuthContext logout called");
+    setToken(null);
+  };
 
-    // derived state
-    const isAuthenticated = !!token;
+  // derived state to easily check authentication
+  const isAuthenticated = !!token;
 
-    // value
-    const value = {token, login, logout, isAuthenticated};
+  // context value provided to consumers
+  const value = { token, login, logout, isAuthenticated };
 
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-//hook to consume context
+// hook to consume auth context easily
 export function useAuth() {
-    const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error ("useAuth must be used within an AuthProvider");
-    }
-    return context;
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 }

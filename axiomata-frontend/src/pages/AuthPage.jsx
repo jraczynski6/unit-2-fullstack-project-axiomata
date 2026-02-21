@@ -1,37 +1,29 @@
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
 
 export default function AuthPage() {
-  const [mode, setMode] = useState("login"); // login or register
+  const [mode, setMode] = useState("login"); // default to login
+  const navigate = useNavigate();
 
-  // Access login function from AuthContext
-  const { login } = useAuth();
-
-  // Function to handle successful login
-  function handleLoginSuccess(receivedToken) {
-    login(receivedToken); // sets token in context & localStorage
-  }
-
-  // Function to handle successful registration
-  function handleRegisterSuccess(receivedToken) {
-    login(receivedToken); // auto-login after register
-  }
+  // called when login/register succeeds
+  const handleSuccess = () => {
+    navigate("/dashboard"); // redirect to protected page
+    console.log("handleSuccess called, navigating to /dashboard");
+  };
 
   return (
     <div>
-      {/* show current form */}
+      {/* show current form based on mode */}
       {mode === "login" ? (
-        <LoginForm onSuccess={handleLoginSuccess} />
+        <LoginForm onSuccess={handleSuccess} />
       ) : (
-        <RegisterForm onSuccess={handleRegisterSuccess} />
+        <RegisterForm onSuccess={handleSuccess} />
       )}
 
-      {/* Toggle register/login */}
-      <button
-        onClick={() => setMode(mode === "login" ? "register" : "login")}
-      >
+      {/* toggle login/register */}
+      <button onClick={() => setMode(mode === "login" ? "register" : "login")}>
         {mode === "login" ? "Go to Register" : "Go to Login"}
       </button>
     </div>

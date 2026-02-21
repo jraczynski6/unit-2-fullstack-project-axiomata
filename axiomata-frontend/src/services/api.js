@@ -1,30 +1,32 @@
 import axios from "axios";
 import { getToken, clearToken } from "../utils/auth";
 
-// create new instance with base url for brevity
+// Axios instance for all API requests
 const api = axios.create({
-    baseURL: "http://localhost:8080/api",
+  baseURL: "http://localhost:8080/api", // backend URL
 });
 
-// run before every request
+// request interceptor: attach JWT token if present
 api.interceptors.request.use((config) => {
-    const token = getToken();
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
+  const token = getToken();
+  if (token) {
+    console.log("API request with token:", token);
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
-// run after response ? error
+// response interceptor: handle 401 errors (expired/invalid token)
 api.interceptors.response.use(
-    (reponse) => reponse,
-    (error) => {
-        if (error.reponse?.status === 401) {
-            clearToken();
-            window.location.href = "/auth";
-        }
-        return Promise.reject(error);
+  (response) => response, // pass through successful responses
+  (error) => {
+    if (error.response?.status === 401) {
+      console.warn("Unauthorized! Clearing token and redirecting to /auth");
+      clearToken();
+      window.location.href = "/auth"; // force logout
     }
+    return Promise.reject(error);
+  }
 );
 
 export default api;
