@@ -13,3 +13,5 @@ export default function ProtectedRoute({ children }) {
   // otherwise, render the protected content
   return children;
 }
+
+// TODO: Handle the case where children is undefined or not a valid React element
