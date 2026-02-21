@@ -2,6 +2,7 @@ package com.example.axiomata_backend.service;
 
 import com.example.axiomata_backend.dto.FactionRequestDto;
 import com.example.axiomata_backend.dto.FactionResponseDto;
+import com.example.axiomata_backend.exception.ResourceNotFoundException;
 import com.example.axiomata_backend.model.Faction;
 import com.example.axiomata_backend.model.World;
 import com.example.axiomata_backend.repository.FactionRepository;
@@ -24,70 +25,71 @@ public class FactionService {
         this.worldRepository = worldRepository;
     }
 
-    // --- CRUD Operations ---
-
     @Transactional
     public FactionResponseDto createFaction(FactionRequestDto dto) {
+        validateDto(dto);
         Faction faction = mapDtoToEntity(dto);
-        Faction saved = factionRepository.save(faction);
-        return new FactionResponseDto(saved);
+        return new FactionResponseDto(factionRepository.save(faction));
     }
 
     @Transactional(readOnly = true)
     public FactionResponseDto getFactionById(Long id) {
         Faction faction = factionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Faction not found with id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Faction not found with id " + id));
         return new FactionResponseDto(faction);
     }
 
     @Transactional(readOnly = true)
     public List<FactionResponseDto> getFactionsByWorldId(Long worldId) {
-        List<Faction> factions = factionRepository.findByWorldId(worldId);
-        return factions.stream()
+        return factionRepository.findByWorldId(worldId)
+                .stream()
                 .map(FactionResponseDto::new)
                 .collect(Collectors.toList());
     }
 
     @Transactional
     public FactionResponseDto updateFaction(Long id, FactionRequestDto dto) {
+        validateDto(dto);
         Faction faction = factionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Faction not found with id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Faction not found with id " + id));
 
         faction.setName(dto.getName());
         faction.setType(dto.getType());
         faction.setDescription(dto.getDescription());
 
-        // Update world if changed
         if (dto.getWorldId() != null && !faction.getWorld().getId().equals(dto.getWorldId())) {
             World world = worldRepository.findById(dto.getWorldId())
-                    .orElseThrow(() -> new RuntimeException("World not found with id " + dto.getWorldId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("World not found with id " + dto.getWorldId()));
             faction.setWorld(world);
         }
 
-        Faction updated = factionRepository.save(faction);
-        return new FactionResponseDto(updated);
+        return new FactionResponseDto(factionRepository.save(faction));
     }
 
     @Transactional
     public void deleteFaction(Long id) {
-        if (!factionRepository.existsById(id)) {
-            throw new RuntimeException("Faction not found with id " + id);
-        }
-        factionRepository.deleteById(id); // cascades to Character relationships if configured
+        Faction faction = factionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Faction not found with id " + id));
+        factionRepository.delete(faction);
     }
 
-    // --- Mapper: DTO → Entity ---
+    private void validateDto(FactionRequestDto dto) {
+        if (dto.getName() == null || dto.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Faction name cannot be blank");
+        }
+        if (dto.getWorldId() == null) {
+            throw new IllegalArgumentException("World ID is required");
+        }
+    }
+
     private Faction mapDtoToEntity(FactionRequestDto dto) {
         Faction faction = new Faction();
-
-        // Set basic fields
         faction.setName(dto.getName());
         faction.setType(dto.getType());
         faction.setDescription(dto.getDescription());
 
-        // Set World entity
         World world = worldRepository.findById(dto.getWorldId())
-                .orElseThrow(() -> new RuntimeException("World not found with id " + dto.getWorldId()));
+                .orElseThrow(() -> new ResourceNotFoundException("World not found with id " + dto.getWorldId()));
         faction.setWorld(world);
 
         return faction;

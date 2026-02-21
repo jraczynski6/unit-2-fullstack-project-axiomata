@@ -2,6 +2,7 @@ package com.example.axiomata_backend.service;
 
 import com.example.axiomata_backend.dto.ItemRequestDto;
 import com.example.axiomata_backend.dto.ItemResponseDto;
+import com.example.axiomata_backend.exception.ResourceNotFoundException;
 import com.example.axiomata_backend.model.Item;
 import com.example.axiomata_backend.model.Location;
 import com.example.axiomata_backend.model.World;
@@ -29,80 +30,80 @@ public class ItemService {
         this.locationRepository = locationRepository;
     }
 
-    // --- CRUD Operations ---
-
     @Transactional
     public ItemResponseDto createItem(ItemRequestDto dto) {
+        validateDto(dto);
         Item item = mapDtoToEntity(dto);
-        Item saved = itemRepository.save(item);
-        return new ItemResponseDto(saved);
+        return new ItemResponseDto(itemRepository.save(item));
     }
 
     @Transactional(readOnly = true)
     public ItemResponseDto getItem(Long id) {
         Item item = itemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Item not found with id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Item not found with id " + id));
         return new ItemResponseDto(item);
     }
 
     @Transactional(readOnly = true)
     public List<ItemResponseDto> getItemsByWorld(Long worldId) {
-        List<Item> items = itemRepository.findByWorldId(worldId);
-        return items.stream()
+        return itemRepository.findByWorldId(worldId)
+                .stream()
                 .map(ItemResponseDto::new)
                 .collect(Collectors.toList());
     }
 
     @Transactional
     public ItemResponseDto updateItem(Long id, ItemRequestDto dto) {
+        validateDto(dto);
         Item item = itemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Item not found with id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Item not found with id " + id));
 
-        // Update fields
         if (dto.getName() != null) item.setName(dto.getName());
         if (dto.getDescription() != null) item.setDescription(dto.getDescription());
 
-        // Update world if changed
         if (dto.getWorldId() != null && !dto.getWorldId().equals(item.getWorld().getId())) {
             World world = worldRepository.findById(dto.getWorldId())
-                    .orElseThrow(() -> new RuntimeException("World not found with id " + dto.getWorldId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("World not found with id " + dto.getWorldId()));
             item.setWorld(world);
         }
 
-        // Update location (nullable)
         if (dto.getLocationId() != null) {
             Location location = locationRepository.findById(dto.getLocationId())
-                    .orElseThrow(() -> new RuntimeException("Location not found with id " + dto.getLocationId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("Location not found with id " + dto.getLocationId()));
             item.setLocation(location);
         } else {
             item.setLocation(null);
         }
 
-        Item updated = itemRepository.save(item);
-        return new ItemResponseDto(updated);
+        return new ItemResponseDto(itemRepository.save(item));
     }
 
     @Transactional
     public void deleteItem(Long id) {
-        if (!itemRepository.existsById(id)) {
-            throw new RuntimeException("Item not found with id " + id);
-        }
-        itemRepository.deleteById(id); // cascades if configured in Location/World relationships
+        Item item = itemRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Item not found with id " + id));
+        itemRepository.delete(item);
     }
 
-    // --- Mapper: DTO → Entity ---
+    private void validateDto(ItemRequestDto dto) {
+        if (dto.getName() == null || dto.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Item name cannot be blank");
+        }
+        if (dto.getWorldId() == null) {
+            throw new IllegalArgumentException("World ID is required");
+        }
+    }
+
     private Item mapDtoToEntity(ItemRequestDto dto) {
         Item item = new Item();
 
-        // Required world
         World world = worldRepository.findById(dto.getWorldId())
-                .orElseThrow(() -> new RuntimeException("World not found with id " + dto.getWorldId()));
+                .orElseThrow(() -> new ResourceNotFoundException("World not found with id " + dto.getWorldId()));
         item.setWorld(world);
 
-        // Optional location
         if (dto.getLocationId() != null) {
             Location location = locationRepository.findById(dto.getLocationId())
-                    .orElseThrow(() -> new RuntimeException("Location not found with id " + dto.getLocationId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("Location not found with id " + dto.getLocationId()));
             item.setLocation(location);
         }
 

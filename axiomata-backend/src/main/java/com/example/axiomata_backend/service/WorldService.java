@@ -1,6 +1,8 @@
 package com.example.axiomata_backend.service;
 
 import com.example.axiomata_backend.dto.*;
+import com.example.axiomata_backend.exception.AccessDeniedException;
+import com.example.axiomata_backend.exception.ResourceNotFoundException;
 import com.example.axiomata_backend.model.*;
 import com.example.axiomata_backend.repository.*;
 import org.springframework.stereotype.Service;
@@ -20,14 +22,15 @@ public class WorldService {
         this.userRepository = userRepository;
     }
 
-
-    // CRUD operations for World entities
-
-
     @Transactional
     public WorldResponseDto createWorld(Long userId, WorldRequestDto request) {
+
+        if (request.getName() == null || request.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("World name cannot be blank");
+        }
+
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalStateException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with ID " + userId + " not found"));
 
         World world = new World();
         world.setUser(user);
@@ -35,14 +38,18 @@ public class WorldService {
         world.setDescription(request.getDescription());
         world.setAttributes(request.getAttributes());
 
-        World savedWorld = worldRepository.save(world);
-        return mapToResponseDto(savedWorld);
+        return mapToResponseDto(worldRepository.save(world));
     }
 
     @Transactional
     public WorldResponseDto updateWorld(Long worldId, WorldRequestDto request) {
+
+        if (request.getName() == null || request.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("World name cannot be blank");
+        }
+
         World world = worldRepository.findById(worldId)
-                .orElseThrow(() -> new IllegalStateException("World not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("World with ID " + worldId + " not found"));
 
         world.setName(request.getName());
         world.setDescription(request.getDescription());
@@ -54,8 +61,7 @@ public class WorldService {
     @Transactional(readOnly = true)
     public WorldResponseDto getWorldById(Long worldId) {
         World world = worldRepository.findById(worldId)
-                .orElseThrow(() -> new IllegalStateException("World not found"));
-
+                .orElseThrow(() -> new ResourceNotFoundException("World with ID " + worldId + " not found"));
         return mapToResponseDto(world);
     }
 
@@ -67,54 +73,30 @@ public class WorldService {
                 .collect(Collectors.toList());
     }
 
-
-    // Delete world (cascades to locations, factions, characters, items)
-
     @Transactional
     public void deleteWorld(Long worldId) {
         World world = worldRepository.findById(worldId)
-                .orElseThrow(() -> new IllegalStateException("World not found"));
-
-        // CascadeType.ALL + orphanRemoval on children ensures all children are deleted
+                .orElseThrow(() -> new ResourceNotFoundException("World with ID " + worldId + " not found"));
         worldRepository.delete(world);
     }
 
-    // Delete world only if owned by specific user
     @Transactional
     public void deleteWorldIfOwnedByUser(Long worldId, Long userId) {
         World world = worldRepository.findById(worldId)
-                .orElseThrow(() -> new IllegalStateException("World not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("World with ID " + worldId + " not found"));
 
         if (!world.getUser().getId().equals(userId)) {
-            throw new IllegalStateException("Unauthorized");
+            throw new AccessDeniedException("Unauthorized access to world");
         }
 
         worldRepository.delete(world);
     }
 
-
-    // Helper: Map entity to response DTO (includes children)
-
     private WorldResponseDto mapToResponseDto(World world) {
-        List<LocationResponseDto> locations = world.getLocations()
-                .stream()
-                .map(LocationResponseDto::new)
-                .collect(Collectors.toList());
-
-        List<FactionResponseDto> factions = world.getFactions()
-                .stream()
-                .map(FactionResponseDto::new)
-                .collect(Collectors.toList());
-
-        List<CharacterResponseDto> characters = world.getCharacters()
-                .stream()
-                .map(CharacterResponseDto::new)
-                .collect(Collectors.toList());
-
-        List<ItemResponseDto> items = world.getItems()
-                .stream()
-                .map(ItemResponseDto::new)
-                .collect(Collectors.toList());
+        List<LocationResponseDto> locations = world.getLocations().stream().map(LocationResponseDto::new).collect(Collectors.toList());
+        List<FactionResponseDto> factions = world.getFactions().stream().map(FactionResponseDto::new).collect(Collectors.toList());
+        List<CharacterResponseDto> characters = world.getCharacters().stream().map(CharacterResponseDto::new).collect(Collectors.toList());
+        List<ItemResponseDto> items = world.getItems().stream().map(ItemResponseDto::new).collect(Collectors.toList());
 
         return new WorldResponseDto(
                 world.getId(),
@@ -130,29 +112,23 @@ public class WorldService {
                 items
         );
     }
+}
 
 /*
-    ==========================
-    Axiomata Backend TODOs
-    ==========================
+==========================
+Axiomata Backend TODOs
+==========================
 
-    ==========================
-    Updated Critical Backend TODOs Before Frontend
-    ==========================
-    TODO: Implement delete operations with parent-child validation
-          - Prevent accidental deletion of entities that still have dependent children.
-    TODO: Ensure proper HTTP status codes for all endpoints (201, 204, 400, 401, 403)
-          - So the frontend can correctly interpret success and error responses.
-    TODO (Optional): Start global exception handler for consistent error responses
-          - Helps standardize error responses, but not blocking frontend development.
+==========================
+Critical Backend TODOs (Required Before Frontend)
+==========================
+TODO: Allow requests from frontend origin (CORS configuration)
+      - Critical for frontend to connect if running on a different origin.
 
-    ==========================
-    Remaining Backend TODOs
-    ==========================
-    TODO: Add authentication error handling (401/403) with JSON messages.
-    TODO: Design Misc container handling strategy for orphaned entities (Phase 2).
-    TODO: Add validation dependency (jakarta.validation / Hibernate Validator).
-    TODO: Allow requests from frontend origin (CORS configuration).
-    TODO: Add field validation annotations (@NotNull, @Size, etc.) to DTOs.
+TODO: (Optional): Add authentication error handling (401/403) with JSON messages
+      - Ownership checks already enforce security;
+==========================
+Remaining Backend TODOs (Phase 2)
+==========================
+TODO: Design Misc container handling strategy for orphaned entities (Phase 2)
 */
-}
