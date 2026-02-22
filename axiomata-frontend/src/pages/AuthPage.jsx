@@ -2,6 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
+import PublicHeader from "../components/PublicHeader";
+import PublicFooter from "../components/PublicFooter";
+
 
 export default function AuthPage() {
   const [mode, setMode] = useState("login"); // default to login
@@ -15,6 +18,7 @@ export default function AuthPage() {
 
   return (
     <div>
+      <PublicHeader />
       {/* show current form based on mode */}
       {mode === "login" ? (
         <LoginForm onSuccess={handleSuccess} />
@@ -26,6 +30,7 @@ export default function AuthPage() {
       <button onClick={() => setMode(mode === "login" ? "register" : "login")}>
         {mode === "login" ? "Go to Register" : "Go to Login"}
       </button>
+      <PublicFooter />
     </div>
   );
 }
