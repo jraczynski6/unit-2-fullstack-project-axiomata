@@ -7,5 +7,7 @@ export const getWorldsForUser = async () => {
 }
 
 export const getWorldById = async (worldId) => {
-    const response = await api.get(`/worlds/${worldId}`);
-}
+  const response = await api.get(`/worlds/${worldId}`);
+  console.log("API response:", response); // <- add this
+  return response.data;
+};
