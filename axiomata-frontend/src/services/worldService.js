@@ -10,3 +10,8 @@ export const getWorldById = async (worldId) => {
   const response = await api.get(`/worlds/${worldId}`);
   return response.data;
 };
+
+export const getWorldEntities = async (worldId) => {
+  const response = await api.get(`/worlds/${worldId}/entities`);
+  return response.data;
+};
