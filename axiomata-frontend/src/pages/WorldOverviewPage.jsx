@@ -43,7 +43,7 @@ export default function WorldOverviewPage() {
         world={world}
         onSelectEntity={(entity) => {
           // Navigate to world content page for this entity
-          navigate(`/world-content/${worldId}`);
+          navigate(`/world-content/${worldId}`, { state: { selectedEntity: entity } });
         }}
       />
     </div>
