@@ -1,0 +1,13 @@
+USE axiomata_db;
+
+SET FOREIGN_KEY_CHECKS = 0;
+
+TRUNCATE TABLE character_factions;
+TRUNCATE TABLE items;
+TRUNCATE TABLE characters;
+TRUNCATE TABLE factions;
+TRUNCATE TABLE locations;
+TRUNCATE TABLE worlds;
+TRUNCATE TABLE users;
+
+SET FOREIGN_KEY_CHECKS = 1;

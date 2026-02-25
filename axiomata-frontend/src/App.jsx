@@ -1,13 +1,14 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
-import LandingPage from "./pages/LandingPage"
-import AboutPage from "./pages/AboutPage"
-import AuthPage from "./pages/AuthPage"
-import DashboardPage from "./pages/Dashboard"
-import AccountPage from "./pages/AccountPage"
-import CreateWorldPage from "./pages/CreateWorldPage"
-import WorldOverview from "./pages/WorldOverview"
-import WorldContent from "./pages/WorldContent"
-import ProtectedRoute from "./components/ProtectedRoute"
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LandingPage from "./pages/LandingPage";
+import AboutPage from "./pages/AboutPage";
+import AuthPage from "./pages/AuthPage";
+import DashboardPage from "./pages/Dashboard";
+import AccountPage from "./pages/AccountPage";
+import CreateWorldPage from "./pages/CreateWorldPage";
+import WorldOverview from "./pages/WorldOverview";
+import WorldContent from "./pages/WorldContent";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Layout from "./components/Layout";
 
 
 function App() {
@@ -24,7 +25,9 @@ function App() {
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <DashboardPage />
+              <Layout>
+                <DashboardPage />
+              </Layout>
             </ProtectedRoute>
           }
         />
@@ -32,7 +35,9 @@ function App() {
           path="/account"
           element={
             <ProtectedRoute>
-              <AccountPage />
+              <Layout>
+                <AccountPage />
+              </Layout>
             </ProtectedRoute>
           }
         />
@@ -40,7 +45,9 @@ function App() {
           path="/create-world"
           element={
             <ProtectedRoute>
-              <CreateWorldPage />
+              <Layout>
+                <CreateWorldPage />
+              </Layout>
             </ProtectedRoute>
           }
         />
@@ -48,7 +55,9 @@ function App() {
           path="/world-overview/:worldId"
           element={
             <ProtectedRoute>
-              <WorldOverview />
+              <Layout>
+                <WorldOverview />
+              </Layout>
             </ProtectedRoute>
           }
         />
@@ -56,7 +65,9 @@ function App() {
           path="/world-content/:worldId"
           element={
             <ProtectedRoute>
-              <WorldContent />
+              <Layout>
+                <WorldContent />
+              </Layout>
             </ProtectedRoute>
           }
         />
