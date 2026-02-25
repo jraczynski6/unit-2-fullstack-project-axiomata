@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { getWorldById } from "../services/worldService";
 import { getWorldEntities } from "../services/worldService";
 import SectionPanel from "../components/SectionPanel";
+import FloatingControls from "../components/FloatingControls";
 
 export default function WorldOverviewPage() {
   const { worldId } = useParams();
@@ -46,6 +47,17 @@ export default function WorldOverviewPage() {
           navigate(`/world-content/${worldId}`, { state: { selectedEntity: entity } });
         }}
       />
+      {/* Floating Controls */}
+      {world && (
+        <FloatingControls
+          pageType="worldOverview"
+          worldId={world.id}
+          onAddEntity={(entity) => console.log("New entity:", entity)}
+          onEdit={() => console.log("Edit world")}
+          onSave={() => console.log("Save world")}
+          onDelete={() => console.log("Delete world")}
+        />
+      )}
     </div>
   );
 }

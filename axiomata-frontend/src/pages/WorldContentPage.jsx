@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { getWorldById } from "../services/worldService";
 import EntityCard from "../components/EntityCard";
 import SectionPanel from "../components/SectionPanel";
+import FloatingControls from "../components/FloatingControls";
 
 export default function WorldContentPage() {
   const { worldId } = useParams();
@@ -40,6 +41,18 @@ export default function WorldContentPage() {
           <div>Select an entity from the panel</div>
         )}
       </div>
+
+      {/* Floating Controls */}
+      {world && (
+        <FloatingControls
+          pageType="worldOverview"
+          worldId={world.id}
+          onAddEntity={(entity) => console.log("New entity:", entity)}
+          onEdit={() => console.log("Edit world")}
+          onSave={() => console.log("Save world")}
+          onDelete={() => console.log("Delete world")}
+        />
+      )}
     </div>
   );
 }
