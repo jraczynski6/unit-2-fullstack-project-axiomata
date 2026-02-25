@@ -44,7 +44,7 @@ export const deleteWorld = async (worldId) => {
   return response.data;
 };
 
-// Location Crud
+// Location CRUD
 
 // create location
 export const createLocation = async (locationData) => {
@@ -64,3 +64,62 @@ export const deleteLocation = async (locationId) => {
   return response.data;
 };
 
+// Faction CRUD
+
+// create faction
+export const createFaction = async (factionData) => {
+  const response = await api.post("/factions", factionData);
+  return response.data;
+};
+
+// update faction
+export const updateFaction = async (factionId, factionData) => {
+  const response = await api.put(`/factions/${factionId}`, factionData);
+  return response.data;
+};
+
+// delete faction
+export const deleteFaction = async (factionId) => {
+  const response = await api.delete(`/factions/${factionId}`);
+  return response.data;
+};
+
+// Character CRUD
+
+// create character
+export const createCharacter = async (characterData) => {
+  const response = await api.post("/characters", characterData);
+  return response.data;
+};
+
+// update character
+export const updateCharacter = async (characterId, characterData) => {
+  const response = await api.put(`/characters/${characterId}`, characterData);
+  return response.data;
+};
+
+// delete character
+export const deleteCharacter = async (characterId) => {
+  const response = await api.delete(`/characters/${characterId}`);
+  return response.data;
+};
+
+// Item CRUD
+
+// create Item
+export const createItem = async (itemData) => {
+  const response = await api.post("/items", itemData);
+  return response.data;
+};
+
+// update item
+export const updateItem = async (itemId, itemData) => {
+  const response = await api.put(`/items/${itemId}`, itemData);
+  return response.data;
+};
+
+// delete item
+export const deleteItem = async (itemId) => {
+  const response = await api.delete(`/items/${itemId}`);
+  return response.data;
+};
