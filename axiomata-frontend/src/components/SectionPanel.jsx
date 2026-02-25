@@ -42,42 +42,48 @@ export default function SectionPanel({ world, onSelectEntity }) {
             <ul style={{ paddingLeft: "1rem" }}>
               {section === "Locations" ? (
                 <>
-                  {regions.map((region) => (
-                    <li key={region.id}>
-                      <div
-                        style={{ fontWeight: "bold", cursor: "pointer" }}
-                        onClick={() => onSelectEntity?.(region)}
-                      >
-                        {region.name}
-                      </div>
-                      <ul>
-                        {nonRegions
-                          .filter((loc) => loc.regionId === region.id)
-                          .map((loc) => (
-                            <li
-                              key={loc.id}
-                              style={{ cursor: "pointer" }}
-                              onClick={() => onSelectEntity?.(loc)}
-                            >
-                              {loc.name}
-                            </li>
-                          ))}
-                      </ul>
-                    </li>
-                  ))}
+                  {regions.length === 0 && nonRegions.length === 0 ? (
+                    <li>(No locations)</li>
+                  ) : (
+                    <>
+                      {regions.map((region) => (
+                        <li key={region.id}>
+                          <div
+                            style={{ fontWeight: "bold", cursor: "pointer" }}
+                            onClick={() => onSelectEntity?.(region)}
+                          >
+                            {region.name}
+                          </div>
+                          <ul>
+                            {nonRegions
+                              .filter((loc) => loc.regionId === region.id)
+                              .map((loc) => (
+                                <li
+                                  key={loc.id}
+                                  style={{ cursor: "pointer" }}
+                                  onClick={() => onSelectEntity?.(loc)}
+                                >
+                                  {loc.name}
+                                </li>
+                              ))}
+                          </ul>
+                        </li>
+                      ))}
 
-                  {/* locations with no region */}
-                  {nonRegions
-                    .filter((loc) => !loc.regionId)
-                    .map((loc) => (
-                      <li
-                        key={loc.id}
-                        style={{ cursor: "pointer" }}
-                        onClick={() => onSelectEntity?.(loc)}
-                      >
-                        {loc.name}
-                      </li>
-                    ))}
+                      {/* locations with no region */}
+                      {nonRegions
+                        .filter((loc) => !loc.regionId)
+                        .map((loc) => (
+                          <li
+                            key={loc.id}
+                            style={{ cursor: "pointer" }}
+                            onClick={() => onSelectEntity?.(loc)}
+                          >
+                            {loc.name}
+                          </li>
+                        ))}
+                    </>
+                  )}
                 </>
               ) : list.length > 0 ? (
                 list.map((entity) => (
