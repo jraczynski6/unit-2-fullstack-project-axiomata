@@ -27,3 +27,6 @@ export default function EntityCard({ entity, world }) {
     </div>
   );
 }
+// ----- EntityCard.jsx -----
+// TODO: Display selected entity info: name, description, type, location, factions
+// TODO: Style attribute badges and overview layout (no inline styles, use classes)

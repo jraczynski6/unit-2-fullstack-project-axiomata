@@ -43,3 +43,16 @@ export default function WorldContentPage() {
     </div>
   );
 }
+// ----- WorldContentPage.jsx -----
+// TODO: Fetch world data using getWorldById(worldId)
+// TODO: Show loading state while fetching
+// TODO: Receive `world` as prop from route wrapper or parent container
+// TODO: Pass world data to SectionPanel
+// TODO: Ensure entity selection works on first click
+// TODO: Remove breadcrumbs; header handles navigation
+// TODO: Display world name and description
+// TODO: Parse world.attributes JSON string safely
+// TODO: Map parsed attributes into badges or UI elements
+// TODO: Add reroll button once world generation logic exists
+// TODO: Ensure reroll triggers world state update in WorldContentPage
+// TODO: Handle loading / empty world cases gracefully

@@ -49,12 +49,6 @@ export default function WorldOverviewPage() {
     </div>
   );
 }
-// TODO: Receive `world` as prop from route wrapper or parent container
-// TODO: Display world name and description
-// TODO: Parse world.attributes JSON string safely
-// TODO: Map parsed attributes into badges or UI elements
-// TODO: Add reroll button once world generation logic exists
-// TODO: Ensure reroll triggers world state update in WorldContentPage
-// TODO: Integrate side panel for navigation to child pages (Entities, Locations, Factions, etc.)
-// TODO: Handle loading / empty world cases gracefully
-// TODO: Style attribute badges and overview layout (no inline styles, use classes)
+// ----- WorldOverviewPage.jsx -----
+// TODO: List all worlds accessible to the user
+// TODO: Clicking a world navigates to /world-content/:worldId
