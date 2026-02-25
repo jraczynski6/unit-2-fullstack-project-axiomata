@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getWorldById, getWorldEntities } from "../services/worldService";
+import { getWorldById } from "../services/worldService";
 import EntityCard from "../components/EntityCard";
 import SectionPanel from "../components/SectionPanel";
 
 export default function WorldContentPage() {
-  const { id: worldId } = useParams();
+  const { worldId } = useParams();
   const [world, setWorld] = useState(null);
-  const [entities, setEntities] = useState([]);
   const [selectedEntity, setSelectedEntity] = useState(null);
 
   useEffect(() => {
@@ -22,32 +21,17 @@ export default function WorldContentPage() {
     fetchWorld();
   }, [worldId]);
 
-  // Fetch all entities for section panel
-  useEffect(() => {
-    const fetchEntities = async () => {
-      try {
-        const data = await getWorldEntities(worldId);
-        setEntities(data);
-      } catch (err) {
-        console.error("Failed to fetch world entities:", err);
-      }
-    };
-    fetchEntities();
-  }, [worldId]);
-
   if (!world) return <div>Loading world...</div>;
-
 
   return (
     <div>
-      <SectionPanel
-        entities={entities}
-        onSelectEntity={setSelectedEntity}
-      />
+      {/* receive world */}
+      <SectionPanel world={world} onSelectEntity={setSelectedEntity} />
 
+      {/* Entity card */}
       <div>
         {selectedEntity ? (
-          <EntityCard entity={selectedEntity} />
+          <EntityCard entity={selectedEntity} world={world} />
         ) : (
           <div>Select an entity from the panel</div>
         )}

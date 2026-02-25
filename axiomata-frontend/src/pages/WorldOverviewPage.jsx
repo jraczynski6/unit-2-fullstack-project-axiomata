@@ -1,10 +1,14 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getWorldById } from "../services/worldService";
+import { getWorldEntities } from "../services/worldService";
+import SectionPanel from "../components/SectionPanel";
 
 export default function WorldOverviewPage() {
   const { worldId } = useParams();
+  const navigate = useNavigate();
   const [world, setWorld] = useState(null);
+  const [entities, setEntities] = useState([]);
 
   useEffect(() => {
     const fetchWorld = async () => {
@@ -18,13 +22,30 @@ export default function WorldOverviewPage() {
     fetchWorld();
   }, [worldId]);
 
+  useEffect(() => {
+    const fetchEntities = async () => {
+      const data = await getWorldEntities(worldId);
+      setEntities(data);
+    };
+    fetchEntities();
+  }, [worldId]);
+
   if (!world) return <div>Loading...</div>
 
 
   return (
     <div>
-      <h1>{world?.name || "Unnamed World"}</h1>
-      <p>{world?.description || "High-level view of a world."}</p>
+      <h1>{world.name || "Unnamed World"}</h1>
+      <p>{world.description || "High-level view of a world."}</p>
+
+      {/* side panel */}
+      <SectionPanel
+        world={world}
+        onSelectEntity={(entity) => {
+          // Navigate to world content page for this entity
+          navigate(`/world-content/${worldId}`);
+        }}
+      />
     </div>
   );
 }
