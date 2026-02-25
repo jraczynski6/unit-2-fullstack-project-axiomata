@@ -1,8 +1,19 @@
-export default function WorldCard({ world, onClick }) {
+import { useNavigate } from "react-router-dom";
+
+export default function WorldCard({ world }) {
+    const navigate = useNavigate();
+
+    const handleClick = () => {
+        navigate(`/world/${world.id}`);
+    };
+
     return (
-        <div onClick={onClick}>
-            <h3>{world?.name || "World Name"}</h3>
-            <p>{world?.description || "World Description"}</p>
+        <div className="world-card">
+            <h3>{world?.name || "Unnamed World"}</h3>
+            <p>{world?.description || "No description provided."}</p>
+            <button className="world-card-button" onClick={handleClick}>
+                Open World
+            </button>
         </div>
     );
 }
