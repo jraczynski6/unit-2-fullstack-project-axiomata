@@ -1,4 +1,4 @@
-export default function WorldContent() {
+export default function WorldContentPage() {
   return (
     <div>
       <h1>World Content</h1>

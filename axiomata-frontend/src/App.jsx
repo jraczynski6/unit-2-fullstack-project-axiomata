@@ -2,11 +2,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import AboutPage from "./pages/AboutPage";
 import AuthPage from "./pages/AuthPage";
-import DashboardPage from "./pages/Dashboard";
+import DashboardPage from "./pages/DashboardPage";
 import AccountPage from "./pages/AccountPage";
 import CreateWorldPage from "./pages/CreateWorldPage";
-import WorldOverview from "./pages/WorldOverview";
-import WorldContent from "./pages/WorldContent";
+import WorldOverviewPage from "./pages/WorldOverviewPage";
+import WorldContentPage from "./pages/WorldContentPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
 
@@ -56,7 +56,7 @@ function App() {
           element={
             <ProtectedRoute>
               <Layout>
-                <WorldOverview />
+                <WorldOverviewPage />
               </Layout>
             </ProtectedRoute>
           }
@@ -66,7 +66,7 @@ function App() {
           element={
             <ProtectedRoute>
               <Layout>
-                <WorldContent />
+                <WorldContentPage />
               </Layout>
             </ProtectedRoute>
           }

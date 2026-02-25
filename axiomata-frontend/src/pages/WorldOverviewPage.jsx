@@ -1,4 +1,4 @@
-export default function WorldOverview() {
+export default function WorldOverviewPage() {
   return (
     <div>
       <h1>World Overview</h1>
