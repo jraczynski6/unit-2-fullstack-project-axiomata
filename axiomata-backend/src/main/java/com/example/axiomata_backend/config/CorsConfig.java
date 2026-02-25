@@ -19,7 +19,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // Apply to all endpoints
-                        .allowedOrigins("http://localhost:5173") // Vite React dev server
+                        .allowedOriginPatterns("http://localhost:*") // Vite React dev server
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Methods frontend will use
                         .allowCredentials(true) // Needed for JWT or cookie auth
                         .maxAge(3600); // Optional: cache preflight requests for 1 hour
