@@ -5,8 +5,15 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
   const [typeCategory, setTypeCategory] = useState(entityToEdit?.entityType || "Location");
   const [name, setName] = useState(entityToEdit?.name || "");
   const [description, setDescription] = useState(entityToEdit?.description || "");
-  const [subType, setSubType] = useState(entityToEdit?.type || "");
-  const [parentRegionId, setParentRegionId] = useState(entityToEdit?.regionId || "");
+  const [subType, setSubType] = useState(
+    entityToEdit?.type || (entityToEdit?.entityType === "Location" ? "Region" : "")
+  );
+  const [parentRegionId, setParentRegionId] = useState(entityToEdit?.regionId ?? "");
+
+  // ---------------- Options ----------------
+  const locationTypes = ["Region", "City", "Dungeon"];
+  const factionTypes = ["Faction", "Guild", "Clan", "Order"];
+  const regions = world?.locations?.filter((loc) => loc.type === "Region") || [];
 
   // ---------------- Initialize when editing ----------------
   useEffect(() => {
@@ -14,10 +21,15 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
       setTypeCategory(entityToEdit.entityType || "Location");
       setName(entityToEdit.name || "");
       setDescription(entityToEdit.description || "");
-      setSubType(entityToEdit.type || "");
-      setParentRegionId(entityToEdit.regionId || "");
+      setSubType(
+        entityToEdit.type || (entityToEdit.entityType === "Location" ? "Region" : "")
+      );
+      setParentRegionId(entityToEdit.regionId ?? "");
+    } else if (typeCategory === "Location") {
+      setSubType("Region");
+      setParentRegionId("");
     }
-  }, [entityToEdit]);
+  }, [entityToEdit, typeCategory]);
 
   // ---------------- Handlers ----------------
   const handleSubmit = (e) => {
@@ -57,17 +69,12 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
     onSubmit(typeCategory, data);
   };
 
-  // ---------------- Type Options ----------------
-  const locationTypes = ["Region", "City", "Dungeon"];
-  const factionTypes = ["Faction", "Guild", "Clan", "Order"];
-
-  const regions = world?.locations?.filter((loc) => loc.type === "Region") || [];
-
   return (
     <div className="modal-overlay">
       <div className="modal-content">
         <h2>{entityToEdit ? `Edit ${typeCategory}` : `Add New ${typeCategory}`}</h2>
 
+        {/* ---------------- Type Selection ---------------- */}
         {!entityToEdit && (
           <div className="form-group">
             <label>Type:</label>
@@ -80,6 +87,7 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
           </div>
         )}
 
+        {/* ---------------- Name / Description ---------------- */}
         <div className="form-group">
           <label>Name:</label>
           <input value={name} onChange={(e) => setName(e.target.value)} />
@@ -111,7 +119,9 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
               >
                 <option value="">-- None --</option>
                 {regions.map((r) => (
-                  <option key={r.id} value={r.id}>{r.name}</option>
+                  <option key={r.id} value={r.id}>
+                    {r.name}
+                  </option>
                 ))}
               </select>
             </div>
@@ -131,6 +141,7 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
           </div>
         )}
 
+        {/* ---------------- Actions ---------------- */}
         <div className="modal-actions">
           <button onClick={handleSubmit}>{entityToEdit ? "Save" : "Add"}</button>
           <button onClick={onClose}>Cancel</button>

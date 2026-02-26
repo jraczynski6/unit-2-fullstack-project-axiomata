@@ -5,22 +5,23 @@ import {
   updateWorld,
   deleteWorld,
   createLocation,
+  updateLocation,
   deleteLocation,
   createFaction,
-  deleteFaction,
   updateFaction,
-  deleteCharacter,
+  deleteFaction,
   createCharacter,
   updateCharacter,
-  deleteItem,
+  deleteCharacter,
   createItem,
   updateItem,
+  deleteItem,
 } from "../services/worldService";
 
 export default function FloatingControls({
   pageType,
   worldId,
-  worldData,
+  world,
   selectedEntity,
   onAddEntity,
   onDeleteEntity,
@@ -49,61 +50,55 @@ export default function FloatingControls({
     setEntityToEdit(null);
   };
 
-  const handleModalSubmit = async (typeCategory, data) => {
-    if (!typeCategory) {
-      console.error("No entity type provided", data);
-      alert("Entity type is required.");
-      return;
-    }
-
-    const payload = { ...data, worldId }; // worldId always included
-
+  const handleModalSubmit = async (entityType, data) => {
+    // entityType is already "Location" | "Faction" | "Character" | "Item"
     let result;
 
-    if (entityToEdit) {
-      switch (typeCategory) {
-        case "Location":
-          result = await updateLocation(entityToEdit.id, payload);
-          break;
-        case "Faction":  // fix: handle faction update
-          result = await updateFaction(entityToEdit.id, payload);
-          break;
-        case "Character":
-          result = await updateCharacter(entityToEdit.id, payload);
-          break;
-        case "Item":
-          result = await updateItem(entityToEdit.id, payload);
-          break;
-        default:
-          throw new Error(`Unknown entity type: ${typeCategory}`);
+    try {
+      if (entityToEdit) {
+        switch (entityType) {
+          case "Location":
+            result = await updateLocation(entityToEdit.id, data);
+            break;
+          case "Faction":
+            result = await updateFaction(entityToEdit.id, data);
+            break;
+          case "Character":
+            result = await updateCharacter(entityToEdit.id, data);
+            break;
+          case "Item":
+            result = await updateItem(entityToEdit.id, data);
+            break;
+          default:
+            throw new Error(`Unknown entity type: ${entityType}`);
+        }
+        onEdit?.(result);
+      } else {
+        switch (entityType) {
+          case "Location":
+            result = await createLocation(data);
+            break;
+          case "Faction":
+            result = await createFaction(data);
+            break;
+          case "Character":
+            result = await createCharacter(data);
+            break;
+          case "Item":
+            result = await createItem(data);
+            break;
+          default:
+            throw new Error(`Unknown entity type: ${entityType}`);
+        }
+        onAddEntity?.(result);
       }
-      onAddEntity?.(result);
-    } else {
-      switch (typeCategory) {
-        case "Location":
-          result = await createLocation(payload);
-          break;
-        case "Faction":  // fix: handle faction creation
-          if (!payload.type || !payload.type.trim()) {
-            alert("Faction type is required.");
-            return;
-          }
-          result = await createFaction(payload);
-          break;
-        case "Character":
-          result = await createCharacter(payload);
-          break;
-        case "Item":
-          result = await createItem(payload);
-          break;
-        default:
-          throw new Error(`Unknown entity type: ${typeCategory}`);
-      }
-      onAddEntity?.(result);
+    } catch (err) {
+      console.error("Failed to create/update entity:", err);
+      alert(`Failed to create/update entity: ${err.message}`);
+    } finally {
+      setModalOpen(false);
+      setEntityToEdit(null);
     }
-
-    setModalOpen(false);
-    setEntityToEdit(null);
   };
 
   // ---------------- Delete ----------------
@@ -148,7 +143,7 @@ export default function FloatingControls({
   const handleEditWorld = () => onEdit?.();
   const handleSaveWorld = async () => {
     try {
-      await updateWorld(worldId, worldData);
+      await updateWorld(worldId, world);
       onSave?.();
     } catch (err) {
       console.error("Failed to save world:", err);
@@ -176,8 +171,20 @@ export default function FloatingControls({
         </>
       ) : (
         <>
-          <button className="control-button" onClick={handleEditEntity} disabled={!selectedEntity}>Edit</button>
-          <button className="control-button" onClick={requestDeleteEntity} disabled={!selectedEntity}>Delete</button>
+          <button
+            className="control-button"
+            onClick={handleEditEntity}
+            disabled={!selectedEntity}
+          >
+            Edit
+          </button>
+          <button
+            className="control-button"
+            onClick={requestDeleteEntity}
+            disabled={!selectedEntity}
+          >
+            Delete
+          </button>
         </>
       )}
 
@@ -187,7 +194,7 @@ export default function FloatingControls({
       {modalOpen && (
         <AddEntityModal
           worldId={worldId}
-          world={worldData}   // pass the world data for location dropdowns
+          world={world}
           entityToEdit={entityToEdit}
           onClose={handleModalClose}
           onSubmit={handleModalSubmit}

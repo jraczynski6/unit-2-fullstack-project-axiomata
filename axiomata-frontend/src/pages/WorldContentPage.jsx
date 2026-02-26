@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { getWorldById } from "../services/worldService";
 import EntityCard from "../components/EntityCard";
 import SectionPanel from "../components/SectionPanel";
 import FloatingControls from "../components/FloatingControls";
 
 export default function WorldContentPage() {
+  const location = useLocation();
   const { worldId } = useParams();
   const [world, setWorld] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -14,39 +16,48 @@ export default function WorldContentPage() {
   // ---------------- Fetch World ----------------
   useEffect(() => {
     const fetchWorld = async () => {
-      try {
-        const data = await getWorldById(worldId);
-        setWorld(data);
+      const data = await getWorldById(worldId);
+      setWorld(data);
 
-        // Auto-select first item if any exists
-        const firstItem =
-          data.locations?.[0] ||
-          data.factions?.[0] ||
-          data.characters?.[0] ||
-          data.items?.[0];
+      // Check if navigating with preselected entity
+      const preSelected = location.state?.selectedEntity;
+      if (preSelected) {
+        setSelectedItem(preSelected);
+        setSelectedCategory(preSelected.category);
+        return;
+      }
 
-        if (firstItem) {
-          setSelectedItem(firstItem);
-          setSelectedCategory(
-            data.locations?.includes(firstItem)
-              ? "Location"
-              : data.factions?.includes(firstItem)
+      // Otherwise auto-select first item
+      const firstItem =
+        data.locations?.[0] ||
+        data.factions?.[0] ||
+        data.characters?.[0] ||
+        data.items?.[0];
+
+      if (firstItem) {
+        setSelectedItem(firstItem);
+        setSelectedCategory(
+          data.locations?.includes(firstItem)
+            ? "Location"
+            : data.factions?.includes(firstItem)
               ? "Faction"
               : data.characters?.includes(firstItem)
-              ? "Character"
-              : "Item"
-          );
-        }
-      } catch (err) {
-        console.error("Failed to fetch world:", err);
+                ? "Character"
+                : "Item"
+        );
       }
     };
 
     if (worldId) fetchWorld();
-  }, [worldId]);
+  }, [worldId, location.state]);
 
   // ---------------- Add / Update / Delete ----------------
   const handleAddItem = (newItem, category) => {
+    if (!category) {
+      console.error("handleAddItem called with undefined category", newItem);
+      return;
+    }
+
     setWorld((prev) => {
       const updatedWorld = { ...prev };
       const key = category.toLowerCase() + "s";
@@ -91,9 +102,9 @@ export default function WorldContentPage() {
     <div style={{ display: "flex", gap: "2rem" }}>
       <SectionPanel
         world={world}
-        onSelectItem={(item, category) => {
-          setSelectedItem(item);
-          setSelectedCategory(category);
+        onSelectEntity={(entity) => {
+          setSelectedItem(entity);
+          setSelectedCategory(entity.category);
         }}
       />
 
@@ -108,12 +119,11 @@ export default function WorldContentPage() {
       <FloatingControls
         pageType="worldContent"
         worldId={world.id}
-        worldData={world}
-        selectedItem={selectedItem}
-        selectedCategory={selectedCategory}
-        onAddItem={handleAddItem}
-        onUpdateItem={handleUpdateItem}
-        onDeleteItem={handleDeleteItem}
+        world={world}
+        selectedEntity={selectedItem}
+        onAddEntity={handleAddItem}
+        onUpdateEntity={handleUpdateItem}
+        onDeleteEntity={handleDeleteItem}
         onEdit={handleEdit}
         onSave={handleSave}
         onDelete={handleDelete}

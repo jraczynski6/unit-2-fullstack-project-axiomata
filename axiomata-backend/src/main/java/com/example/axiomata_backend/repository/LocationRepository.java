@@ -12,5 +12,7 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
     List<Location> findByRegion(Location region);
 
+    List<Location> findByRegionId(Long regionId);
+
     List<Location> findByWorldIdAndType(Long worldId, String type);
 }
