@@ -43,11 +43,12 @@ export default function FloatingControls({
     setModalOpen(true);
   };
 
-  const handleModalSubmit = async (entityData) => {
+  const handleModalSubmit = async (entityType, entityData) => {
     try {
       let result;
 
       if (entityToEdit) {
+        // Updates remain unchanged
         if (entityToEdit.id.startsWith("loc")) result = await updateLocation(entityToEdit.id, entityData);
         else if (entityToEdit.id.startsWith("fac")) result = await updateFaction(entityToEdit.id, entityData);
         else if (entityToEdit.id.startsWith("char")) result = await updateCharacter(entityToEdit.id, entityData);
@@ -55,10 +56,11 @@ export default function FloatingControls({
 
         onUpdateEntity?.(result);
       } else {
-        if (entityData.type === "Location") result = await createLocation(entityData);
-        else if (entityData.type === "Faction") result = await createFaction(entityData);
-        else if (entityData.type === "Character") result = await createCharacter(entityData);
-        else if (entityData.type === "Item") result = await createItem(entityData);
+        // Creation uses entityType, not entityData.type
+        if (entityType === "Location") result = await createLocation(entityData);
+        else if (entityType === "Faction") result = await createFaction(entityData);
+        else if (entityType === "Character") result = await createCharacter(entityData);
+        else if (entityType === "Item") result = await createItem(entityData);
 
         onAddEntity?.(result);
       }
@@ -133,7 +135,7 @@ export default function FloatingControls({
           worldId={worldId}
           entityToEdit={entityToEdit}
           onClose={handleModalClose}
-          onSubmit={handleModalSubmit}
+          onSubmit={(entityType, entityData) => handleModalSubmit(entityType, entityData)}
         />
       )}
     </div>

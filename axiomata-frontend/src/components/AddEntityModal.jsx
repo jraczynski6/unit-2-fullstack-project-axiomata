@@ -8,8 +8,9 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
   const [name, setName] = useState(entityToEdit?.name || "");
   const [description, setDescription] = useState(entityToEdit?.description || "");
   const [locationType, setLocationType] = useState(entityToEdit?.locationType || "");
-  const [parentRegionId, setParentRegionId] = useState(entityToEdit?.region_id || "");
-  const [itemLocationId, setItemLocationId] = useState(entityToEdit?.location_id || "");
+  const [parentRegionId, setParentRegionId] = useState(entityToEdit?.regionId || "");
+  const [itemLocationId, setItemLocationId] = useState(entityToEdit?.locationId || "");
+  const [factionType, setFactionType] = useState(entityToEdit?.type || "");
   const [regions, setRegions] = useState([]);
 
   useEffect(() => {
@@ -17,7 +18,7 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
       const fetchRegions = async () => {
         try {
           const world = await getWorldById(worldId);
-          const regionList = (world.locations || []).filter((l) => l.type === "Region");
+          const regionList = (world.locations || []).filter((l) => !l.regionId);
           setRegions(regionList);
         } catch (err) {
           console.error("Failed to fetch regions:", err);
@@ -27,21 +28,36 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
     }
   }, [worldId, entityType]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!entityType || !name) return;
 
-    const entityData = { name, description, world_id: worldId };
+    // DTO shared by all entities
+    const entityData = {
+      worldId: Number(worldId),
+      name,
+      description,
+    };
 
+    // Entity specific fields
     if (entityType === "Location") {
-      if (locationType) entityData.type = locationType;
-      if (locationType === "Sub-location" && parentRegionId) entityData.region_id = parentRegionId;
-    } else if (entityType === "Item") {
-      if (itemLocationId) entityData.location_id = itemLocationId;
+      entityData.type = locationType.trim();
+
+      if (parentRegionId) {
+        entityData.regionId = Number(parentRegionId);
+      }
     }
 
-    onSubmit(entityData);
-    onClose();
+    if (entityType === "Item" && itemLocationId) {
+      entityData.locationId = Number(itemLocationId);
+    }
+
+    if (entityType === "Faction") {
+      entityData.type = factionType.trim();
+    }
+
+    await onSubmit(entityType, entityData);
   };
 
   return (
@@ -89,40 +105,49 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
                 />
               </label>
 
+              {entityType === "Faction" && (
+                <label className="modal-label">
+                  Faction Type:
+                  <input
+                    className="modal-input"
+                    type="text"
+                    value={factionType}
+                    onChange={(e) => setFactionType(e.target.value)}
+                    placeholder="Kingdom, Guild, Tribe..."
+                    required
+                  />
+                </label>
+              )}
+
               {entityType === "Location" && (
                 <>
                   <label className="modal-label">
                     Location Type:
-                    <select
-                      className="modal-select"
+                    <input
+                      className="modal-input"
+                      type="text"
                       value={locationType}
                       onChange={(e) => setLocationType(e.target.value)}
+                      placeholder="City, Town, Village, Dungeon..."
                       required
-                    >
-                      <option value="">Select type</option>
-                      <option value="Region">Region</option>
-                      <option value="Sub-location">Sub-location</option>
-                    </select>
+                    />
                   </label>
 
-                  {locationType === "Sub-location" && (
-                    <label className="modal-label">
-                      Parent Region:
-                      <select
-                        className="modal-select"
-                        value={parentRegionId}
-                        onChange={(e) => setParentRegionId(e.target.value)}
-                        required
-                      >
-                        <option value="">Select parent region</option>
-                        {regions.map((r) => (
-                          <option key={r.id} value={r.id}>
-                            {r.name}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                  )}
+                  <label className="modal-label">
+                    Parent Region (optional):
+                    <select
+                      className="modal-select"
+                      value={parentRegionId}
+                      onChange={(e) => setParentRegionId(e.target.value)}
+                    >
+                      <option value="">None</option>
+                      {regions.map((r) => (
+                        <option key={r.id} value={r.id}>
+                          {r.name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
                 </>
               )}
 
