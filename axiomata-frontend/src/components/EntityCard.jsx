@@ -1,37 +1,107 @@
-export default function EntityCard({ item, category, world }) {
+import { useState, useEffect } from "react";
+
+export default function EntityCard({ item, category, world, isEditingProp, onChange }) {
   if (!item) return null;
 
-  // For Locations, type is meaningful (Region, City, etc.)
-  const locationType = category === "Location" ? item.type || "" : "";
+  // ---------------- Edit Mode ----------------
+  const [isEditing, setIsEditing] = useState(false);
 
-  // Resolve location name if this item has a locationId (Characters, Items)
+  useEffect(() => {
+    if (typeof isEditingProp === "boolean") setIsEditing(isEditingProp);
+  }, [isEditingProp]);
+
+  // ---------------- Editable Fields ----------------
+  const [editName, setEditName] = useState(item.name || "");
+  const [editDescription, setEditDescription] = useState(item.description || "");
+  const [editType, setEditType] = useState(item.type || "");
+  const [editLocationId, setEditLocationId] = useState(item.locationId || "");
+
+  // Update local fields when item changes
+  useEffect(() => {
+    setEditName(item.name || "");
+    setEditDescription(item.description || "");
+    setEditType(item.type || "");
+    setEditLocationId(item.locationId || "");
+  }, [item]);
+
+  // ---------------- Helper for dropdowns ----------------
+  const locationTypeOptions = ["Region", "City", "Dungeon", "Town"];
+  const factionTypeOptions = ["Guild", "Tribe", "Order"]; // example, adjust to your backend types
+
+  // ---------------- Notify parent of changes ----------------
+  useEffect(() => {
+    if (isEditing) {
+      onChange?.({
+        ...item,
+        name: editName,
+        description: editDescription,
+        type: editType,
+        locationId: editLocationId,
+      });
+    }
+  }, [editName, editDescription, editType, editLocationId, isEditing]);
+
+  // ---------------- Render ----------------
+  if (isEditing) {
+    return (
+      <div className="entity-card editing">
+        <input
+          type="text"
+          value={editName}
+          onChange={(e) => setEditName(e.target.value)}
+          placeholder="Name"
+        />
+        <textarea
+          value={editDescription}
+          onChange={(e) => setEditDescription(e.target.value)}
+          placeholder="Description"
+        />
+        {category === "Location" && (
+          <select value={editType} onChange={(e) => setEditType(e.target.value)}>
+            <option value="">Select Type</option>
+            {locationTypeOptions.map((opt) => (
+              <option key={opt} value={opt}>{opt}</option>
+            ))}
+          </select>
+        )}
+        {category === "Faction" && (
+          <select value={editType} onChange={(e) => setEditType(e.target.value)}>
+            <option value="">Select Faction Type</option>
+            {factionTypeOptions.map((opt) => (
+              <option key={opt} value={opt}>{opt}</option>
+            ))}
+          </select>
+        )}
+        {category !== "Location" && category !== "Faction" && (
+          <p>No additional fields</p>
+        )}
+      </div>
+    );
+  }
+
+  // ---------------- View Mode ----------------
   const locationName =
     item.locationId && world?.locations?.find((loc) => loc.id === item.locationId)?.name;
-
-  // Resolve faction names if this item has factionIds (Characters, Items)
-  const factionNames =
-    item.factionIds?.map((fid) => world?.factions?.find((f) => f.id === fid)?.name).filter(Boolean) || [];
+  const locationType = category === "Location" ? item.type || "" : "";
+  const factionType = category === "Faction" ? item.type || "" : "";
 
   return (
     <div className="entity-card">
       <h2>{item.name || "(Unnamed)"}</h2>
       {item.description && <p>{item.description}</p>}
-
       <ul>
-        {/* Only show type for Locations */}
         {locationType && <li>Type: {locationType}</li>}
-
+        {factionType && <li>Faction Type: {factionType}</li>}
         {locationName && <li>Location: {locationName}</li>}
-
-        {factionNames.length > 0 && <li>Factions: {factionNames.join(", ")}</li>}
       </ul>
     </div>
   );
 }
-
-// ----- EntityCard.jsx -----
-// TODO: Display selected entity info: name, description, type, location, factions
-// TODO: Implement dynamic state sync after entity creation
-// TODO: Implement delete entity functionality and update state
-// TODO: Implement edit/update flow and refresh panel display
-// TODO: Review region hierarchy logic for sub-locations
+// ==========================
+// EntityCard.jsx / non MVP
+// ==========================
+// - Detect and warn when creating a new entity with duplicate name within same parent
+// - Optionally merge duplicates
+// - Extend edit fields for Character/Item location/faction (future enhancements)
+// - Handle edge cases when changing types on entities with children
+// - Lazy-load children for large worlds (optional optimization)

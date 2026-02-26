@@ -96,3 +96,10 @@ export const deleteItem = async (itemId) => {
   const response = await api.delete(`/items/${itemId}`);
   return response.data;
 };
+// ==========================
+// Backend / worldService.js / NON MVP
+// ==========================
+// - Backend validation for type changes that may break relationships
+// - Soft-delete implementation to recover deleted entities
+// - Track revisions / history for entities (optional)
+// - Handle orphaned children when parent entity is deleted or type-changed
