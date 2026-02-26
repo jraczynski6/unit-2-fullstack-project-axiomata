@@ -5,16 +5,12 @@ import {
   updateWorld,
   deleteWorld,
   createLocation,
-  updateLocation,
   deleteLocation,
   createFaction,
-  updateFaction,
   deleteFaction,
   createCharacter,
-  updateCharacter,
   deleteCharacter,
   createItem,
-  updateItem,
   deleteItem,
 } from "../services/worldService";
 
@@ -24,7 +20,6 @@ export default function FloatingControls({
   worldData,
   selectedEntity,
   onAddEntity,
-  onUpdateEntity,
   onDeleteEntity,
   onEdit,
   onSave,
@@ -33,21 +28,6 @@ export default function FloatingControls({
   const [modalOpen, setModalOpen] = useState(false);
   const [entityToEdit, setEntityToEdit] = useState(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
-
-  // ---------------- Delete Helper ----------------
-  const deleteEntityByBackendType = async (entity) => {
-    console.log("Deleting entity:", entity);  // <-- log entire entity
-    if (!entity?.entityType) throw new Error("Entity missing entityType");
-    console.log("Entity type:", entity.entityType);  // <-- log just the type
-
-    switch (entity.entityType) {
-      case "Location": return deleteLocation(entity.id);
-      case "Faction": return deleteFaction(entity.id);
-      case "Character": return deleteCharacter(entity.id);
-      case "Item": return deleteItem(entity.id);
-      default: throw new Error(`Unknown entity type: ${entity.entityType}`);
-    }
-  };
 
   // ---------------- Add / Edit ----------------
   const handleAddClick = () => {
@@ -61,43 +41,41 @@ export default function FloatingControls({
     setModalOpen(true);
   };
 
-  const handleModalSubmit = async (entityType, entityData) => {
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setEntityToEdit(null);
+  };
+
+  const handleModalSubmit = async (category, entityData) => {
     try {
       let result;
 
-      if (entityToEdit) {
-        // Update existing entity
-        switch (entityType) {
-          case "Location": result = await updateLocation(entityToEdit.id, entityData); break;
-          case "Faction": result = await updateFaction(entityToEdit.id, entityData); break;
-          case "Character": result = await updateCharacter(entityToEdit.id, entityData); break;
-          case "Item": result = await updateItem(entityToEdit.id, entityData); break;
-          default: throw new Error(`Unknown entity type: ${entityType}`);
-        }
-        onUpdateEntity?.(result);
-      } else {
-        // Create new entity
-        switch (entityType) {
-          case "Location": result = await createLocation(entityData); break;
-          case "Faction": result = await createFaction(entityData); break;
-          case "Character": result = await createCharacter(entityData); break;
-          case "Item": result = await createItem(entityData); break;
-          default: throw new Error(`Unknown entity type: ${entityType}`);
-        }
-        onAddEntity?.(result);
+      // Only creating for now; editing not configured
+      switch (category) {
+        case "Location":
+          result = await createLocation(entityData);
+          break;
+        case "Faction":
+          result = await createFaction(entityData);
+          break;
+        case "Character":
+          result = await createCharacter(entityData);
+          break;
+        case "Item":
+          result = await createItem(entityData);
+          break;
+        default:
+          throw new Error(`Unknown category: ${category}`);
       }
+
+      onAddEntity?.(result);
     } catch (err) {
-      console.error("Failed to save entity:", err);
-      alert("Failed to save entity. Check console for details.");
+      console.error("Failed to create entity:", err);
+      alert("Failed to create entity. Check console for details.");
     } finally {
       setModalOpen(false);
       setEntityToEdit(null);
     }
-  };
-
-  const handleModalClose = () => {
-    setModalOpen(false);
-    setEntityToEdit(null);
   };
 
   // ---------------- Delete ----------------
@@ -112,7 +90,23 @@ export default function FloatingControls({
     if (!selectedEntity) return;
 
     try {
-      await deleteEntityByBackendType(selectedEntity);
+      switch (selectedEntity.category) {
+        case "Location":
+          await deleteLocation(selectedEntity.id);
+          break;
+        case "Faction":
+          await deleteFaction(selectedEntity.id);
+          break;
+        case "Character":
+          await deleteCharacter(selectedEntity.id);
+          break;
+        case "Item":
+          await deleteItem(selectedEntity.id);
+          break;
+        default:
+          throw new Error(`Unknown category: ${selectedEntity.category}`);
+      }
+
       onDeleteEntity?.();
     } catch (err) {
       console.error("Failed to delete entity:", err);
@@ -174,7 +168,7 @@ export default function FloatingControls({
       {/* Delete Confirm Modal */}
       {confirmOpen && selectedEntity && (
         <ConfirmModal
-          message={`Deleting this ${selectedEntity.entityType}${selectedEntity.children?.length ? ` and its ${selectedEntity.children.length} child entities` : ""} will remove everything. Are you sure?`}
+          message={`Deleting this ${selectedEntity.category}${selectedEntity.children?.length ? ` and its ${selectedEntity.children.length} child entities` : ""} will remove everything. Are you sure?`}
           onConfirm={handleConfirmDelete}
           onCancel={handleCancelDelete}
         />

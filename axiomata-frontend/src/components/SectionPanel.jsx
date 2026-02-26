@@ -9,7 +9,10 @@ export default function SectionPanel({ world, onSelectEntity }) {
   });
 
   const toggleSection = (section) => {
-    setOpenSections(prev => ({ ...prev, [section]: !prev[section] }));
+    setOpenSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
   };
 
   if (!world) return null;
@@ -21,12 +24,12 @@ export default function SectionPanel({ world, onSelectEntity }) {
     Items: world.items || [],
   };
 
-  // Region -> city hierarchy
-  const regions = sections.Locations.filter(l => l.type === "Region");
-  const nonRegions = sections.Locations.filter(l => l.type !== "Region");
+  const regions = sections.Locations.filter((l) => l.type === "Region");
+  const nonRegions = sections.Locations.filter((l) => l.type !== "Region");
 
-  const handleSelect = (entity) => {
-    onSelectEntity?.(entity);
+  const handleSelect = (entity, sectionName) => {
+    // Assign category so FloatingControls knows which type this is
+    onSelectEntity?.({ ...entity, category: sectionName.slice(0, -1) }); // "Locations" -> "Location"
   };
 
   return (
@@ -34,8 +37,9 @@ export default function SectionPanel({ world, onSelectEntity }) {
       {Object.entries(sections).map(([section, list]) => (
         <div key={section}>
           <div
-            style={{ cursor: "pointer", fontWeight: "bold", marginTop: "1rem" }}
+            style={{ cursor: "pointer", fontWeight: "bold", marginTop: "1rem", outline: "none" }}
             onClick={() => toggleSection(section)}
+            tabIndex={-1}
           >
             {section} {openSections[section] ? "▼" : "►"}
           </div>
@@ -48,19 +52,25 @@ export default function SectionPanel({ world, onSelectEntity }) {
                     <li>(No locations)</li>
                   ) : (
                     <>
-                      {regions.map(region => (
-                        <li key={region.id}>
+                      {regions.map((region) => (
+                        <li key={region.id} tabIndex={-1} style={{ outline: "none" }}>
                           <div
-                            style={{ fontWeight: "bold", cursor: "pointer" }}
-                            onClick={() => handleSelect(region)}
+                            style={{ fontWeight: "bold", cursor: "pointer", outline: "none" }}
+                            onClick={() => handleSelect(region, section)}
+                            tabIndex={-1}
                           >
                             {region.name}
                           </div>
                           <ul>
                             {nonRegions
-                              .filter(loc => loc.regionId === region.id)
-                              .map(loc => (
-                                <li key={loc.id} style={{ cursor: "pointer" }} onClick={() => handleSelect(loc)}>
+                              .filter((loc) => loc.regionId === region.id)
+                              .map((loc) => (
+                                <li
+                                  key={loc.id}
+                                  style={{ cursor: "pointer", outline: "none" }}
+                                  onClick={() => handleSelect(loc, section)}
+                                  tabIndex={-1}
+                                >
                                   {loc.name}
                                 </li>
                               ))}
@@ -69,9 +79,14 @@ export default function SectionPanel({ world, onSelectEntity }) {
                       ))}
 
                       {nonRegions
-                        .filter(loc => !loc.regionId)
-                        .map(loc => (
-                          <li key={loc.id} style={{ cursor: "pointer" }} onClick={() => handleSelect(loc)}>
+                        .filter((loc) => !loc.regionId)
+                        .map((loc) => (
+                          <li
+                            key={loc.id}
+                            style={{ cursor: "pointer", outline: "none" }}
+                            onClick={() => handleSelect(loc, section)}
+                            tabIndex={-1}
+                          >
                             {loc.name}
                           </li>
                         ))}
@@ -79,9 +94,14 @@ export default function SectionPanel({ world, onSelectEntity }) {
                   )}
                 </>
               ) : list.length > 0 ? (
-                list.map(e => (
-                  <li key={e.id} style={{ cursor: "pointer" }} onClick={() => handleSelect(e)}>
-                    {e.name}
+                list.map((entity) => (
+                  <li
+                    key={entity.id}
+                    onClick={() => handleSelect(entity, section)}
+                    style={{ cursor: "pointer", outline: "none" }}
+                    tabIndex={-1}
+                  >
+                    {entity.name}
                   </li>
                 ))
               ) : (
