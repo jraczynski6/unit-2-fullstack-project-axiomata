@@ -41,6 +41,7 @@ api.interceptors.response.use(
 
 export default api;
 
+// non-essential / post-MVP API.js todos
 // TODO: Remove console logs before production
 // TODO: Prevent logging full JWT tokens for security reasons
 // TODO: Eliminate utils/auth token management and use AuthContext as single source of truth

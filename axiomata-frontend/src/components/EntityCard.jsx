@@ -29,4 +29,7 @@ export default function EntityCard({ entity, world }) {
 }
 // ----- EntityCard.jsx -----
 // TODO: Display selected entity info: name, description, type, location, factions
-// TODO: Style attribute badges and overview layout (no inline styles, use classes)
+// TODO: Implement dynamic state sync after entity creation
+// TODO: Implement delete entity functionality and update state
+// TODO: Implement edit/update flow and refresh panel display
+// TODO: Review region hierarchy logic for sub-locations

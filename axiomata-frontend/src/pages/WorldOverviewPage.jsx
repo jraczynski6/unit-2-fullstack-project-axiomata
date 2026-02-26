@@ -1,8 +1,9 @@
-import { useParams, useNavigate } from "react-router-dom";
+// WorldOverviewPage.jsx
 import { useEffect, useState } from "react";
-import { getWorldById } from "../services/worldService";
-import { getWorldEntities } from "../services/worldService";
+import { useParams, useNavigate } from "react-router-dom";
+import { getWorldById, getWorldEntities } from "../services/worldService";
 import SectionPanel from "../components/SectionPanel";
+import FloatingControls from "../components/FloatingControls";
 
 export default function WorldOverviewPage() {
   const { worldId } = useParams();
@@ -10,6 +11,7 @@ export default function WorldOverviewPage() {
   const [world, setWorld] = useState(null);
   const [entities, setEntities] = useState([]);
 
+  // Fetch world details
   useEffect(() => {
     const fetchWorld = async () => {
       try {
@@ -22,33 +24,147 @@ export default function WorldOverviewPage() {
     fetchWorld();
   }, [worldId]);
 
+  // Fetch world entities (flattened for SectionPanel)
   useEffect(() => {
     const fetchEntities = async () => {
-      const data = await getWorldEntities(worldId);
-      setEntities(data);
+      try {
+        const data = await getWorldEntities(worldId);
+        setEntities(data);
+      } catch (err) {
+        console.error("Failed to fetch entities:", err);
+      }
     };
     fetchEntities();
   }, [worldId]);
 
-  if (!world) return <div>Loading...</div>
+  if (!world) return <div>Loading world...</div>;
 
+  /** Add new entity */
+  const handleAddEntity = (newEntity) => {
+    setWorld((prevWorld) => {
+      let updatedWorld = { ...prevWorld };
+      switch (newEntity.type) {
+        case "Location":
+          updatedWorld.locations = [...(prevWorld.locations || []), newEntity];
+          break;
+        case "Faction":
+          updatedWorld.factions = [...(prevWorld.factions || []), newEntity];
+          break;
+        case "Character":
+          updatedWorld.characters = [...(prevWorld.characters || []), newEntity];
+          break;
+        case "Item":
+          updatedWorld.items = [...(prevWorld.items || []), newEntity];
+          break;
+        default:
+          break;
+      }
+
+      // update flattened entities for SectionPanel
+      setEntities([
+        ...(updatedWorld.locations || []),
+        ...(updatedWorld.factions || []),
+        ...(updatedWorld.characters || []),
+        ...(updatedWorld.items || []),
+      ]);
+
+      return updatedWorld;
+    });
+  };
+
+  /** Update an existing entity */
+  const handleUpdateEntity = (updatedEntity) => {
+    setWorld((prevWorld) => {
+      let updatedWorld = { ...prevWorld };
+      const updateArray = (arrName) => {
+        if (updatedWorld[arrName]) {
+          updatedWorld[arrName] = updatedWorld[arrName].map((e) =>
+            e.id === updatedEntity.id ? updatedEntity : e
+          );
+        }
+      };
+      switch (updatedEntity.type) {
+        case "Location": updateArray("locations"); break;
+        case "Faction": updateArray("factions"); break;
+        case "Character": updateArray("characters"); break;
+        case "Item": updateArray("items"); break;
+      }
+
+      setEntities([
+        ...(updatedWorld.locations || []),
+        ...(updatedWorld.factions || []),
+        ...(updatedWorld.characters || []),
+        ...(updatedWorld.items || []),
+      ]);
+
+      return updatedWorld;
+    });
+  };
+
+  /** Delete an existing entity */
+  const handleDeleteEntity = (deletedId, type) => {
+    setWorld((prevWorld) => {
+      let updatedWorld = { ...prevWorld };
+      const deleteFromArray = (arrName) => {
+        if (updatedWorld[arrName]) {
+          updatedWorld[arrName] = updatedWorld[arrName].filter((e) => e.id !== deletedId);
+        }
+      };
+      switch (type) {
+        case "Location": deleteFromArray("locations"); break;
+        case "Faction": deleteFromArray("factions"); break;
+        case "Character": deleteFromArray("characters"); break;
+        case "Item": deleteFromArray("items"); break;
+      }
+
+      setEntities([
+        ...(updatedWorld.locations || []),
+        ...(updatedWorld.factions || []),
+        ...(updatedWorld.characters || []),
+        ...(updatedWorld.items || []),
+      ]);
+
+      return updatedWorld;
+    });
+  };
+
+  /** World controls */
+  const handleEditWorld = () => console.log("Edit world clicked");
+  const handleSaveWorld = () => console.log("Save world clicked");
+  const handleDeleteWorld = () => navigate("/dashboard");
 
   return (
     <div>
       <h1>{world.name || "Unnamed World"}</h1>
       <p>{world.description || "High-level view of a world."}</p>
 
-      {/* side panel */}
+      {/* Side panel */}
       <SectionPanel
         world={world}
-        onSelectEntity={(entity) => {
-          // Navigate to world content page for this entity
-          navigate(`/world-content/${worldId}`, { state: { selectedEntity: entity } });
-        }}
+        onSelectEntity={(entity) =>
+          navigate(`/world-content/${worldId}`, { state: { selectedEntity: entity } })
+        }
+      />
+
+      {/* Floating controls */}
+      <FloatingControls
+        pageType="worldOverview"
+        worldId={worldId}
+        worldData={world}
+        onAddEntity={handleAddEntity}
+        onUpdateEntity={handleUpdateEntity}
+        onDeleteEntity={handleDeleteEntity}
+        onEdit={handleEditWorld}
+        onSave={handleSaveWorld}
+        onDelete={handleDeleteWorld}
       />
     </div>
   );
 }
-// ----- WorldOverviewPage.jsx -----
+
 // TODO: List all worlds accessible to the user
 // TODO: Clicking a world navigates to /world-content/:worldId
+// TODO: Handle onAddEntity callback to update local state with new entity
+// TODO: Handle onUpdateEntity callback to update existing entity in local state
+// TODO: Handle onDeleteEntity callback to remove deleted entity from state
+// TODO: Add loading/error UI for backend actions

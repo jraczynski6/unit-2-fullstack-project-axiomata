@@ -78,6 +78,7 @@ function App() {
 
 export default App
 
+// ----- App / Vite Setup -----
 // TODO: Verify Vite React app builds and runs
 // TODO: Test Auth context: login, logout, token storage
 // TODO: Confirm Protected routes redirect correctly when unauthenticated

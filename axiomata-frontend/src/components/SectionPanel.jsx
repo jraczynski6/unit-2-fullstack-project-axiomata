@@ -27,13 +27,18 @@ export default function SectionPanel({ world, onSelectEntity }) {
   const regions = sections.Locations.filter((l) => l.type === "Region");
   const nonRegions = sections.Locations.filter((l) => l.type !== "Region");
 
+  const handleSelect = (entity) => {
+    onSelectEntity?.(entity);
+  };
+
   return (
-    <div>
+    <div className="section-panel">
       {Object.entries(sections).map(([section, list]) => (
         <div key={section}>
           <div
-            style={{ cursor: "pointer", fontWeight: "bold", marginTop: "1rem" }}
+            style={{ cursor: "pointer", fontWeight: "bold", marginTop: "1rem", outline: "none" }}
             onClick={() => toggleSection(section)}
+            tabIndex={-1} // prevents focus highlight
           >
             {section} {openSections[section] ? "▼" : "►"}
           </div>
@@ -47,10 +52,11 @@ export default function SectionPanel({ world, onSelectEntity }) {
                   ) : (
                     <>
                       {regions.map((region) => (
-                        <li key={region.id}>
+                        <li key={region.id} tabIndex={-1} style={{ outline: "none" }}>
                           <div
-                            style={{ fontWeight: "bold", cursor: "pointer" }}
-                            onClick={() => onSelectEntity?.(region)}
+                            style={{ fontWeight: "bold", cursor: "pointer", outline: "none" }}
+                            onClick={() => handleSelect(region)}
+                            tabIndex={-1}
                           >
                             {region.name}
                           </div>
@@ -60,8 +66,9 @@ export default function SectionPanel({ world, onSelectEntity }) {
                               .map((loc) => (
                                 <li
                                   key={loc.id}
-                                  style={{ cursor: "pointer" }}
-                                  onClick={() => onSelectEntity?.(loc)}
+                                  style={{ cursor: "pointer", outline: "none" }}
+                                  onClick={() => handleSelect(loc)}
+                                  tabIndex={-1}
                                 >
                                   {loc.name}
                                 </li>
@@ -70,14 +77,14 @@ export default function SectionPanel({ world, onSelectEntity }) {
                         </li>
                       ))}
 
-                      {/* locations with no region */}
                       {nonRegions
                         .filter((loc) => !loc.regionId)
                         .map((loc) => (
                           <li
                             key={loc.id}
-                            style={{ cursor: "pointer" }}
-                            onClick={() => onSelectEntity?.(loc)}
+                            style={{ cursor: "pointer", outline: "none" }}
+                            onClick={() => handleSelect(loc)}
+                            tabIndex={-1}
                           >
                             {loc.name}
                           </li>
@@ -89,8 +96,9 @@ export default function SectionPanel({ world, onSelectEntity }) {
                 list.map((entity) => (
                   <li
                     key={entity.id}
-                    onClick={() => onSelectEntity?.(entity)}
-                    style={{ cursor: "pointer" }}
+                    onClick={() => handleSelect(entity)}
+                    style={{ cursor: "pointer", outline: "none" }}
+                    tabIndex={-1}
                   >
                     {entity.name}
                   </li>
@@ -105,10 +113,3 @@ export default function SectionPanel({ world, onSelectEntity }) {
     </div>
   );
 }
-// ----- SectionPanel.jsx -----
-// TODO: Render sections: Locations, Factions, Characters, Items
-// TODO: Locations section groups regions as subheaders
-// TODO: Locations under a region are always visible
-// TODO: Locations with no region appear at top level
-// TODO: Clicking region or location selects entity for EntityCard
-// TODO: Integrate side panel for navigation to child pages (Entities, Locations, Factions, etc.)
