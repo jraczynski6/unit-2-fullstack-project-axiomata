@@ -5,17 +5,16 @@ import {
   updateWorld,
   deleteWorld,
   createLocation,
-  updateLocation,
   deleteLocation,
   createFaction,
-  updateFaction,
   deleteFaction,
+  updateFaction,
+  deleteCharacter,
   createCharacter,
   updateCharacter,
-  deleteCharacter,
+  deleteItem,
   createItem,
   updateItem,
-  deleteItem,
 } from "../services/worldService";
 
 export default function FloatingControls({
@@ -50,56 +49,61 @@ export default function FloatingControls({
     setEntityToEdit(null);
   };
 
-  const handleModalSubmit = async (data) => {
+  const handleModalSubmit = async (typeCategory, data) => {
+    if (!typeCategory) {
+      console.error("No entity type provided", data);
+      alert("Entity type is required.");
+      return;
+    }
+
+    const payload = { ...data, worldId }; // worldId always included
+
     let result;
 
-    try {
-      if (entityToEdit) {
-        // Updating existing entity
-        switch (entityToEdit.category) {
-          case "Location":
-            result = await updateLocation(entityToEdit.id, data);
-            break;
-          case "Faction":
-            result = await updateFaction(entityToEdit.id, data);
-            break;
-          case "Character":
-            result = await updateCharacter(entityToEdit.id, data);
-            break;
-          case "Item":
-            result = await updateItem(entityToEdit.id, data);
-            break;
-          default:
-            throw new Error(`Unknown entity category: ${entityToEdit.category}`);
-        }
-        onAddEntity?.(result); // optionally refresh UI
-      } else {
-        // Creating new entity
-        switch (data.typeCategory) {
-          case "Location":
-            result = await createLocation(data);
-            break;
-          case "Faction":
-            result = await createFaction(data);
-            break;
-          case "Character":
-            result = await createCharacter(data);
-            break;
-          case "Item":
-            result = await createItem(data);
-            break;
-          default:
-            throw new Error(`Unknown entity type: ${data.typeCategory}`);
-        }
-        onAddEntity?.(result);
+    if (entityToEdit) {
+      switch (typeCategory) {
+        case "Location":
+          result = await updateLocation(entityToEdit.id, payload);
+          break;
+        case "Faction":  // fix: handle faction update
+          result = await updateFaction(entityToEdit.id, payload);
+          break;
+        case "Character":
+          result = await updateCharacter(entityToEdit.id, payload);
+          break;
+        case "Item":
+          result = await updateItem(entityToEdit.id, payload);
+          break;
+        default:
+          throw new Error(`Unknown entity type: ${typeCategory}`);
       }
-    } catch (err) {
-      console.error("Failed to create/update entity:", err);
-      alert("Failed to save entity. Check console for details.");
-    } finally {
-      setModalOpen(false);
-      setEntityToEdit(null);
+      onAddEntity?.(result);
+    } else {
+      switch (typeCategory) {
+        case "Location":
+          result = await createLocation(payload);
+          break;
+        case "Faction":  // fix: handle faction creation
+          if (!payload.type || !payload.type.trim()) {
+            alert("Faction type is required.");
+            return;
+          }
+          result = await createFaction(payload);
+          break;
+        case "Character":
+          result = await createCharacter(payload);
+          break;
+        case "Item":
+          result = await createItem(payload);
+          break;
+        default:
+          throw new Error(`Unknown entity type: ${typeCategory}`);
+      }
+      onAddEntity?.(result);
     }
+
+    setModalOpen(false);
+    setEntityToEdit(null);
   };
 
   // ---------------- Delete ----------------
@@ -183,7 +187,7 @@ export default function FloatingControls({
       {modalOpen && (
         <AddEntityModal
           worldId={worldId}
-          world={worldData}   // pass full world data for parent regions
+          world={worldData}   // pass the world data for location dropdowns
           entityToEdit={entityToEdit}
           onClose={handleModalClose}
           onSubmit={handleModalSubmit}
