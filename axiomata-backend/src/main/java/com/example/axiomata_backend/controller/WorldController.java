@@ -56,41 +56,6 @@ public class WorldController {
         return ResponseEntity.ok(worldDto);
     }
 
-    @GetMapping("/{id}/entities")
-    public ResponseEntity<List<Map<String, Object>>> getAllEntities(@PathVariable Long id,
-                                                                    Authentication authentication) {
-        User user = getAuthenticatedUser(authentication);
-        WorldResponseDto worldDto = worldService.getWorldById(id);
-
-        if (!worldDto.getUsername().equals(user.getUsername())) {
-            throw new AccessDeniedException("Unauthorized access to world");
-        }
-
-        List<Map<String, Object>> allEntities = new ArrayList<>();
-
-        // Locations
-        locationService.getByWorld(id).forEach(lDto ->
-                allEntities.add(toMapWithType(lDto, "Location"))
-        );
-
-        // Factions
-        factionService.getFactionsByWorldId(id).forEach(fDto ->
-                allEntities.add(toMapWithType(fDto, "Faction"))
-        );
-
-        // Characters
-        characterService.getCharactersByWorldId(id).forEach(cDto ->
-                allEntities.add(toMapWithType(cDto, "Character"))
-        );
-
-        // Items
-        itemService.getItemsByWorld(id).forEach(iDto ->
-                allEntities.add(toMapWithType(iDto, "Item"))
-        );
-
-        return ResponseEntity.ok(allEntities);
-    }
-
     @PostMapping
     public ResponseEntity<WorldResponseDto> createWorld(@RequestBody @Valid WorldRequestDto request,
                                                         Authentication authentication) {
