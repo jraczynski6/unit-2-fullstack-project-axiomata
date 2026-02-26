@@ -123,3 +123,7 @@ export const deleteItem = async (itemId) => {
   const response = await api.delete(`/items/${itemId}`);
   return response.data;
 };
+// ----- worldService.js -----
+// TODO: Ensure all create/update/delete functions return response.data
+// TODO: Add error handling and custom messages for failed CRUD operations
+// TODO: Standardize DTO mapping if backend evolves

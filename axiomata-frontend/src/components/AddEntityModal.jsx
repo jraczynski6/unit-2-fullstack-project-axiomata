@@ -188,3 +188,10 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
     </div>
   );
 }
+
+// ----- AddEntityModal.jsx -----
+// TODO: Ensure Faction type input exists and maps to DTO
+// TODO: Filter Parent Region dropdown strictly to valid regions only
+// TODO: Add support for future Character fields in handleSubmit
+// TODO: Add defensive guards for entityType, name, and required fields
+// TODO: Add modal validation feedback for backend errors

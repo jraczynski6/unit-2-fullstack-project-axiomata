@@ -14,6 +14,7 @@ export default function ProtectedRoute({ children }) {
   return children;
 }
 
+// ----- ProtectedRoute.jsx (non-MVP) -----
 // TODO: Handle the case where children is undefined or not a valid React element
 // TODO: Add loading guard to prevent redirect flicker before auth initializes
 // TODO: Use isAuthenticated instead of direct token check for clarity

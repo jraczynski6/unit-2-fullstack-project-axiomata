@@ -164,3 +164,7 @@ export default function WorldOverviewPage() {
 
 // TODO: List all worlds accessible to the user
 // TODO: Clicking a world navigates to /world-content/:worldId
+// TODO: Handle onAddEntity callback to update local state with new entity
+// TODO: Handle onUpdateEntity callback to update existing entity in local state
+// TODO: Handle onDeleteEntity callback to remove deleted entity from state
+// TODO: Add loading/error UI for backend actions

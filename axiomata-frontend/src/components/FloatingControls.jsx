@@ -141,3 +141,8 @@ export default function FloatingControls({
     </div>
   );
 }
+// ----- FloatingControls / AddEntityModal -----
+// TODO: Implement dynamic state sync after entity creation
+// TODO: Implement delete entity functionality and update state
+// TODO: Implement edit/update flow and refresh panel display
+// TODO: Add modal validation feedback for backend errors

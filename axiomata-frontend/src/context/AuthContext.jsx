@@ -49,13 +49,12 @@ export function useAuth() {
   return context;
 }
 
+// ----- Auth / App-level -----
+// TODO: Ensure component does not directly access localStorage
 // TODO: Remove console logs before production
-// TODO: Add isLoading state to prevent auth race conditions on app initialization
 // TODO: Move token handling to internal implementation and expose user instead of token
-// TODO: Add token expiration check during initialization
-// TODO: Support role-based authorization in context
-// TODO: Handle automatic logout on 401 responses from API layer
 // TODO: Prevent logging full JWT tokens for security reasons
-// TODO: Add optional refresh token support for future scalability
-// TODO: Create dev-only logging guard using import.meta.env.DEV
-// TODO: Add user profile fetch on login for domain-driven auth state
+// TODO: Eliminate utils/auth token management and use AuthContext as single source of truth
+// TODO: Replace window.location.href with React Router-based redirect
+// TODO: Call AuthContext logout() instead of directly clearing token
+// TODO: Avoid direct localStorage manipulation inside API layer
