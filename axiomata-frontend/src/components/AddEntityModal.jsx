@@ -1,20 +1,19 @@
 import { useState, useEffect } from "react";
 import { getWorldById } from "../services/worldService";
 
-export default function AddEntityModal({ worldId, onClose, onSubmit }) {
-  if (!worldId) return null; // safety guard
+export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmit }) {
+  if (!worldId) return null;
 
-  const [entityType, setEntityType] = useState("");
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [locationType, setLocationType] = useState("");
-  const [parentRegionId, setParentRegionId] = useState("");
-  const [itemLocationId, setItemLocationId] = useState("");
+  const [entityType, setEntityType] = useState(entityToEdit?.entityType || entityToEdit?.type || "");
+  const [name, setName] = useState(entityToEdit?.name || "");
+  const [description, setDescription] = useState(entityToEdit?.description || "");
+  const [locationType, setLocationType] = useState(entityToEdit?.locationType || "");
+  const [parentRegionId, setParentRegionId] = useState(entityToEdit?.region_id || "");
+  const [itemLocationId, setItemLocationId] = useState(entityToEdit?.location_id || "");
   const [regions, setRegions] = useState([]);
 
-  // fetch regions if adding a Location
   useEffect(() => {
-    if (worldId && entityType === "Location") {
+    if (worldId && (entityType === "Location" || entityType === "Item")) {
       const fetchRegions = async () => {
         try {
           const world = await getWorldById(worldId);
@@ -32,21 +31,11 @@ export default function AddEntityModal({ worldId, onClose, onSubmit }) {
     e.preventDefault();
     if (!entityType || !name) return;
 
-    const entityData = {
-      name,
-      description,
-      world_id: worldId,
-    };
+    const entityData = { name, description, world_id: worldId };
 
     if (entityType === "Location") {
-      entityData.type = locationType || "Region";
-      if (locationType === "Sub-location" && parentRegionId) {
-        entityData.region_id = parentRegionId;
-      }
-    } else if (entityType === "Faction") {
-      entityData.type = "Default"; // can be extended later if needed
-    } else if (entityType === "Character") {
-      // nothing extra needed
+      if (locationType) entityData.type = locationType;
+      if (locationType === "Sub-location" && parentRegionId) entityData.region_id = parentRegionId;
     } else if (entityType === "Item") {
       if (itemLocationId) entityData.location_id = itemLocationId;
     }
@@ -58,28 +47,28 @@ export default function AddEntityModal({ worldId, onClose, onSubmit }) {
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <h2 className="modal-title">Add New Entity</h2>
+        <h2 className="modal-title">{entityToEdit ? "Edit Entity" : "Add New Entity"}</h2>
         <form className="modal-form" onSubmit={handleSubmit}>
-          {/* Entity Type Selection */}
-          <label className="modal-label">
-            Type:
-            <select
-              className="modal-select"
-              value={entityType}
-              onChange={(e) => setEntityType(e.target.value)}
-              required
-            >
-              <option value="">Select type</option>
-              <option value="Location">Location</option>
-              <option value="Faction">Faction</option>
-              <option value="Character">Character</option>
-              <option value="Item">Item</option>
-            </select>
-          </label>
+          {!entityToEdit && (
+            <label className="modal-label">
+              Type:
+              <select
+                className="modal-select"
+                value={entityType}
+                onChange={(e) => setEntityType(e.target.value)}
+                required
+              >
+                <option value="">Select type</option>
+                <option value="Location">Location</option>
+                <option value="Faction">Faction</option>
+                <option value="Character">Character</option>
+                <option value="Item">Item</option>
+              </select>
+            </label>
+          )}
 
           {entityType && (
             <>
-              {/* Common fields */}
               <label className="modal-label">
                 Name:
                 <input
@@ -100,7 +89,6 @@ export default function AddEntityModal({ worldId, onClose, onSubmit }) {
                 />
               </label>
 
-              {/* Location-specific fields */}
               {entityType === "Location" && (
                 <>
                   <label className="modal-label">
@@ -138,7 +126,6 @@ export default function AddEntityModal({ worldId, onClose, onSubmit }) {
                 </>
               )}
 
-              {/* Item-specific location assignment */}
               {entityType === "Item" && regions.length > 0 && (
                 <label className="modal-label">
                   Location:
@@ -159,7 +146,7 @@ export default function AddEntityModal({ worldId, onClose, onSubmit }) {
 
               <div className="modal-actions">
                 <button type="submit" className="modal-button">
-                  Create
+                  {entityToEdit ? "Save" : "Create"}
                 </button>
                 <button
                   type="button"

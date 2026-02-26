@@ -4,55 +4,87 @@ import {
   updateWorld,
   deleteWorld,
   createLocation,
+  updateLocation,
+  deleteLocation,
   createFaction,
+  updateFaction,
+  deleteFaction,
   createCharacter,
+  updateCharacter,
+  deleteCharacter,
   createItem,
+  updateItem,
+  deleteItem,
 } from "../services/worldService";
 
 export default function FloatingControls({
   pageType,
   worldId,
   worldData,
+  selectedEntity,
   onAddEntity,
+  onUpdateEntity,
+  onDeleteEntity,
   onEdit,
   onSave,
   onDelete,
 }) {
   const [modalOpen, setModalOpen] = useState(false);
+  const [entityToEdit, setEntityToEdit] = useState(null);
 
-  const handleAddClick = () => setModalOpen(true);
+  const handleAddClick = () => {
+    setEntityToEdit(null);
+    setModalOpen(true);
+  };
+
+  const handleEditEntity = () => {
+    if (!selectedEntity) return;
+    setEntityToEdit(selectedEntity);
+    setModalOpen(true);
+  };
 
   const handleModalSubmit = async (entityData) => {
     try {
-      let createdEntity;
+      let result;
 
-      switch (entityData.type) {
-        case "Location":
-          createdEntity = await createLocation(entityData);
-          break;
-        case "Faction":
-          createdEntity = await createFaction(entityData);
-          break;
-        case "Character":
-          createdEntity = await createCharacter(entityData);
-          break;
-        case "Item":
-          createdEntity = await createItem(entityData);
-          break;
-        default:
-          throw new Error("Unknown entity type: " + entityData.type);
+      if (entityToEdit) {
+        if (entityToEdit.id.startsWith("loc")) result = await updateLocation(entityToEdit.id, entityData);
+        else if (entityToEdit.id.startsWith("fac")) result = await updateFaction(entityToEdit.id, entityData);
+        else if (entityToEdit.id.startsWith("char")) result = await updateCharacter(entityToEdit.id, entityData);
+        else if (entityToEdit.id.startsWith("item")) result = await updateItem(entityToEdit.id, entityData);
+
+        onUpdateEntity?.(result);
+      } else {
+        if (entityData.type === "Location") result = await createLocation(entityData);
+        else if (entityData.type === "Faction") result = await createFaction(entityData);
+        else if (entityData.type === "Character") result = await createCharacter(entityData);
+        else if (entityData.type === "Item") result = await createItem(entityData);
+
+        onAddEntity?.(result);
       }
-
-      onAddEntity?.(createdEntity);
     } catch (err) {
-      console.error("Failed to create entity:", err);
+      console.error("Failed to save entity:", err);
     } finally {
       setModalOpen(false);
+      setEntityToEdit(null);
     }
   };
 
-  const handleModalClose = () => setModalOpen(false);
+  const handleDeleteEntity = async () => {
+    if (!selectedEntity) return;
+    if (!confirm("Delete this entity?")) return;
 
+    try {
+      if (selectedEntity.id.startsWith("loc")) await deleteLocation(selectedEntity.id);
+      else if (selectedEntity.id.startsWith("fac")) await deleteFaction(selectedEntity.id);
+      else if (selectedEntity.id.startsWith("char")) await deleteCharacter(selectedEntity.id);
+      else if (selectedEntity.id.startsWith("item")) await deleteItem(selectedEntity.id);
+
+      onDeleteEntity?.(selectedEntity.id);
+    } catch (err) {
+      console.error("Failed to delete entity:", err);
+    }
+  };
 
   const handleEditWorld = () => onEdit?.();
   const handleSaveWorld = async () => {
@@ -63,7 +95,6 @@ export default function FloatingControls({
       console.error("Failed to save world:", err);
     }
   };
-
   const handleDeleteWorld = async () => {
     if (!confirm("Delete this world?")) return;
 
@@ -75,41 +106,32 @@ export default function FloatingControls({
     }
   };
 
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setEntityToEdit(null);
+  };
+
   return (
     <div className="floating-controls">
       {pageType === "worldOverview" ? (
         <>
-          <button className="control-button" onClick={handleEditWorld}>
-            Edit World
-          </button>
-          <button className="control-button" onClick={handleSaveWorld}>
-            Save World
-          </button>
-          <button className="control-button" onClick={handleDeleteWorld}>
-            Delete World
-          </button>
+          <button className="control-button" onClick={handleEditWorld}>Edit World</button>
+          <button className="control-button" onClick={handleSaveWorld}>Save World</button>
+          <button className="control-button" onClick={handleDeleteWorld}>Delete World</button>
         </>
       ) : (
         <>
-          <button className="control-button" onClick={onEdit}>
-            Edit
-          </button>
-          <button className="control-button" onClick={onSave}>
-            Save
-          </button>
-          <button className="control-button" onClick={onDelete}>
-            Delete
-          </button>
+          <button className="control-button" onClick={handleEditEntity} disabled={!selectedEntity}>Edit</button>
+          <button className="control-button" onClick={handleDeleteEntity} disabled={!selectedEntity}>Delete</button>
         </>
       )}
 
-      <button className="control-button" onClick={handleAddClick}>
-        Add New
-      </button>
+      <button className="control-button" onClick={handleAddClick}>Add New</button>
 
       {modalOpen && (
         <AddEntityModal
           worldId={worldId}
+          entityToEdit={entityToEdit}
           onClose={handleModalClose}
           onSubmit={handleModalSubmit}
         />
@@ -117,4 +139,3 @@ export default function FloatingControls({
     </div>
   );
 }
-// TODO: add custom confirm modal for delete actions
