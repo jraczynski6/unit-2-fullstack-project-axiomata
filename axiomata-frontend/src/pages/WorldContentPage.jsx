@@ -28,6 +28,42 @@ export default function WorldContentPage() {
 
   if (!world) return <div>Loading world...</div>;
 
+  const handleAddEntity = (newEntity) => {
+    setWorld((prevWorld) => {
+      const updatedWorld = { ...prevWorld };
+      switch (newEntity.type) {
+        case "Location":
+          updatedWorld.locations = [...(prevWorld.locations || []), newEntity];
+          break;
+        case "Faction":
+          updatedWorld.factions = [...(prevWorld.factions || []), newEntity];
+          break;
+        case "Character":
+          updatedWorld.characters = [...(prevWorld.characters || []), newEntity];
+          break;
+        case "Item":
+          updatedWorld.items = [...(prevWorld.items || []), newEntity];
+          break;
+        default:
+          break;
+      }
+      return updatedWorld;
+    });
+  };
+
+  // Placeholder handlers
+  const handleEdit = () => {
+    console.log("Edit entity / world clicked", selectedEntity);
+  };
+
+  const handleSave = () => {
+    console.log("Save entity / world clicked", selectedEntity);
+  };
+
+  const handleDelete = () => {
+    console.log("Delete entity / world clicked", selectedEntity);
+  };
+
   return (
     <div style={{ display: "flex", gap: "2rem" }}>
       {/* SectionPanel updates selectedEntity on click */}
@@ -45,12 +81,12 @@ export default function WorldContentPage() {
       {/* Floating Controls */}
       {world && (
         <FloatingControls
-          pageType="worldOverview"
+          pageType="worldContent" // fixed
           worldId={world.id}
-          onAddEntity={(entity) => console.log("New entity:", entity)}
-          onEdit={() => console.log("Edit world")}
-          onSave={() => console.log("Save world")}
-          onDelete={() => console.log("Delete world")}
+          onAddEntity={handleAddEntity} // updates world state
+          onEdit={() => console.log("Edit entity / world")}
+          onSave={() => console.log("Save entity / world")}
+          onDelete={() => console.log("Delete entity / world")}
         />
       )}
     </div>

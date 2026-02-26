@@ -11,6 +11,7 @@ export default function WorldOverviewPage() {
   const [world, setWorld] = useState(null);
   const [entities, setEntities] = useState([]);
 
+  // Fetch world details
   useEffect(() => {
     const fetchWorld = async () => {
       try {
@@ -33,6 +34,40 @@ export default function WorldOverviewPage() {
 
   if (!world) return <div>Loading...</div>
 
+  const handleAddEntity = (newEntity) => {
+    setWorld((prevWorld) => {
+      let updatedWorld = { ...prevWorld };
+      switch (newEntity.type) {
+        case "Location":
+          updatedWorld.locations = [...(prevWorld.locations || []), newEntity];
+          break;
+        case "Faction":
+          updatedWorld.factions = [...(prevWorld.factions || []), newEntity];
+          break;
+        case "Character":
+          updatedWorld.characters = [...(prevWorld.characters || []), newEntity];
+          break;
+        case "Item":
+          updatedWorld.items = [...(prevWorld.items || []), newEntity];
+          break;
+        default:
+          break;
+      }
+
+      setEntities([
+        ...(updatedWorld.locations || []),
+        ...(updatedWorld.factions || []),
+        ...(updatedWorld.characters || []),
+        ...(updatedWorld.items || []),
+      ]);
+      return updatedWorld;
+    });
+  };
+
+  const handleEditWorld = () => console.log("Edit world clicked");
+  const handleSaveWorld = () => console.log("Save world clicked");
+  const handleDeleteWorld = () => navigate("/dashboard");
+
 
   return (
     <div>
@@ -51,11 +86,12 @@ export default function WorldOverviewPage() {
       {world && (
         <FloatingControls
           pageType="worldOverview"
-          worldId={world.id}
-          onAddEntity={(entity) => console.log("New entity:", entity)}
-          onEdit={() => console.log("Edit world")}
-          onSave={() => console.log("Save world")}
-          onDelete={() => console.log("Delete world")}
+          worldId={worldId}
+          worldData={world}
+          onAddEntity={handleAddEntity}
+          onEdit={handleEditWorld}
+          onSave={handleSaveWorld}
+          onDelete={handleDeleteWorld}
         />
       )}
     </div>
