@@ -1,50 +1,54 @@
 import { useState, useEffect } from "react";
 
-export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmit }) {
-  // ---------------- State ----------------
-  const [entityType, setEntityType] = useState(entityToEdit?.entityType || "Location");
+export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmit, world }) {
+  const [typeCategory, setTypeCategory] = useState(entityToEdit?.entityType || "Location");
   const [name, setName] = useState(entityToEdit?.name || "");
   const [description, setDescription] = useState(entityToEdit?.description || "");
-  const [subtype, setSubtype] = useState(entityToEdit?.type || ""); // optional type field
+  const [subType, setSubType] = useState(entityToEdit?.type || "City");
+  const [parentRegionId, setParentRegionId] = useState(entityToEdit?.regionId || null);
 
-  // ---------------- Initialize when editing ----------------
   useEffect(() => {
     if (entityToEdit) {
-      setEntityType(entityToEdit.entityType || "Location");
+      setTypeCategory(entityToEdit.entityType || "Location");
       setName(entityToEdit.name || "");
       setDescription(entityToEdit.description || "");
-      setSubtype(entityToEdit.type || "");
+      setSubType(entityToEdit.type || "City");
+      setParentRegionId(entityToEdit.regionId || null);
     }
   }, [entityToEdit]);
 
-  // ---------------- Handlers ----------------
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!name.trim()) return alert("Name is required.");
 
-    if (!name.trim()) {
-      alert("Name is required.");
-      return;
-    }
-
-    const entityData = {
+    const data = {
+      typeCategory,         // important for backend to know what entity it is
       name: name.trim(),
       description: description.trim(),
-      type: subtype.trim() || undefined, // optional
-      entityType, // required for backend mapping in FloatingControls
+      worldId,
     };
 
-    onSubmit(entityType, entityData);
+    if (typeCategory === "Location") {
+      if (!subType || !subType.trim()) return alert("Location type is required.");
+      data.type = subType.trim();
+      data.regionId = subType === "Region" ? null : parentRegionId || null;
+    }
+
+    onSubmit(data); // only pass the data object
   };
+
+  const locationTypes = ["Region", "City", "Dungeon"];
+  const regions = world?.locations?.filter((loc) => loc.type === "Region") || [];
 
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <h2>{entityToEdit ? `Edit ${entityType}` : `Add New ${entityType}`}</h2>
+        <h2>{entityToEdit ? `Edit ${typeCategory}` : `Add New ${typeCategory}`}</h2>
 
         {!entityToEdit && (
           <div className="form-group">
-            <label>Entity Type:</label>
-            <select value={entityType} onChange={(e) => setEntityType(e.target.value)}>
+            <label>Type:</label>
+            <select value={typeCategory} onChange={(e) => setTypeCategory(e.target.value)}>
               <option value="Location">Location</option>
               <option value="Faction">Faction</option>
               <option value="Character">Character</option>
@@ -63,10 +67,34 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
           <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
         </div>
 
-        <div className="form-group">
-          <label>{entityType} Type / Subtype (optional):</label>
-          <input value={subtype} onChange={(e) => setSubtype(e.target.value)} />
-        </div>
+        {typeCategory === "Location" && (
+          <>
+            <div className="form-group">
+              <label>Location Type:</label>
+              <select value={subType} onChange={(e) => setSubType(e.target.value)}>
+                {locationTypes.map((opt) => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Parent Region:</label>
+              <select
+                value={parentRegionId || ""}
+                onChange={(e) =>
+                  setParentRegionId(e.target.value ? Number(e.target.value) : null)
+                }
+                disabled={subType === "Region"}
+              >
+                <option value="">-- None --</option>
+                {regions.map((r) => (
+                  <option key={r.id} value={r.id}>{r.name}</option>
+                ))}
+              </select>
+            </div>
+          </>
+        )}
 
         <div className="modal-actions">
           <button onClick={handleSubmit}>{entityToEdit ? "Save" : "Add"}</button>
@@ -76,11 +104,3 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
     </div>
   );
 }
-
-
-// ----- AddEntityModal.jsx -----
-// TODO: Ensure Faction type input exists and maps to DTO
-// TODO: Filter Parent Region dropdown strictly to valid regions only
-// TODO: Add support for future Character fields in handleSubmit
-// TODO: Add defensive guards for entityType, name, and required fields
-// TODO: Add modal validation feedback for backend errors

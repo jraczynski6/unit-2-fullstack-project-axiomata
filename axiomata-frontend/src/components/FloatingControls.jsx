@@ -5,12 +5,16 @@ import {
   updateWorld,
   deleteWorld,
   createLocation,
+  updateLocation,
   deleteLocation,
   createFaction,
+  updateFaction,
   deleteFaction,
   createCharacter,
+  updateCharacter,
   deleteCharacter,
   createItem,
+  updateItem,
   deleteItem,
 } from "../services/worldService";
 
@@ -46,32 +50,52 @@ export default function FloatingControls({
     setEntityToEdit(null);
   };
 
-  const handleModalSubmit = async (category, entityData) => {
+  const handleModalSubmit = async (data) => {
+    let result;
+
     try {
-      let result;
-
-      // Only creating for now; editing not configured
-      switch (category) {
-        case "Location":
-          result = await createLocation(entityData);
-          break;
-        case "Faction":
-          result = await createFaction(entityData);
-          break;
-        case "Character":
-          result = await createCharacter(entityData);
-          break;
-        case "Item":
-          result = await createItem(entityData);
-          break;
-        default:
-          throw new Error(`Unknown category: ${category}`);
+      if (entityToEdit) {
+        // Updating existing entity
+        switch (entityToEdit.category) {
+          case "Location":
+            result = await updateLocation(entityToEdit.id, data);
+            break;
+          case "Faction":
+            result = await updateFaction(entityToEdit.id, data);
+            break;
+          case "Character":
+            result = await updateCharacter(entityToEdit.id, data);
+            break;
+          case "Item":
+            result = await updateItem(entityToEdit.id, data);
+            break;
+          default:
+            throw new Error(`Unknown entity category: ${entityToEdit.category}`);
+        }
+        onAddEntity?.(result); // optionally refresh UI
+      } else {
+        // Creating new entity
+        switch (data.typeCategory) {
+          case "Location":
+            result = await createLocation(data);
+            break;
+          case "Faction":
+            result = await createFaction(data);
+            break;
+          case "Character":
+            result = await createCharacter(data);
+            break;
+          case "Item":
+            result = await createItem(data);
+            break;
+          default:
+            throw new Error(`Unknown entity type: ${data.typeCategory}`);
+        }
+        onAddEntity?.(result);
       }
-
-      onAddEntity?.(result);
     } catch (err) {
-      console.error("Failed to create entity:", err);
-      alert("Failed to create entity. Check console for details.");
+      console.error("Failed to create/update entity:", err);
+      alert("Failed to save entity. Check console for details.");
     } finally {
       setModalOpen(false);
       setEntityToEdit(null);
@@ -159,6 +183,7 @@ export default function FloatingControls({
       {modalOpen && (
         <AddEntityModal
           worldId={worldId}
+          world={worldData}   // pass full world data for parent regions
           entityToEdit={entityToEdit}
           onClose={handleModalClose}
           onSubmit={handleModalSubmit}
