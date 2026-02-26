@@ -1,16 +1,15 @@
 export default function EntityCard({ item, category, world }) {
   if (!item) return null;
 
-  // For Locations, type is meaningful (Region, City, etc.)
+  // For Locations, (Region, City, Dungeon, Town)
   const locationType = category === "Location" ? item.type || "" : "";
 
-  // Resolve location name if this item has a locationId (Characters, Items)
+  // For Factions,
+  const factionType = category === "Faction" ? item.type || "" : "";
+
+  // location name if this item has a locationId
   const locationName =
     item.locationId && world?.locations?.find((loc) => loc.id === item.locationId)?.name;
-
-  // Resolve faction names if this item has factionIds (Characters, Items)
-  const factionNames =
-    item.factionIds?.map((fid) => world?.factions?.find((f) => f.id === fid)?.name).filter(Boolean) || [];
 
   return (
     <div className="entity-card">
@@ -18,12 +17,14 @@ export default function EntityCard({ item, category, world }) {
       {item.description && <p>{item.description}</p>}
 
       <ul>
-        {/* Only show type for Locations */}
+        {/* Show type for Locations */}
         {locationType && <li>Type: {locationType}</li>}
 
-        {locationName && <li>Location: {locationName}</li>}
+        {/* Show type for Factions */}
+        {factionType && <li>Faction Type: {factionType}</li>}
 
-        {factionNames.length > 0 && <li>Factions: {factionNames.join(", ")}</li>}
+        {/* Show location if exists */}
+        {locationName && <li>Location: {locationName}</li>}
       </ul>
     </div>
   );
