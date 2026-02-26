@@ -1,7 +1,6 @@
-// WorldOverviewPage.jsx
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getWorldById, getWorldEntities } from "../services/worldService";
+import { getWorldById } from "../services/worldService";
 import SectionPanel from "../components/SectionPanel";
 import FloatingControls from "../components/FloatingControls";
 
@@ -9,9 +8,8 @@ export default function WorldOverviewPage() {
   const { worldId } = useParams();
   const navigate = useNavigate();
   const [world, setWorld] = useState(null);
-  const [entities, setEntities] = useState([]);
 
-  // Fetch world details
+  // ---------------- Fetch World ----------------
   useEffect(() => {
     const fetchWorld = async () => {
       try {
@@ -24,121 +22,51 @@ export default function WorldOverviewPage() {
     fetchWorld();
   }, [worldId]);
 
-  // Fetch world entities (flattened for SectionPanel)
-  useEffect(() => {
-    const fetchEntities = async () => {
-      try {
-        const data = await getWorldEntities(worldId);
-        setEntities(data);
-      } catch (err) {
-        console.error("Failed to fetch entities:", err);
-      }
-    };
-    fetchEntities();
-  }, [worldId]);
-
-  if (!world) return <div>Loading world...</div>;
-
-  /** Add new entity */
+  // ---------------- Add / Update / Delete ----------------
   const handleAddEntity = (newEntity) => {
-    setWorld((prevWorld) => {
-      let updatedWorld = { ...prevWorld };
-      switch (newEntity.type) {
-        case "Location":
-          updatedWorld.locations = [...(prevWorld.locations || []), newEntity];
-          break;
-        case "Faction":
-          updatedWorld.factions = [...(prevWorld.factions || []), newEntity];
-          break;
-        case "Character":
-          updatedWorld.characters = [...(prevWorld.characters || []), newEntity];
-          break;
-        case "Item":
-          updatedWorld.items = [...(prevWorld.items || []), newEntity];
-          break;
-        default:
-          break;
-      }
+    if (!newEntity?.entityType) return;
 
-      // update flattened entities for SectionPanel
-      setEntities([
-        ...(updatedWorld.locations || []),
-        ...(updatedWorld.factions || []),
-        ...(updatedWorld.characters || []),
-        ...(updatedWorld.items || []),
-      ]);
-
-      return updatedWorld;
-    });
+    setWorld(prev => ({
+      ...prev,
+      [newEntity.entityType.toLowerCase() + "s"]: [
+        ...(prev[newEntity.entityType.toLowerCase() + "s"] || []),
+        newEntity,
+      ],
+    }));
   };
 
-  /** Update an existing entity */
   const handleUpdateEntity = (updatedEntity) => {
-    setWorld((prevWorld) => {
-      let updatedWorld = { ...prevWorld };
-      const updateArray = (arrName) => {
-        if (updatedWorld[arrName]) {
-          updatedWorld[arrName] = updatedWorld[arrName].map((e) =>
-            e.id === updatedEntity.id ? updatedEntity : e
-          );
-        }
-      };
-      switch (updatedEntity.type) {
-        case "Location": updateArray("locations"); break;
-        case "Faction": updateArray("factions"); break;
-        case "Character": updateArray("characters"); break;
-        case "Item": updateArray("items"); break;
-      }
+    if (!updatedEntity?.entityType) return;
 
-      setEntities([
-        ...(updatedWorld.locations || []),
-        ...(updatedWorld.factions || []),
-        ...(updatedWorld.characters || []),
-        ...(updatedWorld.items || []),
-      ]);
-
-      return updatedWorld;
-    });
+    const arrName = updatedEntity.entityType.toLowerCase() + "s";
+    setWorld(prev => ({
+      ...prev,
+      [arrName]: prev[arrName]?.map(e => e.id === updatedEntity.id ? updatedEntity : e),
+    }));
   };
 
-  /** Delete an existing entity */
-  const handleDeleteEntity = (deletedId, type) => {
-    setWorld((prevWorld) => {
-      let updatedWorld = { ...prevWorld };
-      const deleteFromArray = (arrName) => {
-        if (updatedWorld[arrName]) {
-          updatedWorld[arrName] = updatedWorld[arrName].filter((e) => e.id !== deletedId);
-        }
-      };
-      switch (type) {
-        case "Location": deleteFromArray("locations"); break;
-        case "Faction": deleteFromArray("factions"); break;
-        case "Character": deleteFromArray("characters"); break;
-        case "Item": deleteFromArray("items"); break;
-      }
-
-      setEntities([
-        ...(updatedWorld.locations || []),
-        ...(updatedWorld.factions || []),
-        ...(updatedWorld.characters || []),
-        ...(updatedWorld.items || []),
-      ]);
-
-      return updatedWorld;
-    });
+  const handleDeleteEntity = async () => {
+    try {
+      // refetch world to get updated state after deletion
+      const data = await getWorldById(worldId);
+      setWorld(data);
+    } catch (err) {
+      console.error("Failed to refresh world after deletion:", err);
+    }
   };
 
-  /** World controls */
+  // ---------------- World Controls ----------------
   const handleEditWorld = () => console.log("Edit world clicked");
   const handleSaveWorld = () => console.log("Save world clicked");
   const handleDeleteWorld = () => navigate("/dashboard");
+
+  if (!world) return <div>Loading world...</div>;
 
   return (
     <div>
       <h1>{world.name || "Unnamed World"}</h1>
       <p>{world.description || "High-level view of a world."}</p>
 
-      {/* Side panel */}
       <SectionPanel
         world={world}
         onSelectEntity={(entity) =>
@@ -146,7 +74,6 @@ export default function WorldOverviewPage() {
         }
       />
 
-      {/* Floating controls */}
       <FloatingControls
         pageType="worldOverview"
         worldId={worldId}
@@ -161,10 +88,3 @@ export default function WorldOverviewPage() {
     </div>
   );
 }
-
-// TODO: List all worlds accessible to the user
-// TODO: Clicking a world navigates to /world-content/:worldId
-// TODO: Handle onAddEntity callback to update local state with new entity
-// TODO: Handle onUpdateEntity callback to update existing entity in local state
-// TODO: Handle onDeleteEntity callback to remove deleted entity from state
-// TODO: Add loading/error UI for backend actions
