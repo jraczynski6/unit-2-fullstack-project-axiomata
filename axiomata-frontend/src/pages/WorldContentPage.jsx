@@ -1,188 +1,129 @@
 import { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { getWorldById } from "../services/worldService";
 import EntityCard from "../components/EntityCard";
 import SectionPanel from "../components/SectionPanel";
 import FloatingControls from "../components/FloatingControls";
 
 export default function WorldContentPage() {
-  const { worldId } = useParams();
   const location = useLocation();
-  const initialSelected = location.state?.selectedEntity || null;
-
+  const { worldId } = useParams();
   const [world, setWorld] = useState(null);
-  const [entities, setEntities] = useState([]);
-  const [selectedEntity, setSelectedEntity] = useState(initialSelected);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
-  // Fetch world
+  // ---------------- Fetch World ----------------
   useEffect(() => {
     const fetchWorld = async () => {
-      try {
-        const data = await getWorldById(worldId);
-        setWorld(data);
-        setEntities([
-          ...(data.locations || []),
-          ...(data.factions || []),
-          ...(data.characters || []),
-          ...(data.items || []),
-        ]);
+      const data = await getWorldById(worldId);
+      setWorld(data);
 
-        // auto-select first entity if none selected
-        if (!selectedEntity) {
-          const firstEntity =
-            (data.locations?.[0] ||
-              data.factions?.[0] ||
-              data.characters?.[0] ||
-              data.items?.[0]) ||
-            null;
-          setSelectedEntity(firstEntity);
-        }
-      } catch (err) {
-        console.error("Failed to fetch world:", err);
+      // Check if navigating with preselected entity
+      const preSelected = location.state?.selectedEntity;
+      if (preSelected) {
+        setSelectedItem(preSelected);
+        setSelectedCategory(preSelected.category);
+        return;
+      }
+
+      // Otherwise auto-select first item
+      const firstItem =
+        data.locations?.[0] ||
+        data.factions?.[0] ||
+        data.characters?.[0] ||
+        data.items?.[0];
+
+      if (firstItem) {
+        setSelectedItem(firstItem);
+        setSelectedCategory(
+          data.locations?.includes(firstItem)
+            ? "Location"
+            : data.factions?.includes(firstItem)
+              ? "Faction"
+              : data.characters?.includes(firstItem)
+                ? "Character"
+                : "Item"
+        );
       }
     };
+
     if (worldId) fetchWorld();
-  }, [worldId]);
+  }, [worldId, location.state]);
 
-  /** Add new entity */
-  const handleAddEntity = (newEntity) => {
-    setWorld((prevWorld) => {
-      const updatedWorld = { ...prevWorld };
-      switch (newEntity.type) {
-        case "Location":
-          updatedWorld.locations = [...(prevWorld.locations || []), newEntity];
-          break;
-        case "Faction":
-          updatedWorld.factions = [...(prevWorld.factions || []), newEntity];
-          break;
-        case "Character":
-          updatedWorld.characters = [...(prevWorld.characters || []), newEntity];
-          break;
-        case "Item":
-          updatedWorld.items = [...(prevWorld.items || []), newEntity];
-          break;
-      }
+  // ---------------- Add / Update / Delete ----------------
+  const handleAddItem = (newItem, category) => {
+    if (!category) {
+      console.error("handleAddItem called with undefined category", newItem);
+      return;
+    }
 
-      const updatedEntities = [
-        ...(updatedWorld.locations || []),
-        ...(updatedWorld.factions || []),
-        ...(updatedWorld.characters || []),
-        ...(updatedWorld.items || []),
-      ];
-      setEntities(updatedEntities);
-
-      // do NOT overwrite selectedEntity
+    setWorld((prev) => {
+      const updatedWorld = { ...prev };
+      const key = category.toLowerCase() + "s";
+      updatedWorld[key] = [...(prev[key] || []), newItem];
       return updatedWorld;
     });
   };
 
-  /** Update existing entity */
-  const handleUpdateEntity = (updatedEntity) => {
-    setWorld((prevWorld) => {
-      const updatedWorld = { ...prevWorld };
-      const updateArray = (arrName) => {
-        if (updatedWorld[arrName]) {
-          updatedWorld[arrName] = updatedWorld[arrName].map((e) =>
-            e.id === updatedEntity.id ? updatedEntity : e
-          );
-        }
-      };
-      switch (updatedEntity.type) {
-        case "Location":
-          updateArray("locations");
-          break;
-        case "Faction":
-          updateArray("factions");
-          break;
-        case "Character":
-          updateArray("characters");
-          break;
-        case "Item":
-          updateArray("items");
-          break;
+  const handleUpdateItem = (updatedItem, category) => {
+    setWorld((prev) => {
+      const updatedWorld = { ...prev };
+      const key = category.toLowerCase() + "s";
+      if (updatedWorld[key]) {
+        updatedWorld[key] = updatedWorld[key].map((i) =>
+          i.id === updatedItem.id ? updatedItem : i
+        );
       }
-
-      const updatedEntities = [
-        ...(updatedWorld.locations || []),
-        ...(updatedWorld.factions || []),
-        ...(updatedWorld.characters || []),
-        ...(updatedWorld.items || []),
-      ];
-      setEntities(updatedEntities);
-
-      // update selectedEntity if it's the one being updated
-      if (selectedEntity?.id === updatedEntity.id) setSelectedEntity(updatedEntity);
-
+      if (selectedItem?.id === updatedItem.id) setSelectedItem(updatedItem);
       return updatedWorld;
     });
   };
 
-  /** Delete entity */
-  const handleDeleteEntity = (deletedId, type) => {
-    setWorld((prevWorld) => {
-      const updatedWorld = { ...prevWorld };
-      const deleteFromArray = (arrName) => {
-        if (updatedWorld[arrName]) {
-          updatedWorld[arrName] = updatedWorld[arrName].filter((e) => e.id !== deletedId);
-        }
-      };
-      switch (type) {
-        case "Location":
-          deleteFromArray("locations");
-          break;
-        case "Faction":
-          deleteFromArray("factions");
-          break;
-        case "Character":
-          deleteFromArray("characters");
-          break;
-        case "Item":
-          deleteFromArray("items");
-          break;
-      }
-
-      const updatedEntities = [
-        ...(updatedWorld.locations || []),
-        ...(updatedWorld.factions || []),
-        ...(updatedWorld.characters || []),
-        ...(updatedWorld.items || []),
-      ];
-      setEntities(updatedEntities);
-
-      // reset selectedEntity if deleted
-      if (selectedEntity?.id === deletedId) setSelectedEntity(null);
-
-      return updatedWorld;
-    });
+  const handleDeleteItem = async () => {
+    try {
+      const data = await getWorldById(worldId); // refetch world
+      setWorld(data);
+      setSelectedItem(null);
+      setSelectedCategory(null);
+    } catch (err) {
+      console.error("Failed to refresh world after deletion:", err);
+    }
   };
 
-  // World-level placeholder actions
-  const handleEdit = () => console.log("Edit entity/world clicked", selectedEntity);
-  const handleSave = () => console.log("Save entity/world clicked", selectedEntity);
-  const handleDelete = () => console.log("Delete entity/world clicked", selectedEntity);
+  // ---------------- World Controls ----------------
+  const handleEdit = () => console.log("Edit clicked", selectedItem);
+  const handleSave = () => console.log("Save clicked", selectedItem);
+  const handleDelete = () => console.log("Delete clicked", selectedItem);
 
   if (!world) return <div>Loading world...</div>;
 
   return (
     <div style={{ display: "flex", gap: "2rem" }}>
-      <SectionPanel world={world} onSelectEntity={setSelectedEntity} />
+      <SectionPanel
+        world={world}
+        onSelectEntity={(entity) => {
+          setSelectedItem(entity);
+          setSelectedCategory(entity.category);
+        }}
+      />
 
       <div>
-        {selectedEntity ? (
-          <EntityCard entity={selectedEntity} world={world} />
+        {selectedItem ? (
+          <EntityCard item={selectedItem} category={selectedCategory} world={world} />
         ) : (
-          <div>Select an entity from the panel</div>
+          <div>Select an item from the panel</div>
         )}
       </div>
 
       <FloatingControls
         pageType="worldContent"
         worldId={world.id}
-        worldData={world}
-        selectedEntity={selectedEntity}
-        onAddEntity={handleAddEntity}
-        onUpdateEntity={handleUpdateEntity}
-        onDeleteEntity={handleDeleteEntity}
+        world={world}
+        selectedEntity={selectedItem}
+        onAddEntity={handleAddItem}
+        onUpdateEntity={handleUpdateItem}
+        onDeleteEntity={handleDeleteItem}
         onEdit={handleEdit}
         onSave={handleSave}
         onDelete={handleDelete}

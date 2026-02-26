@@ -8,13 +8,6 @@ export default function SectionPanel({ world, onSelectEntity }) {
     Items: true,
   });
 
-  const toggleSection = (section) => {
-    setOpenSections((prev) => ({
-      ...prev,
-      [section]: !prev[section],
-    }));
-  };
-
   if (!world) return null;
 
   const sections = {
@@ -24,83 +17,83 @@ export default function SectionPanel({ world, onSelectEntity }) {
     Items: world.items || [],
   };
 
+  const toggleSection = (section) => {
+    setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
+  };
+
+  const handleSelect = (entity, section) => {
+    onSelectEntity?.({ ...entity, category: section.slice(0, -1) });
+  };
+
   const regions = sections.Locations.filter((l) => l.type === "Region");
   const nonRegions = sections.Locations.filter((l) => l.type !== "Region");
-
-  const handleSelect = (entity) => {
-    onSelectEntity?.(entity);
-  };
 
   return (
     <div className="section-panel">
       {Object.entries(sections).map(([section, list]) => (
         <div key={section}>
           <div
-            style={{ cursor: "pointer", fontWeight: "bold", marginTop: "1rem", outline: "none" }}
+            style={{ cursor: "pointer", fontWeight: "bold", marginTop: "1rem" }}
             onClick={() => toggleSection(section)}
-            tabIndex={-1} // prevents focus highlight
           >
             {section} {openSections[section] ? "▼" : "►"}
           </div>
 
           {openSections[section] && (
-            <ul style={{ paddingLeft: "1rem" }}>
+            <ul style={{ paddingLeft: "1rem", margin: 0 }}>
               {section === "Locations" ? (
                 <>
-                  {regions.length === 0 && nonRegions.length === 0 ? (
+                  {regions.length === 0 && nonRegions.length === 0 && (
                     <li>(No locations)</li>
-                  ) : (
-                    <>
-                      {regions.map((region) => (
-                        <li key={region.id} tabIndex={-1} style={{ outline: "none" }}>
-                          <div
-                            style={{ fontWeight: "bold", cursor: "pointer", outline: "none" }}
-                            onClick={() => handleSelect(region)}
-                            tabIndex={-1}
-                          >
-                            {region.name}
-                          </div>
-                          <ul>
-                            {nonRegions
-                              .filter((loc) => loc.regionId === region.id)
-                              .map((loc) => (
-                                <li
-                                  key={loc.id}
-                                  style={{ cursor: "pointer", outline: "none" }}
-                                  onClick={() => handleSelect(loc)}
-                                  tabIndex={-1}
-                                >
-                                  {loc.name}
-                                </li>
-                              ))}
-                          </ul>
-                        </li>
-                      ))}
-
-                      {nonRegions
-                        .filter((loc) => !loc.regionId)
-                        .map((loc) => (
-                          <li
-                            key={loc.id}
-                            style={{ cursor: "pointer", outline: "none" }}
-                            onClick={() => handleSelect(loc)}
-                            tabIndex={-1}
-                          >
-                            {loc.name}
-                          </li>
-                        ))}
-                    </>
                   )}
+
+                  {regions.map((region) => (
+                    <li key={region.id}>
+                      <div
+                        style={{ fontWeight: "bold", cursor: "pointer" }}
+                        onClick={() => handleSelect(region, section)}
+                      >
+                        {region.name}
+                      </div>
+                      <ul style={{ paddingLeft: "1rem", margin: 0 }}>
+                        {nonRegions
+                          .filter((loc) => loc.regionId === region.id)
+                          .map((loc) => (
+                            <li key={loc.id}>
+                              <div
+                                style={{ cursor: "pointer" }}
+                                onClick={() => handleSelect(loc, section)}
+                              >
+                                {loc.name}
+                              </div>
+                            </li>
+                          ))}
+                      </ul>
+                    </li>
+                  ))}
+
+                  {nonRegions
+                    .filter((loc) => !loc.regionId)
+                    .map((loc) => (
+                      <li key={loc.id}>
+                        <div
+                          style={{ cursor: "pointer" }}
+                          onClick={() => handleSelect(loc, section)}
+                        >
+                          {loc.name}
+                        </div>
+                      </li>
+                    ))}
                 </>
               ) : list.length > 0 ? (
                 list.map((entity) => (
-                  <li
-                    key={entity.id}
-                    onClick={() => handleSelect(entity)}
-                    style={{ cursor: "pointer", outline: "none" }}
-                    tabIndex={-1}
-                  >
-                    {entity.name}
+                  <li key={entity.id}>
+                    <div
+                      style={{ cursor: "pointer" }}
+                      onClick={() => handleSelect(entity, section)}
+                    >
+                      {entity.name}
+                    </div>
                   </li>
                 ))
               ) : (

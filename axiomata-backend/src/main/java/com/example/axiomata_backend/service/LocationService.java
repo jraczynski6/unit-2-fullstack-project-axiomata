@@ -100,6 +100,16 @@ public class LocationService {
     public void delete(Long id) {
         Location location = locationRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Location not found with id " + id));
+
+        // Find children of this location
+        List<Location> children = locationRepository.findByRegionId(location.getId());
+
+        // Delete children recursively
+        for (Location child : children) {
+            delete(child.getId());
+        }
+
+        // Delete the parent location
         locationRepository.delete(location);
     }
 }
