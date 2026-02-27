@@ -8,16 +8,21 @@ export default function WorldAttributesPanel({ attributes, editable = false, onC
   // Parse incoming attributes safely
   // ==========================
   useEffect(() => {
+    console.log("Incoming attributes prop:", attributes);
+
     if (!attributes) {
       setLocalAttributes({});
     } else if (typeof attributes === "string") {
       try {
-        setLocalAttributes(JSON.parse(attributes));
+        const parsed = JSON.parse(attributes);
+        console.log("Parsed string attributes:", parsed);
+        setLocalAttributes(parsed);
       } catch (err) {
         console.error("Failed to parse attributes:", err);
         setLocalAttributes({});
       }
     } else if (typeof attributes === "object") {
+      console.log("Attributes are object:", attributes);
       setLocalAttributes(attributes);
     }
   }, [attributes]);
@@ -27,8 +32,11 @@ export default function WorldAttributesPanel({ attributes, editable = false, onC
   // ==========================
   const handleChange = (key, value) => {
     const updatedAttributes = { ...localAttributes, [key]: value };
+    console.log("Updating attribute:", key, "to value:", value);
+    console.log("Before update localAttributes:", localAttributes);
     setLocalAttributes(updatedAttributes);
     onChange?.(updatedAttributes);
+    console.log("After update localAttributes:", updatedAttributes);
   };
 
   // ==========================
@@ -37,8 +45,10 @@ export default function WorldAttributesPanel({ attributes, editable = false, onC
   const handleAddAttribute = () => {
     const newKey = `attribute_${Object.keys(localAttributes).length + 1}`;
     const updatedAttributes = { ...localAttributes, [newKey]: "" };
+    console.log("Adding new attribute:", newKey);
     setLocalAttributes(updatedAttributes);
     onChange?.(updatedAttributes);
+    console.log("After add localAttributes:", updatedAttributes);
   };
 
   // ==========================
@@ -47,8 +57,10 @@ export default function WorldAttributesPanel({ attributes, editable = false, onC
   const handleRemoveAttribute = (key) => {
     const updatedAttributes = { ...localAttributes };
     delete updatedAttributes[key];
+    console.log("Removing attribute:", key);
     setLocalAttributes(updatedAttributes);
     onChange?.(updatedAttributes);
+    console.log("After remove localAttributes:", updatedAttributes);
   };
 
   // ==========================

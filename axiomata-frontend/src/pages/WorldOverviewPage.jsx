@@ -36,8 +36,12 @@ export default function WorldOverviewPage() {
         }
       }
 
+      console.log("FETCH WORLD ATTRIBUTES:", parsedAttributes); // <-- log after parsing
+      console.log("RAW BACKEND ATTRIBUTES:", data.attributes);  // <-- log raw string from backend
+
       setWorld({ ...data, attributesObj: parsedAttributes });
       setEditedAttributes(parsedAttributes);
+      console.log("STATE SET: world.attributesObj & editedAttributes", parsedAttributes);
     } catch (err) {
       console.error("Failed to fetch world:", err);
       addToast({ message: "Failed to load world.", type: "error" });
