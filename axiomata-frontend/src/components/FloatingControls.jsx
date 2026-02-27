@@ -126,17 +126,23 @@ export default function FloatingControls({
 
   return (
     <div className="floating-controls">
-      {/* ---------- World Overview Controls ---------- */}
       {pageType === "worldOverview" && (
         <>
           <button className="control-button" onClick={handleEditWorld} disabled={isEditingProp}>
             Edit World
           </button>
+
           {isEditingProp && (
-            <button className="control-button" onClick={handleSaveWorld}>
-              Save World
-            </button>
+            <>
+              <button className="control-button" onClick={handleSaveWorld}>
+                Save World
+              </button>
+              <button className="control-button" onClick={onCancelEdit}>
+                Cancel
+              </button>
+            </>
           )}
+
           <button className="control-button" onClick={() => setConfirmDeleteWorld(true)}>
             Delete World
           </button>

@@ -2,12 +2,13 @@ package com.example.axiomata_backend.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 public class WorldResponseDto {
     private Long id;
     private String name;
     private String description;
-    private String attributes;
+    private Map<String, Object> attributes; // <-- change here
     private String username;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -18,7 +19,7 @@ public class WorldResponseDto {
     private List<ItemResponseDto> items;
 
     public WorldResponseDto(Long id, String name, String description,
-                            String attributes, String username,
+                            Map<String, Object> attributes, String username,
                             LocalDateTime createdAt, LocalDateTime updatedAt,
                             List<LocationResponseDto> locations,
                             List<FactionResponseDto> factions,
@@ -40,7 +41,7 @@ public class WorldResponseDto {
     public Long getId() { return id; }
     public String getName() { return name; }
     public String getDescription() { return description; }
-    public String getAttributes() { return attributes; }
+    public Map<String, Object> getAttributes() { return attributes; } // <-- change here
     public String getUsername() { return username; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
