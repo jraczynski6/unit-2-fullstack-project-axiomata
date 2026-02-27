@@ -10,8 +10,9 @@ import WorldAttributesPanel from "../components/WorldAttributesPanel";
 export default function WorldOverviewPage() {
   const { worldId } = useParams();
   const navigate = useNavigate();
-  const [world, setWorld] = useState(null);
   const { addToast } = useToast();
+
+  const [world, setWorld] = useState(null);
 
   // Editing state
   const [isEditingWorld, setIsEditingWorld] = useState(false);
@@ -25,8 +26,16 @@ export default function WorldOverviewPage() {
       try {
         const data = await getWorldById(worldId);
 
-        // NEW: parse attributes once and store in state
-        const parsedAttributes = data.attributes ? JSON.parse(data.attributes) : {};
+        // parse attributes safely
+        let parsedAttributes = {};
+        if (data.attributes) {
+          try {
+            parsedAttributes = JSON.parse(data.attributes);
+          } catch {
+            parsedAttributes = {};
+          }
+        }
+
         setWorld({ ...data, attributesObj: parsedAttributes });
 
         // keep editedAttributes in sync for editing
@@ -36,29 +45,34 @@ export default function WorldOverviewPage() {
         addToast({ message: "Failed to load world.", type: "error" });
       }
     };
+
     if (worldId) fetchWorld();
   }, [worldId]);
 
   // ---------------- World Controls ----------------
   const handleEditWorld = () => {
+    if (!world) return;
     setIsEditingWorld(true);
 
     setEditedName(world.name || "");
     setEditedDescription(world.description || "");
-
-    try {
-      setEditedAttributes(world.attributes ? JSON.parse(world.attributes) : {});
-    } catch {
-      setEditedAttributes({});
-    }
+    setEditedAttributes(world.attributesObj || {});
   };
 
   const handleSaveWorld = async () => {
+    if (!world) return;
+
+    // Ensure attributes are always a plain object before stringifying
+    const safeAttributes =
+      typeof editedAttributes === "object" && editedAttributes !== null
+        ? editedAttributes
+        : {};
+
     const updatedWorld = {
       ...world,
       name: editedName,
       description: editedDescription,
-      attributes: JSON.stringify(editedAttributes), // only stringify here
+      attributes: JSON.stringify(safeAttributes), // only stringify here
     };
 
     try {
@@ -67,7 +81,7 @@ export default function WorldOverviewPage() {
       // store parsed object in state for display
       setWorld({
         ...savedWorld,
-        attributesObj: editedAttributes,
+        attributesObj: safeAttributes,
       });
 
       setIsEditingWorld(false);
@@ -132,6 +146,7 @@ export default function WorldOverviewPage() {
     </div>
   );
 }
+
 // TODO: WorldOverview Panel State
 // - Implement frontend-only state tracking for collapsible panels (stats & entities)
 // - Ensure UI updates when panels are opened/closed
