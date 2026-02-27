@@ -13,7 +13,7 @@ export default function WorldAttributesPanel({ attributes, editable = false, onC
       } catch {
         setLocalAttributes({});
       }
-    } else {
+    } else if (typeof attributes === "object") {
       setLocalAttributes(attributes);
     }
   }, [attributes]);
@@ -48,25 +48,20 @@ export default function WorldAttributesPanel({ attributes, editable = false, onC
 
   return (
     <div className="world-attributes-panel">
-      {attributeEntries.map(([key, value]) => (
+      {Object.entries(localAttributes).length === 0 && <p>No attributes yet.</p>}
+
+      {Object.entries(localAttributes).map(([key, value]) => (
         <div key={key} className="attribute-row">
           {editable ? (
             <>
-              <input
-                className="attribute-key"
-                value={key}
-                disabled
-                placeholder="Key"
-              />
+              <input className="attribute-key" value={key} disabled />
               <input
                 className="attribute-value"
                 value={value}
                 onChange={(e) => handleChange(key, e.target.value)}
                 placeholder="Value"
               />
-              <button className="attribute-remove" onClick={() => handleRemoveAttribute(key)}>
-                &times;
-              </button>
+              <button onClick={() => handleRemoveAttribute(key)}>&times;</button>
             </>
           ) : (
             <>

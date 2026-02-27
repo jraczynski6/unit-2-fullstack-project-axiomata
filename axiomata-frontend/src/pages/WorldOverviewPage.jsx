@@ -10,10 +10,13 @@ import WorldAttributesPanel from "../components/WorldAttributesPanel";
 export default function WorldOverviewPage() {
   const { worldId } = useParams();
   const navigate = useNavigate();
+  const [world, setWorld] = useState(null);
   const { addToast } = useToast();
 
-  const [world, setWorld] = useState(null);
+  // Editing state
   const [isEditingWorld, setIsEditingWorld] = useState(false);
+  const [editedName, setEditedName] = useState("");
+  const [editedDescription, setEditedDescription] = useState("");
   const [editedAttributes, setEditedAttributes] = useState({});
 
   // ---------------- Fetch World ----------------
@@ -21,7 +24,13 @@ export default function WorldOverviewPage() {
     const fetchWorld = async () => {
       try {
         const data = await getWorldById(worldId);
-        setWorld(data);
+
+        // NEW: parse attributes once and store in state
+        const parsedAttributes = data.attributes ? JSON.parse(data.attributes) : {};
+        setWorld({ ...data, attributesObj: parsedAttributes });
+
+        // keep editedAttributes in sync for editing
+        setEditedAttributes(parsedAttributes);
       } catch (err) {
         console.error("Failed to fetch world:", err);
         addToast({ message: "Failed to load world.", type: "error" });
@@ -33,34 +42,69 @@ export default function WorldOverviewPage() {
   // ---------------- World Controls ----------------
   const handleEditWorld = () => {
     setIsEditingWorld(true);
-    setEditedAttributes(world?.attributes || {});
-  };
 
-  const handleSaveWorld = async () => {
-    const updatedWorld = { ...world, attributes: editedAttributes };
+    setEditedName(world.name || "");
+    setEditedDescription(world.description || "");
+
     try {
-      await updateWorld(worldId, updatedWorld);
-      setWorld(updatedWorld);             // sync frontend
-      setIsEditingWorld(false);
-      addToast({ message: "World saved successfully.", type: "success" });
-    } catch (err) {
-      console.error("Failed to save world:", err);
-      addToast({ message: "Failed to save world.", type: "error" });
+      setEditedAttributes(world.attributes ? JSON.parse(world.attributes) : {});
+    } catch {
+      setEditedAttributes({});
     }
   };
 
-  const handleCancelEdit = () => {
-    setIsEditingWorld(false);
-    setEditedAttributes(world?.attributes || {}); // revert changes
+  const handleSaveWorld = async () => {
+    const updatedWorld = {
+      ...world,
+      name: editedName,
+      description: editedDescription,
+      attributes: JSON.stringify(editedAttributes), // only stringify here
+    };
+
+    try {
+      const savedWorld = await updateWorld(worldId, updatedWorld);
+
+      // store parsed object in state for display
+      setWorld({
+        ...savedWorld,
+        attributesObj: editedAttributes,
+      });
+
+      setIsEditingWorld(false);
+      addToast({ message: "World saved successfully.", type: "success" });
+    } catch (err) {
+      console.error(err);
+      addToast({ message: "Failed to save world.", type: "error" });
+    }
   };
 
   if (!world) return <Spinner />;
 
   return (
     <div>
-      <h1>{world.name || "Unnamed World"}</h1>
-      <p>{world.description || "High-level view of a world."}</p>
+      {/* ---------------- Editable Name & Description ---------------- */}
+      {isEditingWorld ? (
+        <>
+          <input
+            type="text"
+            value={editedName}
+            onChange={(e) => setEditedName(e.target.value)}
+            placeholder="World Name"
+          />
+          <textarea
+            value={editedDescription}
+            onChange={(e) => setEditedDescription(e.target.value)}
+            placeholder="World Description"
+          />
+        </>
+      ) : (
+        <>
+          <h1>{world.name || "Unnamed World"}</h1>
+          <p>{world.description || "High-level view of a world."}</p>
+        </>
+      )}
 
+      {/* ---------------- Section Panel ---------------- */}
       <SectionPanel
         world={world}
         onSelectEntity={(entity) =>
@@ -68,23 +112,23 @@ export default function WorldOverviewPage() {
         }
       />
 
+      {/* ---------------- World Attributes Panel ---------------- */}
       <WorldAttributesPanel
-        attributes={editedAttributes}
+        attributes={isEditingWorld ? editedAttributes : world?.attributesObj || {}}
         editable={isEditingWorld}
-        onChange={setEditedAttributes}
+        onChange={(updatedAttributes) => setEditedAttributes(updatedAttributes)}
       />
 
-      {world && (
-        <FloatingControls
-          pageType="worldOverview"
-          worldId={worldId}
-          world={world} // always defined here
-          isEditingProp={isEditingWorld}
-          onEdit={handleEditWorld}
-          onSave={handleSaveWorld}
-          onCancelEdit={() => setIsEditingWorld(false)}
-        />
-      )}
+      {/* ---------------- Floating Controls ---------------- */}
+      <FloatingControls
+        pageType="worldOverview"
+        worldId={worldId}
+        world={world}
+        isEditingProp={isEditingWorld}
+        onEdit={handleEditWorld}
+        onSave={handleSaveWorld}
+        onCancelEdit={() => setIsEditingWorld(false)}
+      />
     </div>
   );
 }

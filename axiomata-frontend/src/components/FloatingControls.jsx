@@ -95,29 +95,14 @@ export default function FloatingControls({
   // ----- World Actions -----
 
   // Edit World
-  const handleEditWorld = () => console.log("Edit world clicked");
+  const handleEditWorld = () => {
+    onEdit?.(); // calls WorldOverviewPage's handleEditWorld
+  };
 
   // Save World
+  // FloatingControls.jsx
   const handleSaveWorld = async () => {
-    if (!world) {
-      console.error("Cannot save: world is undefined");
-      addToast({ message: "World data not loaded yet.", type: "error" });
-      return;
-    }
-
-    try {      
-      const body = {
-        name: world.name,
-        description: world.description,
-        attributes: JSON.stringify(world.attributes || {})
-      };
-
-      await updateWorld(worldId, body);
-      addToast({ message: "World saved successfully.", type: "success" });
-    } catch (err) {
-      console.error("Failed to save world:", err);
-      addToast({ message: "Failed to save world.", type: "error" });
-    }
+    onSave?.(); // just call parent handler
   };
 
   // Delete World
@@ -128,13 +113,26 @@ export default function FloatingControls({
 
   return (
     <div className="floating-controls">
-      {pageType === "worldOverview" ? (
+      {pageType === "worldOverview" && (
         <>
-          <button className="control-button" onClick={handleEditWorld}>Edit World</button>
-          <button className="control-button" onClick={handleSaveWorld}>Save World</button>
-          <button className="control-button" onClick={handleDeleteWorld}>Delete World</button>
+          <button className="control-button" onClick={onEdit} disabled={isEditingProp}>
+            Edit World
+          </button>
+
+          {isEditingProp && (
+            <button className="control-button" onClick={onSave}>
+              Save World
+            </button>
+          )}
+
+          <button className="control-button" onClick={handleDeleteWorld}>
+            Delete World
+          </button>
         </>
-      ) : (
+      )}
+
+      {/* Entity controls (for non-worldOverview pages) */}
+      {pageType !== "worldOverview" && (
         <>
           <button
             className="control-button"
@@ -167,10 +165,12 @@ export default function FloatingControls({
         </>
       )}
 
+      {/* Add New button always */}
       <button className="control-button" onClick={handleAddClick} disabled={isEditingProp}>
         Add New
       </button>
 
+      {/* Modals */}
       {modalOpen && (
         <AddEntityModal
           worldId={worldId}
@@ -182,7 +182,10 @@ export default function FloatingControls({
 
       {confirmOpen && selectedEntity && (
         <ConfirmModal
-          message={`Deleting this ${selectedEntity.category}${selectedEntity.children?.length ? ` and its ${selectedEntity.children.length} child entities` : ""} will remove everything. Are you sure?`}
+          message={`Deleting this ${selectedEntity.category}${selectedEntity.children?.length
+            ? ` and its ${selectedEntity.children.length} child entities`
+            : ""
+            } will remove everything. Are you sure?`}
           onConfirm={handleConfirmDelete}
           onCancel={handleCancelDelete}
         />
