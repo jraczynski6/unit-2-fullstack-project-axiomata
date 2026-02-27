@@ -93,12 +93,34 @@ export default function FloatingControls({
   };
 
   // ----- World Actions -----
+
+  // Edit World
   const handleEditWorld = () => console.log("Edit world clicked");
 
+  // Save World
   const handleSaveWorld = async () => {
-    try { await updateWorld(worldId, world); } catch (err) { console.error(err); }
+    if (!world) {
+      console.error("Cannot save: world is undefined");
+      addToast({ message: "World data not loaded yet.", type: "error" });
+      return;
+    }
+
+    try {      
+      const body = {
+        name: world.name,
+        description: world.description,
+        attributes: JSON.stringify(world.attributes || {})
+      };
+
+      await updateWorld(worldId, body);
+      addToast({ message: "World saved successfully.", type: "success" });
+    } catch (err) {
+      console.error("Failed to save world:", err);
+      addToast({ message: "Failed to save world.", type: "error" });
+    }
   };
-  
+
+  // Delete World
   const handleDeleteWorld = async () => {
     if (!confirm("Delete this world?")) return;
     try { await deleteWorld(worldId); } catch (err) { console.error(err); }

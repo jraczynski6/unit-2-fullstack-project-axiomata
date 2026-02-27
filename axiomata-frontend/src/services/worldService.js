@@ -23,7 +23,15 @@ export const createWorld = async (worldData) => {
 
 // Update an existing world
 export const updateWorld = async (worldId, worldData) => {
-  const response = await api.put(`/worlds/${worldId}`, worldData);
+  if (!worldData) throw new Error("worldData is undefined");
+
+  const body = {
+    name: worldData.name,
+    description: worldData.description,
+    attributes: JSON.stringify(worldData.attributes || {})
+  };
+
+  const response = await api.put(`/worlds/${worldId}`, body);
   return response.data;
 };
 

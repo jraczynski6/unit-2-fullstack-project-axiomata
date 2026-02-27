@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getWorldById } from "../services/worldService";
+import { getWorldById, updateWorld } from "../services/worldService";
 import SectionPanel from "../components/SectionPanel";
 import FloatingControls from "../components/FloatingControls";
 import Spinner from "../components/ui/Spinner";
@@ -10,8 +10,11 @@ import WorldAttributesPanel from "../components/WorldAttributesPanel";
 export default function WorldOverviewPage() {
   const { worldId } = useParams();
   const navigate = useNavigate();
-  const [world, setWorld] = useState(null);
   const { addToast } = useToast();
+
+  const [world, setWorld] = useState(null);
+  const [isEditingWorld, setIsEditingWorld] = useState(false);
+  const [editedAttributes, setEditedAttributes] = useState({});
 
   // ---------------- Fetch World ----------------
   useEffect(() => {
@@ -28,9 +31,28 @@ export default function WorldOverviewPage() {
   }, [worldId]);
 
   // ---------------- World Controls ----------------
-  const handleEditWorld = () => console.log("Edit world clicked");
-  const handleSaveWorld = () => console.log("Save world clicked");
-  const handleDeleteWorld = () => navigate("/dashboard");
+  const handleEditWorld = () => {
+    setIsEditingWorld(true);
+    setEditedAttributes(world?.attributes || {});
+  };
+
+  const handleSaveWorld = async () => {
+    const updatedWorld = { ...world, attributes: editedAttributes };
+    try {
+      await updateWorld(worldId, updatedWorld);
+      setWorld(updatedWorld);             // sync frontend
+      setIsEditingWorld(false);
+      addToast({ message: "World saved successfully.", type: "success" });
+    } catch (err) {
+      console.error("Failed to save world:", err);
+      addToast({ message: "Failed to save world.", type: "error" });
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditingWorld(false);
+    setEditedAttributes(world?.attributes || {}); // revert changes
+  };
 
   if (!world) return <Spinner />;
 
@@ -47,26 +69,25 @@ export default function WorldOverviewPage() {
       />
 
       <WorldAttributesPanel
-        attributes={world.attributes}
-        editable={true}
-        onChange={(updatedAttributes) => {
-          // Update world state
-          setWorld((prev) => ({ ...prev, attributes: updatedAttributes }));
-        }}
+        attributes={editedAttributes}
+        editable={isEditingWorld}
+        onChange={setEditedAttributes}
       />
 
-      <FloatingControls
-        pageType="worldOverview"
-        worldId={worldId}
-        worldData={world}
-        onEdit={handleEditWorld}
-        onSave={handleSaveWorld}
-        onDelete={handleDeleteWorld}
-      />
+      {world && (
+        <FloatingControls
+          pageType="worldOverview"
+          worldId={worldId}
+          world={world} // always defined here
+          isEditingProp={isEditingWorld}
+          onEdit={handleEditWorld}
+          onSave={handleSaveWorld}
+          onCancelEdit={() => setIsEditingWorld(false)}
+        />
+      )}
     </div>
   );
 }
-
 // TODO: WorldOverview Panel State
 // - Implement frontend-only state tracking for collapsible panels (stats & entities)
 // - Ensure UI updates when panels are opened/closed

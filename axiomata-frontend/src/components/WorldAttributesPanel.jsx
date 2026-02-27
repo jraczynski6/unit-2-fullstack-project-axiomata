@@ -1,72 +1,94 @@
 import { useState, useEffect } from "react";
-import Spinner from "./ui/Spinner";
 
-export default function WorldAttributesPanel({ world, editable = false, onChange }) {
-  const [openPanels, setOpenPanels] = useState({});
-  const [attributes, setAttributes] = useState({});
+export default function WorldAttributesPanel({ attributes, editable = false, onChange }) {
+  // Convert JSON string to object if necessary
+  const [localAttributes, setLocalAttributes] = useState({});
 
-  // ---------------- Initialize attributes ----------------
   useEffect(() => {
-    if (!world) return;
-    try {
-      const parsed = world.attributes ? JSON.parse(world.attributes) : {};
-      setAttributes(parsed);
-    } catch (err) {
-      console.error("Failed to parse world.attributes:", err);
-      setAttributes({});
+    if (!attributes) {
+      setLocalAttributes({});
+    } else if (typeof attributes === "string") {
+      try {
+        setLocalAttributes(JSON.parse(attributes));
+      } catch {
+        setLocalAttributes({});
+      }
+    } else {
+      setLocalAttributes(attributes);
     }
-  }, [world]);
+  }, [attributes]);
 
-  // ---------------- Toggle collapsible ----------------
-  const togglePanel = (key) =>
-    setOpenPanels((prev) => ({ ...prev, [key]: !prev[key] }));
-
-  // ---------------- Handle editable changes ----------------
-  const handleAttributeChange = (key, value) => {
-    setAttributes((prev) => {
-      const updated = { ...prev, [key]: value };
-      onChange?.(updated); // notify parent
-      return updated;
-    });
+  // Handle updates to a single key
+  const handleChange = (key, value) => {
+    const updatedAttributes = { ...localAttributes, [key]: value };
+    setLocalAttributes(updatedAttributes);
+    onChange?.(updatedAttributes);
   };
 
-  if (!world) return <Spinner />;
+  // Add a new attribute
+  const handleAddAttribute = () => {
+    const newKey = `attribute_${Object.keys(localAttributes).length + 1}`;
+    const updatedAttributes = { ...localAttributes, [newKey]: "" };
+    setLocalAttributes(updatedAttributes);
+    onChange?.(updatedAttributes);
+  };
 
-  const attributeKeys = Object.keys(attributes);
-  if (attributeKeys.length === 0) return <p className="no-attributes">No world attributes yet.</p>;
+  // Remove an attribute
+  const handleRemoveAttribute = (key) => {
+    const updatedAttributes = { ...localAttributes };
+    delete updatedAttributes[key];
+    setLocalAttributes(updatedAttributes);
+    onChange?.(updatedAttributes);
+  };
+
+  // Convert object to entries for display
+  const attributeEntries = Object.entries(localAttributes);
+
+  if (attributeEntries.length === 0) return <p className="world-attributes-empty">No attributes yet.</p>;
 
   return (
     <div className="world-attributes-panel">
-      {attributeKeys.map((key) => (
-        <div key={key} className="attribute-card">
-          <div
-            className="attribute-header"
-            onClick={() => togglePanel(key)}
-          >
-            {key} <span className="toggle-indicator">{openPanels[key] ? "▲" : "▼"}</span>
-          </div>
-          {openPanels[key] && (
-            <div className="attribute-content">
-              {editable ? (
-                <input
-                  type="text"
-                  value={attributes[key]}
-                  onChange={(e) => handleAttributeChange(key, e.target.value)}
-                  className="attribute-input"
-                />
-              ) : (
-                <span className="attribute-value">{attributes[key]}</span>
-              )}
-            </div>
+      {attributeEntries.map(([key, value]) => (
+        <div key={key} className="attribute-row">
+          {editable ? (
+            <>
+              <input
+                className="attribute-key"
+                value={key}
+                disabled
+                placeholder="Key"
+              />
+              <input
+                className="attribute-value"
+                value={value}
+                onChange={(e) => handleChange(key, e.target.value)}
+                placeholder="Value"
+              />
+              <button className="attribute-remove" onClick={() => handleRemoveAttribute(key)}>
+                &times;
+              </button>
+            </>
+          ) : (
+            <>
+              <span className="attribute-key">{key}:</span>
+              <span className="attribute-value">{value}</span>
+            </>
           )}
         </div>
       ))}
+
+      {editable && (
+        <button className="attribute-add" onClick={handleAddAttribute}>
+          + Add Attribute
+        </button>
+      )}
     </div>
   );
 }
-// TODO: WorldAttributesPanel
-// - Display each attribute as key/value
-// - Support inline editing in editable mode
-// - Update parent world state via onChange
-// - Graceful empty state (e.g., "No attributes yet")
-// - Plan for future grid layout / styling
+
+// ==========================
+// WorldAttributesPanel.jsx / TODO
+// ==========================
+// - Add grid-based layout in future for multiple attributes
+// - Style key/value inputs and add/remove buttons to match Axiomata theme
+// - Integrate with FloatingControls Save button for backend persistence later
