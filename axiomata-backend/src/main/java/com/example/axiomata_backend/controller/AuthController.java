@@ -58,6 +58,50 @@ public class AuthController {
         return Collections.singletonMap("token", token); // 200 OK
     }
 
+    // GET /api/auth/me - fetch currently authenticated user
+    @GetMapping("/me")
+    public Map<String, String> getCurrentUser(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
+        }
+
+        String username = authentication.getName();
+        User user = userService.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        return Map.of(
+                "username", user.getUsername(),
+                "email", user.getEmail()
+        );
+    }
+
+    // PUT /api/auth/me - Update username / password
+    @PutMapping("/me")
+    public Map<String, String> updateCurrentUser(
+            Authentication authentication,
+            @RequestBody Map<String, String> updates) {
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
+        }
+
+        String username = authentication.getName();
+        User user = userService.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        // Only update fields if provided
+        if (updates.containsKey("username")) {
+            user.setUsername(updates.get("username"));
+        }
+        if (updates.containsKey("password") && !updates.get("password").isBlank()) {
+            user.setPassword(passwordEncoder.encode(updates.get("password")));
+        }
+
+        userService.saveUser(user);
+
+        return Map.of("username", user.getUsername());
+    }
+
     // DELETE /api/auth/me - Delete currently authenticated user
     @DeleteMapping("/me")
     @ResponseStatus(HttpStatus.NO_CONTENT) // 204 No Content
