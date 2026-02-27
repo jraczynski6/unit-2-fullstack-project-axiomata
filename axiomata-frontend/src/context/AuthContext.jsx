@@ -5,8 +5,23 @@ const AuthContext = createContext(null);
 
 // Provider component wraps the app and provides auth state
 export function AuthProvider({ children }) {
-  // initialize token from localStorage if present
-  const [token, setToken] = useState(() => localStorage.getItem("token") || null);
+  // token state (hydrated on mount)
+  const [token, setToken] = useState(null);
+
+  // loading state to prevent ProtectedRoute flicker
+  const [loading, setLoading] = useState(true);
+
+  // hydrate token from localStorage on initial mount
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+
+    if (storedToken) {
+      setToken(storedToken);
+      console.log("Token restored from localStorage:", storedToken);
+    }
+
+    setLoading(false);
+  }, []);
 
   // update localStorage whenever token changes
   useEffect(() => {
@@ -35,7 +50,7 @@ export function AuthProvider({ children }) {
   const isAuthenticated = !!token;
 
   // context value provided to consumers
-  const value = { token, login, logout, isAuthenticated };
+  const value = { token, login, logout, isAuthenticated, loading };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
