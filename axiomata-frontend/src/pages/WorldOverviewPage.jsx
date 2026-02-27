@@ -169,9 +169,24 @@ export default function WorldOverviewPage() {
   );
 }
 
-// TODO: WorldOverview Panel State
-// - Implement frontend-only state tracking for collapsible panels (stats & entities)
-// - Ensure UI updates when panels are opened/closed
-// - Connect panel state to backend/state sync later
-// - Test with loading spinners, empty states, and entity list updates
-// TODO: fetchWorld failure toast – Confirm behavior after WorldOverview state syncing is fully implemented
+// ==========================
+// NON-MVP / Backlog TODOs
+// ==========================
+
+// Panel State
+// - Track collapsible section panels (Locations, Factions, Characters, Items) on the frontend
+// - Preserve open/closed state when navigating away and returning
+// - Connect panel state to backend or central store later
+
+// UI / UX Enhancements
+// - Add loading indicators for save/delete/fetch operations
+// - Improve empty state rendering for sections with no entities
+// - Optional: smoother toast notifications for fetch/save failures
+
+// Attributes / World Editing
+// - Inline validation for world name, description, and attributes
+// - Optional: undo last edit for world attributes
+
+// Fetch / Sync
+// - Confirm proper behavior when fetchWorld fails after returning to Overview
+// - Consider refactoring to reduce repeated JSON parsing of attributes
