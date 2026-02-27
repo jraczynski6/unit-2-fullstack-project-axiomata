@@ -1,4 +1,3 @@
-// src/components/EmptyState.jsx
 export default function EmptyState({ message }) {
   return (
     <div>
