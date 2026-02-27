@@ -4,11 +4,13 @@ import { getWorldById } from "../services/worldService";
 import SectionPanel from "../components/SectionPanel";
 import FloatingControls from "../components/FloatingControls";
 import Spinner from "../components/ui/Spinner";
+import { useToast } from "../context/ToastContext";
 
 export default function WorldOverviewPage() {
   const { worldId } = useParams();
   const navigate = useNavigate();
   const [world, setWorld] = useState(null);
+  const { addToast } = useToast();
 
   // ---------------- Fetch World ----------------
   useEffect(() => {
@@ -18,6 +20,7 @@ export default function WorldOverviewPage() {
         setWorld(data);
       } catch (err) {
         console.error("Failed to fetch world:", err);
+        addToast({ message: "Failed to load world.", type: "error" });
       }
     };
     if (worldId) fetchWorld();
@@ -59,3 +62,4 @@ export default function WorldOverviewPage() {
 // - Ensure UI updates when panels are opened/closed
 // - Connect panel state to backend/state sync later
 // - Test with loading spinners, empty states, and entity list updates
+// TODO: fetchWorld failure toast – Confirm behavior after WorldOverview state syncing is fully implemented

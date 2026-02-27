@@ -13,6 +13,7 @@ import {
   deleteCharacter,
   deleteItem
 } from "../services/worldService";
+import { useToast } from "../context/ToastContext";
 
 export default function FloatingControls({
   pageType,
@@ -28,6 +29,7 @@ export default function FloatingControls({
 }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const { addToast } = useToast();
 
   // ----- Add / Edit -----
   const handleAddClick = () => setModalOpen(true);
@@ -92,9 +94,11 @@ export default function FloatingControls({
 
   // ----- World Actions -----
   const handleEditWorld = () => console.log("Edit world clicked");
+
   const handleSaveWorld = async () => {
     try { await updateWorld(worldId, world); } catch (err) { console.error(err); }
   };
+  
   const handleDeleteWorld = async () => {
     if (!confirm("Delete this world?")) return;
     try { await deleteWorld(worldId); } catch (err) { console.error(err); }
@@ -164,6 +168,9 @@ export default function FloatingControls({
     </div>
   );
 }
+// FloatingControls.jsx
+// TODO: handleSaveWorld – Test toast after WorldOverview state syncing is implemented
+// TODO: handleDeleteWorld – Test toast after WorldOverview state syncing is implemented
 
 // ==========================
 // FloatingControls.jsx / NON MVP
