@@ -5,6 +5,7 @@ import SectionPanel from "../components/SectionPanel";
 import FloatingControls from "../components/FloatingControls";
 import Spinner from "../components/ui/Spinner";
 import { useToast } from "../context/ToastContext";
+import WorldAttributesPanel from "../components/WorldAttributesPanel";
 
 export default function WorldOverviewPage() {
   const { worldId } = useParams();
@@ -43,6 +44,15 @@ export default function WorldOverviewPage() {
         onSelectEntity={(entity) =>
           navigate(`/world-content/${worldId}`, { state: { selectedEntity: entity } })
         }
+      />
+
+      <WorldAttributesPanel
+        attributes={world.attributes}
+        editable={true}
+        onChange={(updatedAttributes) => {
+          // Update world state
+          setWorld((prev) => ({ ...prev, attributes: updatedAttributes }));
+        }}
       />
 
       <FloatingControls
