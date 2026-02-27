@@ -1,7 +1,18 @@
 import { useState } from "react";
 import AddEntityModal from "./AddEntityModal";
 import ConfirmModal from "./ConfirmModal";
-import { updateWorld, deleteWorld, createLocation, createFaction, createCharacter, createItem, deleteLocation, deleteFaction, deleteCharacter, deleteItem } from "../services/worldService";
+import {
+  updateWorld,
+  deleteWorld,
+  createLocation,
+  createFaction,
+  createCharacter,
+  createItem,
+  deleteLocation,
+  deleteFaction,
+  deleteCharacter,
+  deleteItem
+} from "../services/worldService";
 
 export default function FloatingControls({
   pageType,
@@ -10,7 +21,6 @@ export default function FloatingControls({
   selectedEntity,
   isEditingProp,
   onAddEntity,
-  onUpdateEntity,
   onDeleteEntity,
   onEdit,
   onSave,
@@ -24,26 +34,30 @@ export default function FloatingControls({
   const requestDeleteEntity = () => selectedEntity && setConfirmOpen(true);
   const handleCancelDelete = () => setConfirmOpen(false);
 
+  // ----- Delete -----
   const handleConfirmDelete = async () => {
     if (!selectedEntity) return;
+
+    const { category, id } = selectedEntity;
+    if (!category || !id) {
+      console.error("Cannot delete entity: category or id is undefined", selectedEntity);
+      return;
+    }
+
     try {
-      switch (selectedEntity.category) {
-        case "Location":
-          await deleteLocation(selectedEntity.id);
-          break;
-        case "Faction":
-          await deleteFaction(selectedEntity.id);
-          break;
-        case "Character":
-          await deleteCharacter(selectedEntity.id);
-          break;
-        case "Item":
-          await deleteItem(selectedEntity.id);
-          break;
+      switch (category) {
+        case "Location": await deleteLocation(id); break;
+        case "Faction": await deleteFaction(id); break;
+        case "Character": await deleteCharacter(id); break;
+        case "Item": await deleteItem(id); break;
         default:
-          throw new Error(`Unknown category: ${selectedEntity.category}`);
+          console.error("Unknown category:", category, selectedEntity);
+          return;
       }
+
+      // Update parent state
       onDeleteEntity?.();
+
     } catch (err) {
       console.error("Failed to delete entity:", err);
       alert("Failed to delete entity. Check console for details.");
@@ -52,7 +66,7 @@ export default function FloatingControls({
     }
   };
 
-  // ----- AddEntityModal submit (create only) -----
+  // ----- AddEntityModal submit -----
   const handleModalSubmit = async (entityType, data) => {
     try {
       let result;
@@ -63,7 +77,8 @@ export default function FloatingControls({
         case "Item": result = await createItem(data); break;
         default: throw new Error(`Unknown entity type: ${entityType}`);
       }
-      onAddEntity?.(result);
+      // Update parent state immediately
+      onAddEntity?.(result, entityType);
     } catch (err) {
       console.error("Failed to create entity:", err);
       alert(`Failed to create entity: ${err.message}`);
@@ -92,21 +107,48 @@ export default function FloatingControls({
         </>
       ) : (
         <>
-          <button className="control-button" onClick={onEdit} disabled={!selectedEntity || isEditingProp}>Edit</button>
-          <button className="control-button" onClick={requestDeleteEntity} disabled={!selectedEntity || isEditingProp}>Delete</button>
+          <button
+            className="control-button"
+            onClick={onEdit}
+            disabled={!selectedEntity || isEditingProp}
+          >
+            Edit
+          </button>
+
+          <button
+            className="control-button"
+            onClick={requestDeleteEntity}
+            disabled={!selectedEntity || isEditingProp}
+          >
+            Delete
+          </button>
+
           {isEditingProp && (
             <>
-              <button className="control-button" onClick={onSave} disabled={!selectedEntity}>Save</button>
+              <button
+                className="control-button"
+                onClick={onSave}
+                disabled={!selectedEntity}
+              >
+                Save
+              </button>
               <button className="control-button" onClick={onCancelEdit}>Cancel</button>
             </>
           )}
         </>
       )}
 
-      <button className="control-button" onClick={handleAddClick} disabled={isEditingProp}>Add New</button>
+      <button className="control-button" onClick={handleAddClick} disabled={isEditingProp}>
+        Add New
+      </button>
 
       {modalOpen && (
-        <AddEntityModal worldId={worldId} world={world} onClose={() => setModalOpen(false)} onSubmit={handleModalSubmit} />
+        <AddEntityModal
+          worldId={worldId}
+          world={world}
+          onClose={() => setModalOpen(false)}
+          onSubmit={handleModalSubmit}
+        />
       )}
 
       {confirmOpen && selectedEntity && (
@@ -119,8 +161,9 @@ export default function FloatingControls({
     </div>
   );
 }
+
 // ==========================
-// FloatingControls.jsx/ NON MVP
+// FloatingControls.jsx / NON MVP
 // ==========================
 // - Multi-select delete/edit for entities
 // - Bulk assign items or characters to a location/faction

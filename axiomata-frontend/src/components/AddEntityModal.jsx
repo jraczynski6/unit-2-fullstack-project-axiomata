@@ -21,9 +21,7 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
       setTypeCategory(entityToEdit.entityType || "Location");
       setName(entityToEdit.name || "");
       setDescription(entityToEdit.description || "");
-      setSubType(
-        entityToEdit.type || (entityToEdit.entityType === "Location" ? "Region" : "")
-      );
+      setSubType(entityToEdit.type || (entityToEdit.entityType === "Location" ? "Region" : ""));
       setParentRegionId(entityToEdit.regionId ?? "");
     } else if (typeCategory === "Location") {
       setSubType("Region");
@@ -32,10 +30,8 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
   }, [entityToEdit, typeCategory]);
 
   // ---------------- Handlers ----------------
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!name.trim()) {
+  const handleSubmit = () => {
+    if (!name || !name.trim()) {
       alert("Name is required.");
       return;
     }
@@ -53,7 +49,7 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
         return;
       }
       data.type = subType.trim();
-      data.regionId = subType === "Region" ? null : parentRegionId || null;
+      data.regionId = subType === "City" ? parentRegionId || null : null;
     }
 
     // ---------------- Faction ----------------
@@ -65,8 +61,12 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
       data.type = subType.trim();
     }
 
-    // Characters and Items do not require a subtype
+
+
+    // ---------------- Call parent submit ----------------
     onSubmit(typeCategory, data);
+
+    onClose();
   };
 
   return (
@@ -119,9 +119,7 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
               >
                 <option value="">-- None --</option>
                 {regions.map((r) => (
-                  <option key={r.id} value={r.id}>
-                    {r.name}
-                  </option>
+                  <option key={r.id} value={r.id}>{r.name}</option>
                 ))}
               </select>
             </div>

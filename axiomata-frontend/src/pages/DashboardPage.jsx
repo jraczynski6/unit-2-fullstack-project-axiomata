@@ -42,7 +42,4 @@ export default function DashboardPage() {
     );
 }
 // ----- WorldDashboard / WorldPanel (MVP) -----
-// TODO: List all worlds accessible to the user
-// TODO: Clicking a world navigates to /world-content/:worldId
-// TODO: Add panel auto-refresh when entities are added/edited/deleted
 // TODO: Add delete confirmation modals for entities

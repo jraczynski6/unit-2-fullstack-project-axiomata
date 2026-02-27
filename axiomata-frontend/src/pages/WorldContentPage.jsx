@@ -20,22 +20,29 @@ export default function WorldContentPage() {
   useEffect(() => {
     const fetchWorld = async () => {
       const data = await getWorldById(worldId);
-      setWorld(data);
+
+      // Attach category to each entity for frontend use
+      const withCategory = {
+        ...data,
+        locations: data.locations?.map((loc) => ({ ...loc, category: "Location" })) || [],
+        factions: data.factions?.map((f) => ({ ...f, category: "Faction" })) || [],
+        characters: data.characters?.map((c) => ({ ...c, category: "Character" })) || [],
+        items: data.items?.map((i) => ({ ...i, category: "Item" })) || []
+      };
+
+      setWorld(withCategory);
 
       const preSelected = location.state?.selectedEntity;
-      const firstItem = preSelected || data.locations?.[0] || data.factions?.[0] || data.characters?.[0] || data.items?.[0];
+      const firstItem =
+        preSelected ||
+        withCategory.locations?.[0] ||
+        withCategory.factions?.[0] ||
+        withCategory.characters?.[0] ||
+        withCategory.items?.[0];
 
       if (firstItem) {
         setSelectedItem(firstItem);
-        setSelectedCategory(
-          data.locations?.includes(firstItem)
-            ? "Location"
-            : data.factions?.includes(firstItem)
-              ? "Faction"
-              : data.characters?.includes(firstItem)
-                ? "Character"
-                : "Item"
-        );
+        setSelectedCategory(firstItem.category);
       }
     };
 
@@ -45,31 +52,48 @@ export default function WorldContentPage() {
   // ----- Add / Update / Delete -----
   const handleAddItem = (newItem, category) => {
     if (!category) return;
-    setWorld(prev => {
+    const itemWithCategory = { ...newItem, category };
+    setWorld((prev) => {
       const updatedWorld = { ...prev };
       const key = category.toLowerCase() + "s";
-      updatedWorld[key] = [...(prev[key] || []), newItem];
+      updatedWorld[key] = [...(prev[key] || []), itemWithCategory];
       return updatedWorld;
     });
+    setSelectedItem(itemWithCategory);
+    setSelectedCategory(category);
   };
 
   const handleUpdateItem = (updatedItem, category) => {
-    setWorld(prev => {
+    const itemWithCategory = { ...updatedItem, category };
+    setWorld((prev) => {
       const updatedWorld = { ...prev };
-      const key = category?.toLowerCase() + "s"; // safe check
+      const key = category.toLowerCase() + "s";
       if (updatedWorld[key]) {
-        updatedWorld[key] = updatedWorld[key].map(i => i.id === updatedItem.id ? updatedItem : i);
+        updatedWorld[key] = updatedWorld[key].map((i) =>
+          i.id === itemWithCategory.id ? itemWithCategory : i
+        );
       }
-      if (selectedItem?.id === updatedItem.id) setSelectedItem(updatedItem);
-      setDraftEntity(updatedItem); // sync draft
       return updatedWorld;
     });
+
+    // Refresh selectedItem
+    setSelectedItem(itemWithCategory);
+    setDraftEntity(itemWithCategory);
   };
 
   const handleDeleteItem = async () => {
     try {
       const data = await getWorldById(worldId);
-      setWorld(data);
+      // Re-attach category
+      const refreshed = {
+        ...data,
+        locations: data.locations?.map((loc) => ({ ...loc, category: "Location" })) || [],
+        factions: data.factions?.map((f) => ({ ...f, category: "Faction" })) || [],
+        characters: data.characters?.map((c) => ({ ...c, category: "Character" })) || [],
+        items: data.items?.map((i) => ({ ...i, category: "Item" })) || []
+      };
+      setWorld(refreshed);
+
       setSelectedItem(null);
       setSelectedCategory(null);
       setDraftEntity(null);
@@ -125,7 +149,7 @@ export default function WorldContentPage() {
     <div style={{ display: "flex", gap: "2rem" }}>
       <SectionPanel
         world={world}
-        onSelectEntity={entity => {
+        onSelectEntity={(entity) => {
           setSelectedItem(entity);
           setSelectedCategory(entity.category);
           setIsEditing(false);
