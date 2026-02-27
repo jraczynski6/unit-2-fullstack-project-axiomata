@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { getWorldById, updateWorld } from "../services/worldService";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { getWorldById, updateWorld, deleteWorld } from "../services/worldService";
 import SectionPanel from "../components/SectionPanel";
 import FloatingControls from "../components/FloatingControls";
 import Spinner from "../components/ui/Spinner";
@@ -10,6 +10,7 @@ import WorldAttributesPanel from "../components/WorldAttributesPanel";
 export default function WorldOverviewPage() {
   const { worldId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { addToast } = useToast();
 
   const [world, setWorld] = useState(null);
@@ -21,48 +22,49 @@ export default function WorldOverviewPage() {
   const [editedAttributes, setEditedAttributes] = useState({});
 
   // ---------------- Fetch World ----------------
-  useEffect(() => {
-    const fetchWorld = async () => {
-      try {
-        const data = await getWorldById(worldId);
+  const fetchWorld = async () => {
+    try {
+      const data = await getWorldById(worldId);
 
-        // parse attributes safely
-        let parsedAttributes = {};
-        if (data.attributes) {
-          try {
-            parsedAttributes = JSON.parse(data.attributes);
-          } catch {
-            parsedAttributes = {};
-          }
+      // parse attributes safely
+      let parsedAttributes = {};
+      if (data.attributes) {
+        try {
+          parsedAttributes = JSON.parse(data.attributes);
+        } catch {
+          parsedAttributes = {};
         }
-
-        setWorld({ ...data, attributesObj: parsedAttributes });
-
-        // keep editedAttributes in sync for editing
-        setEditedAttributes(parsedAttributes);
-      } catch (err) {
-        console.error("Failed to fetch world:", err);
-        addToast({ message: "Failed to load world.", type: "error" });
       }
-    };
 
+      setWorld({ ...data, attributesObj: parsedAttributes });
+      setEditedAttributes(parsedAttributes);
+    } catch (err) {
+      console.error("Failed to fetch world:", err);
+      addToast({ message: "Failed to load world.", type: "error" });
+    }
+  };
+
+  // Refetch on mount
+  useEffect(() => {
     if (worldId) fetchWorld();
-  }, [worldId]);
+  }, [worldId, location.key]);
+
 
   // ---------------- World Controls ----------------
+
+  // Edit World
   const handleEditWorld = () => {
     if (!world) return;
     setIsEditingWorld(true);
-
     setEditedName(world.name || "");
     setEditedDescription(world.description || "");
     setEditedAttributes(world.attributesObj || {});
   };
 
+  // Save World
   const handleSaveWorld = async () => {
     if (!world) return;
 
-    // Ensure attributes are always a plain object before stringifying
     const safeAttributes =
       typeof editedAttributes === "object" && editedAttributes !== null
         ? editedAttributes
@@ -72,18 +74,16 @@ export default function WorldOverviewPage() {
       ...world,
       name: editedName,
       description: editedDescription,
-      attributes: JSON.stringify(safeAttributes), // only stringify here
+      attributes: JSON.stringify(safeAttributes),
     };
 
     try {
       const savedWorld = await updateWorld(worldId, updatedWorld);
 
-      // store parsed object in state for display
       setWorld({
         ...savedWorld,
         attributesObj: safeAttributes,
       });
-
       setIsEditingWorld(false);
       addToast({ message: "World saved successfully.", type: "success" });
     } catch (err) {
@@ -92,7 +92,27 @@ export default function WorldOverviewPage() {
     }
   };
 
+  // Delete World
+  const handleDeleteWorld = async () => {
+    try {
+      await deleteWorld(worldId);
+      navigate("/dashboard");
+    } catch (err) {
+      console.error(err);
+      addToast({ message: "Failed to delete world.", type: "error" });
+    }
+  };
+
+  // ---------------- Entity Controls ----------------
+
+  // Add Entity
+  const handleAddEntity = async (entityType) => {
+    // Navigate immediately to content page to create entity
+    navigate(`/world-content/${worldId}`);
+  };
+
   if (!world) return <Spinner />;
+
 
   return (
     <div>
@@ -142,6 +162,8 @@ export default function WorldOverviewPage() {
         onEdit={handleEditWorld}
         onSave={handleSaveWorld}
         onCancelEdit={() => setIsEditingWorld(false)}
+        onAddEntity={handleAddEntity}
+        onDeleteWorld={handleDeleteWorld}
       />
     </div>
   );
