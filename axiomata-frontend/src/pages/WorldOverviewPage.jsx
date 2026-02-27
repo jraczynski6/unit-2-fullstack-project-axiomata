@@ -52,3 +52,9 @@ export default function WorldOverviewPage() {
     </div>
   );
 }
+
+// TODO: WorldOverview Panel State
+// - Implement frontend-only state tracking for collapsible panels (stats & entities)
+// - Ensure UI updates when panels are opened/closed
+// - Connect panel state to backend/state sync later
+// - Test with loading spinners, empty states, and entity list updates

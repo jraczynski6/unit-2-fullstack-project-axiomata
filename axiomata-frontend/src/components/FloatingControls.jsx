@@ -77,8 +77,11 @@ export default function FloatingControls({
         case "Item": result = await createItem(data); break;
         default: throw new Error(`Unknown entity type: ${entityType}`);
       }
+
+      const entityWithCategory = { ...result, category: entityType };
+
       // Update parent state immediately
-      onAddEntity?.(result, entityType);
+      onAddEntity?.(entityWithCategory, entityType);
     } catch (err) {
       console.error("Failed to create entity:", err);
       alert(`Failed to create entity: ${err.message}`);
