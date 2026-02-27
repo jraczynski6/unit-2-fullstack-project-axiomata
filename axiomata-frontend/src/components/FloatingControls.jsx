@@ -176,6 +176,16 @@ export default function FloatingControls({
         </>
       )}
 
+      {pageType !== "worldOverview" && (
+        <button
+          className="control-button"
+          onClick={() => navigate(`/world-overview/${worldId}`)}
+          disabled={isEditingProp}
+        >
+          Back to Overview
+        </button>
+      )}
+
       {/* ---------- Add New (WorldContent/Overview) ---------- */}
       <button className="control-button" onClick={handleAddClick} disabled={isEditingProp}>
         Add New
