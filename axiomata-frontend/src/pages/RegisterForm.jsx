@@ -10,8 +10,30 @@ export default function RegisterForm({ onSuccess }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
 
+  const validate = () => {
+    if (!username.trim()) return "Username cannot be blank";
+    if (username.length < 3 || username.length > 50)
+      return "Username must be between 3 and 50 characters";
+    if (!email.trim()) return "Email cannot be blank";
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) return "Email must be valid";
+    if (!password) return "Password cannot be blank";
+    if (password.length < 6 || password.length > 100)
+      return "Password must be between 6 and 100 characters";
+    if (password !== confirmPassword) return "Passwords do not match";
+    return null;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
+
+    const validationError = validate();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     try {
       console.log("Submitting register form...", { username, email, password });
 
