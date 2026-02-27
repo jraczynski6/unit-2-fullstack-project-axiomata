@@ -3,6 +3,8 @@ package com.example.axiomata_backend.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import java.util.Map;
+
 public class WorldRequestDto {
 
     @NotBlank(message = "World name cannot be blank")
@@ -12,12 +14,11 @@ public class WorldRequestDto {
     @Size(max = 500, message = "Description must be at most 500 characters")
     private String description;
 
-    @Size(max = 5000, message = "Attributes JSON must be at most 5000 characters")
-    private String attributes; // JSON string
+    private Map<String, Object> attributes; // <-- change here
 
     public WorldRequestDto() {}
 
-    public WorldRequestDto(String name, String description, String attributes) {
+    public WorldRequestDto(String name, String description, Map<String, Object> attributes) {
         this.name = name;
         this.description = description;
         this.attributes = attributes;
@@ -29,6 +30,6 @@ public class WorldRequestDto {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    public String getAttributes() { return attributes; }
-    public void setAttributes(String attributes) { this.attributes = attributes; }
+    public Map<String, Object> getAttributes() { return attributes; }
+    public void setAttributes(Map<String, Object> attributes) { this.attributes = attributes; }
 }

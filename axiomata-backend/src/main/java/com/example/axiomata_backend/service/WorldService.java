@@ -7,8 +7,12 @@ import com.example.axiomata_backend.model.*;
 import com.example.axiomata_backend.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -16,6 +20,7 @@ public class WorldService {
 
     private final WorldRepository worldRepository;
     private final UserRepository userRepository;
+    private final ObjectMapper objectMapper = new ObjectMapper(); // for JSON serialization
 
     public WorldService(WorldRepository worldRepository, UserRepository userRepository) {
         this.worldRepository = worldRepository;
@@ -24,7 +29,6 @@ public class WorldService {
 
     @Transactional
     public WorldResponseDto createWorld(Long userId, WorldRequestDto request) {
-
         if (request.getName() == null || request.getName().trim().isEmpty()) {
             throw new IllegalArgumentException("World name cannot be blank");
         }
@@ -36,14 +40,13 @@ public class WorldService {
         world.setUser(user);
         world.setName(request.getName());
         world.setDescription(request.getDescription());
-        world.setAttributes(request.getAttributes());
+        world.setAttributes(convertAttributesToJson(request.getAttributes()));
 
         return mapToResponseDto(worldRepository.save(world));
     }
 
     @Transactional
     public WorldResponseDto updateWorld(Long worldId, WorldRequestDto request) {
-
         if (request.getName() == null || request.getName().trim().isEmpty()) {
             throw new IllegalArgumentException("World name cannot be blank");
         }
@@ -53,7 +56,7 @@ public class WorldService {
 
         world.setName(request.getName());
         world.setDescription(request.getDescription());
-        world.setAttributes(request.getAttributes());
+        world.setAttributes(convertAttributesToJson(request.getAttributes()));
 
         return mapToResponseDto(world);
     }
@@ -93,6 +96,16 @@ public class WorldService {
     }
 
     private WorldResponseDto mapToResponseDto(World world) {
+        // parse JSON attributes to Map for frontend
+        Map<String, Object> parsedAttributes = new HashMap<>();
+        if (world.getAttributes() != null && !world.getAttributes().isEmpty()) {
+            try {
+                parsedAttributes = objectMapper.readValue(world.getAttributes(), Map.class);
+            } catch (Exception e) {
+                System.err.println("Failed to parse attributes for world " + world.getId());
+            }
+        }
+
         List<LocationResponseDto> locations = world.getLocations().stream().map(LocationResponseDto::new).collect(Collectors.toList());
         List<FactionResponseDto> factions = world.getFactions().stream().map(FactionResponseDto::new).collect(Collectors.toList());
         List<CharacterResponseDto> characters = world.getCharacters().stream().map(CharacterResponseDto::new).collect(Collectors.toList());
@@ -102,7 +115,7 @@ public class WorldService {
                 world.getId(),
                 world.getName(),
                 world.getDescription(),
-                world.getAttributes(),
+                parsedAttributes, // send as Map
                 world.getUser().getUsername(),
                 world.getCreatedAt(),
                 world.getUpdatedAt(),
@@ -112,19 +125,14 @@ public class WorldService {
                 items
         );
     }
-}
-/*
-==========================
-Axiomata Backend TODOs
-==========================
 
-==========================
-Critical Backend TODOs (Required Before Frontend)
-==========================
-TODO: (Optional): Add authentication error handling (401/403) with JSON messages
-      - Ownership checks already enforce security;
-==========================
-Remaining Backend TODOs (Phase 2)
-==========================
-TODO: Design Misc container handling strategy for orphaned entities (Phase 2)
-*/
+    // helper to serialize attributes map to JSON string
+    private String convertAttributesToJson(Map<String, Object> attributes) {
+        if (attributes == null || attributes.isEmpty()) return "{}";
+        try {
+            return objectMapper.writeValueAsString(attributes);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to serialize attributes", e);
+        }
+    }
+}

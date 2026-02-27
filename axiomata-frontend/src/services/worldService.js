@@ -17,13 +17,25 @@ export const getWorldById = async (worldId) => {
 
 // Create a new world
 export const createWorld = async (worldData) => {
-  const response = await api.post("/worlds", worldData);
+  const response = await api.post("/worlds", {
+    name: worldData.name,
+    description: worldData.description,
+    attributes: worldData.attributes || {} // send as object
+  });
   return response.data;
 };
 
 // Update an existing world
 export const updateWorld = async (worldId, worldData) => {
-  const response = await api.put(`/worlds/${worldId}`, worldData);
+  if (!worldData) throw new Error("worldData is undefined");
+
+  const body = {
+    name: worldData.name,
+    description: worldData.description,
+    attributes: worldData.attributes || {} // <-- no stringify
+  };
+
+  const response = await api.put(`/worlds/${worldId}`, body);
   return response.data;
 };
 
@@ -96,10 +108,3 @@ export const deleteItem = async (itemId) => {
   const response = await api.delete(`/items/${itemId}`);
   return response.data;
 };
-// ==========================
-// Backend / worldService.js / NON MVP
-// ==========================
-// - Backend validation for type changes that may break relationships
-// - Soft-delete implementation to recover deleted entities
-// - Track revisions / history for entities (optional)
-// - Handle orphaned children when parent entity is deleted or type-changed

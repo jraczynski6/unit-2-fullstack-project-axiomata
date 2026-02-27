@@ -1,27 +1,34 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createWorld } from "../services/worldService";
+import { useToast } from "../context/ToastContext";
 
 export default function CreateWorldPage() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { addToast } = useToast();
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
 
     try {
       const newWorld = await createWorld({ name, description });
-      console.log("World Created:", newWorld);
+
+      // Toast success
+      addToast({ message: `World "${newWorld.name}" created successfully!`, type: "success" });
+
+      // Navigate to the overview page
       navigate(`/world-overview/${newWorld.id}`);
     } catch (err) {
       console.error("Failed to create world:", err);
-      setError("Failed to create world. Please try again.");
+
+      // Toast error
+      addToast({ message: "Failed to create world. Please try again.", type: "error" });
     } finally {
       setLoading(false);
     }

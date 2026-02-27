@@ -9,74 +9,81 @@ import WorldOverviewPage from "./pages/WorldOverviewPage";
 import WorldContentPage from "./pages/WorldContentPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
+import { ToastProvider } from "./context/ToastContext";
+import ToastContainer from "./components/ui/ToastContainer";
 
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        {/* Public Pages */}
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/auth" element={<AuthPage />} />
-        <Route path="/about" element={<AboutPage />} />
+      <ToastProvider>
+        {/* ToastContainer must be inside the provider */}
+        <ToastContainer />
 
-        {/* Protected Route */}
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Layout>
-                <DashboardPage />
-              </Layout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/account"
-          element={
-            <ProtectedRoute>
-              <Layout>
-                <AccountPage />
-              </Layout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/create-world"
-          element={
-            <ProtectedRoute>
-              <Layout>
-                <CreateWorldPage />
-              </Layout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/world-overview/:worldId"
-          element={
-            <ProtectedRoute>
-              <Layout>
-                <WorldOverviewPage />
-              </Layout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/world-content/:worldId"
-          element={
-            <ProtectedRoute>
-              <Layout>
-                <WorldContentPage />
-              </Layout>
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
+        <Routes>
+          {/* Public Pages */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/about" element={<AboutPage />} />
+
+          {/* Protected Routes */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <DashboardPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/account"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <AccountPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/create-world"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <CreateWorldPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/world-overview/:worldId"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <WorldOverviewPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/world-content/:worldId"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <WorldContentPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </ToastProvider>
     </BrowserRouter>
-  )
+  );
 }
 
-export default App
+export default App;
 
 // ----- App / Vite Setup -----
 // TODO: Verify Vite React app builds and runs

@@ -4,8 +4,11 @@ import { getWorldById, updateLocation, updateFaction, updateCharacter, updateIte
 import EntityCard from "../components/EntityCard";
 import SectionPanel from "../components/SectionPanel";
 import FloatingControls from "../components/FloatingControls";
+import Spinner from "../components/ui/Spinner";
+import { useToast } from "../context/ToastContext";
 
 export default function WorldContentPage() {
+  const { addToast } = useToast();
   const location = useLocation();
   const { worldId } = useParams();
   const [world, setWorld] = useState(null);
@@ -61,6 +64,9 @@ export default function WorldContentPage() {
     });
     setSelectedItem(itemWithCategory);
     setSelectedCategory(category);
+
+    // Toast
+    addToast({ message: `${category} created successfully!`, type: "success" });
   };
 
   const handleUpdateItem = (updatedItem, category) => {
@@ -84,7 +90,6 @@ export default function WorldContentPage() {
   const handleDeleteItem = async () => {
     try {
       const data = await getWorldById(worldId);
-      // Re-attach category
       const refreshed = {
         ...data,
         locations: data.locations?.map((loc) => ({ ...loc, category: "Location" })) || [],
@@ -98,8 +103,16 @@ export default function WorldContentPage() {
       setSelectedCategory(null);
       setDraftEntity(null);
       setIsEditing(false);
+      addToast({
+        message: `${selectedCategory} deleted successfully!`,
+        type: "error"
+      });
     } catch (err) {
       console.error("Failed to refresh world after deletion:", err);
+      addToast({
+        message: `Failed to delete ${selectedCategory}.`,
+        type: "error"
+      });
     }
   };
 
@@ -130,20 +143,29 @@ export default function WorldContentPage() {
         default:
           throw new Error("Unknown category");
       }
+
       handleUpdateItem(updatedItem, selectedCategory);
       setIsEditing(false);
+
+      // Toast success
+      addToast({ message: `${selectedCategory} saved successfully!`, type: "success" });
     } catch (err) {
       console.error("Failed to save entity:", err);
-      alert("Save failed. Check console for details.");
+
+      // Toast error instead of alert
+      addToast({ message: `Failed to save ${selectedCategory}.`, type: "error" });
     }
   };
 
   const handleCancelEdit = () => {
     setDraftEntity(null);
     setIsEditing(false);
+
+    // Optional toast for cancel
+    addToast({ message: `${selectedCategory} edit canceled.`, type: "info" });
   };
 
-  if (!world) return <div>Loading world...</div>;
+  if (!world) return <Spinner />;
 
   return (
     <div style={{ display: "flex", gap: "2rem" }}>
