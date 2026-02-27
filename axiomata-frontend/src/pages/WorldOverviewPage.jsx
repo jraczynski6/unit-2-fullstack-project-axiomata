@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getWorldById } from "../services/worldService";
 import SectionPanel from "../components/SectionPanel";
 import FloatingControls from "../components/FloatingControls";
+import Spinner from "../components/ui/Spinner";
 
 export default function WorldOverviewPage() {
   const { worldId } = useParams();
@@ -27,7 +28,7 @@ export default function WorldOverviewPage() {
   const handleSaveWorld = () => console.log("Save world clicked");
   const handleDeleteWorld = () => navigate("/dashboard");
 
-  if (!world) return <div>Loading world...</div>;
+  if (!world) return <Spinner />;
 
   return (
     <div>

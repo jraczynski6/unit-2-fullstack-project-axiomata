@@ -4,6 +4,7 @@ import { getWorldById, updateLocation, updateFaction, updateCharacter, updateIte
 import EntityCard from "../components/EntityCard";
 import SectionPanel from "../components/SectionPanel";
 import FloatingControls from "../components/FloatingControls";
+import Spinner from "../components/ui/Spinner";
 
 export default function WorldContentPage() {
   const location = useLocation();
@@ -143,7 +144,7 @@ export default function WorldContentPage() {
     setIsEditing(false);
   };
 
-  if (!world) return <div>Loading world...</div>;
+  if (!world) return <Spinner />;
 
   return (
     <div style={{ display: "flex", gap: "2rem" }}>
