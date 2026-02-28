@@ -74,6 +74,11 @@ export default function WorldOverviewPage() {
   const handleSaveWorld = async () => {
     if (!world) return;
 
+    if (hasErrors) {
+      addToast({ message: "Cannot save: fix invalid fields first.", type: "error" });
+      return;
+    }
+
     const updatedWorld = {
       ...world,
       name: editedName,

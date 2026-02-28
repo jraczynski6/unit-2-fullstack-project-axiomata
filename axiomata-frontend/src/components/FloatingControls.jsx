@@ -15,7 +15,6 @@ import {
 } from "../services/worldService";
 import { useToast } from "../context/ToastContext";
 
-
 export default function FloatingControls({
   pageType,
   worldId,
@@ -32,8 +31,9 @@ export default function FloatingControls({
   const { addToast } = useToast();
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [confirmOpen, setConfirmOpen] = useState(false); // for entity deletion
-  const [confirmDeleteWorld, setConfirmDeleteWorld] = useState(false); // for world deletion
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmDeleteWorld, setConfirmDeleteWorld] = useState(false);
+
 
   // ==========================
   // Add / Create Entity
@@ -103,7 +103,6 @@ export default function FloatingControls({
     }
   };
 
-
   // ==========================
   // World Actions (Overview only)
   // ==========================
@@ -126,6 +125,7 @@ export default function FloatingControls({
 
   return (
     <div className="floating-controls">
+      {/* ---------- World Overview Controls ---------- */}
       {pageType === "worldOverview" && (
         <>
           <button className="control-button" onClick={handleEditWorld} disabled={isEditingProp}>
@@ -179,20 +179,18 @@ export default function FloatingControls({
               <button className="control-button" onClick={onCancelEdit}>Cancel</button>
             </>
           )}
+
+          <button
+            className="control-button"
+            onClick={() => navigate(`/world-overview/${worldId}`)}
+            disabled={isEditingProp}
+          >
+            Back to Overview
+          </button>
         </>
       )}
 
-      {pageType !== "worldOverview" && (
-        <button
-          className="control-button"
-          onClick={() => navigate(`/world-overview/${worldId}`)}
-          disabled={isEditingProp}
-        >
-          Back to Overview
-        </button>
-      )}
-
-      {/* ---------- Add New (WorldContent/Overview) ---------- */}
+      {/* ---------- Add New ---------- */}
       <button className="control-button" onClick={handleAddClick} disabled={isEditingProp}>
         Add New
       </button>
@@ -207,13 +205,12 @@ export default function FloatingControls({
         />
       )}
 
-      {/* Confirm deletion modals */}
+      {/* ---------- Confirm Deletion Modals ---------- */}
       {confirmOpen && selectedEntity && (
         <ConfirmModal
           message={`Deleting this ${selectedEntity.category}${selectedEntity.children?.length
             ? ` and its ${selectedEntity.children.length} child entities`
-            : ""
-            } will remove everything. Are you sure?`}
+            : ""} will remove everything. Are you sure?`}
           onConfirm={handleConfirmDeleteEntity}
           onCancel={handleCancelDelete}
         />
@@ -230,16 +227,7 @@ export default function FloatingControls({
   );
 }
 
-// FloatingControls.jsx
-// TODO: handleSaveWorld – Test toast after WorldOverview state syncing is implemented
-// TODO: handleDeleteWorld – Test toast after WorldOverview state syncing is implemented
 
-// ==========================
-// FloatingControls.jsx / NON MVP
-// ==========================
-// - Multi-select delete/edit for entities
-// - Bulk assign items or characters to a location/faction
-// - Frontend validation for missing required fields on create/edit
-// - Improved UI feedback for CRUD operations: loading, success, error states
-// - Inline editing confirmation before save
-// - Debounced auto-save for entity edits (optional optimization)
+
+
+

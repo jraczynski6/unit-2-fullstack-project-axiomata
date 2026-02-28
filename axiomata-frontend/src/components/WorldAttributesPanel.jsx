@@ -1,19 +1,30 @@
 import { useState, useEffect } from "react";
 
-export default function WorldAttributesPanel({ attributes, editable = false, onChange }) {
+export default function WorldAttributesPanel({ attributes, editable = false, onChange, onValidationChange }) {
   const [localAttributes, setLocalAttributes] = useState({});
   const [collapsed, setCollapsed] = useState(false);
 
   // --------------------- Sync with props ---------------------
   useEffect(() => {
     setLocalAttributes(attributes || {});
+    validateAttributes(attributes || {});
   }, [attributes]);
+
+  // --------------------- Validate Attributes ---------------------
+  const validateAttributes = (attrs) => {
+    const errors = {};
+    Object.entries(attrs).forEach(([key, value]) => {
+      errors[key] = (!key || !value || !value.trim()) ? "Key and Value required" : null;
+    });
+    onValidationChange?.(errors);
+  };
 
   // --------------------- Update a value ---------------------
   const handleChangeValue = (key, value) => {
     const updatedAttributes = { ...localAttributes, [key]: value };
     setLocalAttributes(updatedAttributes);
     onChange?.(updatedAttributes);
+    validateAttributes(updatedAttributes);
   };
 
   // --------------------- Update a key ---------------------
@@ -26,6 +37,7 @@ export default function WorldAttributesPanel({ attributes, editable = false, onC
 
     setLocalAttributes(updatedAttributes);
     onChange?.(updatedAttributes);
+    validateAttributes(updatedAttributes);
   };
 
   // --------------------- Add a new attribute ---------------------
@@ -34,6 +46,7 @@ export default function WorldAttributesPanel({ attributes, editable = false, onC
     const updatedAttributes = { ...localAttributes, [newKey]: "" };
     setLocalAttributes(updatedAttributes);
     onChange?.(updatedAttributes);
+    validateAttributes(updatedAttributes);
   };
 
   // --------------------- Remove an attribute ---------------------
@@ -42,6 +55,7 @@ export default function WorldAttributesPanel({ attributes, editable = false, onC
     delete updatedAttributes[key];
     setLocalAttributes(updatedAttributes);
     onChange?.(updatedAttributes);
+    validateAttributes(updatedAttributes);
   };
 
   // --------------------- Display ---------------------
@@ -65,6 +79,7 @@ export default function WorldAttributesPanel({ attributes, editable = false, onC
                   className="attribute-key"
                   value={key}
                   onChange={(e) => handleChangeKey(key, e.target.value)}
+                  placeholder="Key"
                 />
                 <input
                   className="attribute-value"
@@ -72,6 +87,9 @@ export default function WorldAttributesPanel({ attributes, editable = false, onC
                   onChange={(e) => handleChangeValue(key, e.target.value)}
                   placeholder="Value"
                 />
+                {(!key || !value || !value.trim()) && (
+                  <span className="error-text">Key & Value required</span>
+                )}
                 <button onClick={() => handleRemoveAttribute(key)}>&times;</button>
               </>
             ) : (
@@ -92,10 +110,7 @@ export default function WorldAttributesPanel({ attributes, editable = false, onC
   );
 }
 
-// ==========================
 // WorldAttributesPanel.jsx / TODO
-// ==========================
-// - Add grid-based layout in future for multiple attributes
-// - Style key/value inputs and add/remove buttons to match Axiomata theme
-// - Integrate with FloatingControls Save button for backend persistence later
-// - Panel is collapsible to reduce clutter
+// TODO: Add grid-based layout in future for multiple attributes
+
+
