@@ -21,6 +21,13 @@ export default function WorldOverviewPage() {
   const [editedDescription, setEditedDescription] = useState("");
   const [editedAttributes, setEditedAttributes] = useState({});
 
+  // Validation state
+  const [validationErrors, setValidationErrors] = useState({
+    name: null,
+    description: null,
+    attributes: {}
+  });
+
   // ---------------- Fetch World ----------------
   const fetchWorld = async () => {
     try {
@@ -48,6 +55,11 @@ export default function WorldOverviewPage() {
     setEditedName(world.name || "");
     setEditedDescription(world.description || "");
     setEditedAttributes(world.attributesObj || {});
+    setValidationErrors({
+      name: world.name ? null : "Name is required",
+      description: null,
+      attributes: {}
+    });
   };
 
   const handleCancelEditWorld = () => {
@@ -56,6 +68,7 @@ export default function WorldOverviewPage() {
     setEditedDescription(world.description || "");
     setEditedAttributes(world.attributesObj || {});
     setIsEditingWorld(false);
+    setValidationErrors({ name: null, description: null, attributes: {} });
   };
 
   const handleSaveWorld = async () => {
@@ -65,7 +78,7 @@ export default function WorldOverviewPage() {
       ...world,
       name: editedName,
       description: editedDescription,
-      attributes: editedAttributes, // <-- now an object
+      attributes: editedAttributes
     };
 
     try {
@@ -73,6 +86,7 @@ export default function WorldOverviewPage() {
       setWorld({ ...savedWorld, attributesObj: editedAttributes });
       setIsEditingWorld(false);
       addToast({ message: "World saved successfully.", type: "success" });
+      setValidationErrors({ name: null, description: null, attributes: {} });
     } catch (err) {
       console.error(err);
       addToast({ message: "Failed to save world.", type: "error" });
@@ -95,6 +109,13 @@ export default function WorldOverviewPage() {
 
   if (!world) return <Spinner />;
 
+  // --------------------- Validation --------------------
+  const hasErrors =
+    Boolean(validationErrors.name) ||
+    Boolean(validationErrors.description) ||
+    Object.keys(validationErrors.attributes).some(k => validationErrors.attributes[k]);
+
+
   return (
     <div>
       {/* Editable Name & Description */}
@@ -103,14 +124,29 @@ export default function WorldOverviewPage() {
           <input
             type="text"
             value={editedName}
-            onChange={(e) => setEditedName(e.target.value)}
+            onChange={(e) => {
+              setEditedName(e.target.value);
+              setValidationErrors(prev => ({
+                ...prev,
+                name: e.target.value.trim() ? null : "Name is required"
+              }));
+            }}
             placeholder="World Name"
           />
+          {validationErrors.name && <span className="error-text">{validationErrors.name}</span>}
+
           <textarea
             value={editedDescription}
-            onChange={(e) => setEditedDescription(e.target.value)}
+            onChange={(e) => {
+              setEditedDescription(e.target.value);
+              setValidationErrors(prev => ({
+                ...prev,
+                description: null // optional field
+              }));
+            }}
             placeholder="World Description"
           />
+          {validationErrors.description && <span className="error-text">{validationErrors.description}</span>}
         </>
       ) : (
         <>
@@ -132,6 +168,9 @@ export default function WorldOverviewPage() {
         attributes={isEditingWorld ? editedAttributes : world?.attributesObj || {}}
         editable={isEditingWorld}
         onChange={(updatedAttributes) => setEditedAttributes(updatedAttributes)}
+        onValidationChange={(errors) =>
+          setValidationErrors(prev => ({ ...prev, attributes: errors }))
+        }
       />
 
       {/* Floating Controls */}
@@ -140,6 +179,7 @@ export default function WorldOverviewPage() {
         worldId={worldId}
         world={world}
         isEditingProp={isEditingWorld}
+        hasErrors={hasErrors}
         onEdit={handleEditWorld}
         onSave={handleSaveWorld}
         onCancelEdit={handleCancelEditWorld}
