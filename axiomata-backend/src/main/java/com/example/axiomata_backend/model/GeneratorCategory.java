@@ -21,7 +21,7 @@ public class GeneratorCategory {
 
     // One category can have many entities, cascade delete
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<com.axiomata.worldgen.models.GeneratorEntity> entities;
+    private List<com.example.axiomata_backend.model.GeneratorEntity> entities;
 
     // Constructors
 
@@ -59,11 +59,11 @@ public class GeneratorCategory {
         this.description = description;
     }
 
-    public List<com.axiomata.worldgen.models.GeneratorEntity> getEntities() {
+    public List<com.example.axiomata_backend.model.GeneratorEntity> getEntities() {
         return entities;
     }
 
-    public void setEntities(List<com.axiomata.worldgen.models.GeneratorEntity> entities) {
+    public void setEntities(List<com.example.axiomata_backend.model.GeneratorEntity> entities) {
         this.entities = entities;
     }
 }
