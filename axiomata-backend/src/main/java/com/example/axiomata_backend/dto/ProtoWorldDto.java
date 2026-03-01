@@ -2,7 +2,7 @@ package com.example.axiomata_backend.dto;
 
 import java.util.Map;
 
-public class ProtoWorldDTO {
+public class ProtoWorldDto {
 
     private String worldName;
     private String description;
