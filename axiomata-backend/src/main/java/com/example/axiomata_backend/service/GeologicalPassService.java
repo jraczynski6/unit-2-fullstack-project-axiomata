@@ -5,13 +5,13 @@ import com.example.axiomata_backend.model.GeneratorCategory;
 import com.example.axiomata_backend.model.GeneratorEntity;
 import com.example.axiomata_backend.repository.GeneratorCategoryRepository;
 import com.example.axiomata_backend.repository.GeneratorEntityRepository;
+import com.example.axiomata_backend.util.WeightedRandomUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 @Service
 public class GeologicalPassService {
@@ -22,9 +22,7 @@ public class GeologicalPassService {
     @Autowired
     private GeneratorEntityRepository generatorEntityRepository;
 
-    private Random random = new Random();
-
-    // overrides, default to weight = 1
+    // Weight override maps
     private static final Map<String, Map<String, Double>> WORLD_SIZE_TO_TECTONICS = Map.of(
             "tiny", Map.of("stable", 3.0),
             "small", Map.of("stable", 1.5),
@@ -38,6 +36,7 @@ public class GeologicalPassService {
             "active", Map.of("gems", 3.0)
     );
 
+    // Apply geological pass to proto.attributes, rolling attributes in sequence with dependencies
     public ProtoWorldDto apply(ProtoWorldDto proto) {
         // Step 1: WORLD_SIZE
         GeneratorEntity worldSize = rollAttribute("WORLD_SIZE", null, null);
@@ -54,7 +53,7 @@ public class GeologicalPassService {
         return proto;
     }
 
-
+    // Roll an attribute for a given category
     private GeneratorEntity rollAttribute(String categoryName, GeneratorEntity previous, Map<String, Map<String, Double>> weightMap) {
         GeneratorCategory category = generatorCategoryRepository.findByName(categoryName);
         if (category == null) {
@@ -66,13 +65,12 @@ public class GeologicalPassService {
             throw new RuntimeException("No entities found for category " + categoryName);
         }
 
-        // Adjust weights based on previous attribute and map
+        // Adjust weights based on previous attribute and weight map
         List<GeneratorEntity> adjustedEntities = adjustWeights(entities, previous, weightMap);
 
-        // Return entity selected via binary search weighted random
-        return weightedRandomBinary(adjustedEntities);
+        // weighted random selection
+        return WeightedRandomUtil.pickWeighted(adjustedEntities);
     }
-
 
     private List<GeneratorEntity> adjustWeights(List<GeneratorEntity> entities, GeneratorEntity previous, Map<String, Map<String, Double>> weightMap) {
         if (previous == null || weightMap == null) return entities;
@@ -85,37 +83,9 @@ public class GeologicalPassService {
             GeneratorEntity copy = new GeneratorEntity();
             copy.setId(e.getId());
             copy.setValue(e.getValue());
-            copy.setBaseWeight((int) weight); // cast to int if BaseWeight is int
+            copy.setBaseWeight((int) weight);
             adjusted.add(copy);
         }
         return adjusted;
-    }
-
-    private GeneratorEntity weightedRandomBinary(List<GeneratorEntity> entities) {
-        // Build cumulative weights
-        List<Integer> cumulative = new ArrayList<>();
-        int sum = 0;
-        for (GeneratorEntity e : entities) {
-            sum += e.getBaseWeight();
-            cumulative.add(sum);
-        }
-
-        // Roll random number
-        int totalWeight = cumulative.get(cumulative.size() - 1);
-        int roll = random.nextInt(totalWeight) + 1;
-
-        // Binary search
-        int left = 0;
-        int right = cumulative.size() - 1;
-        while (left < right) {
-            int mid = (left + right) / 2;
-            if (roll <= cumulative.get(mid)) {
-                right = mid;
-            } else {
-                left = mid + 1;
-            }
-        }
-
-        return entities.get(left);
     }
 }
