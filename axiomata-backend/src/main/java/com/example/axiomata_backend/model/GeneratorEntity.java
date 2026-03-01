@@ -1,4 +1,4 @@
-package com.axiomata.worldgen.models;
+package com.example.axiomata_backend.model;
 
 import com.example.axiomata_backend.model.GeneratorCategory;
 import jakarta.persistence.*;
