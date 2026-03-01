@@ -9,39 +9,44 @@ export default function LoginForm({ onSuccess }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
 
+  const validate = () => {
+    if (!username.trim()) return "Username cannot be blank";
+    if (username.length < 3) return "Username must be at least 3 characters";
+    if (!password) return "Password cannot be blank";
+    if (password.length < 6) return "Password must be at least 6 characters";
+    return null;
+  };
+
   // handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
+
+    const validationError = validate();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     try {
-      console.log("Submitting login form...", { username, password });
-
-      // call backend login endpoint
       const response = await api.post("/auth/login", { username, password });
-
       const { token } = response.data;
-      console.log("Token received:", token);
-
       login(token); // store token in AuthContext + localStorage
-      console.log("AuthContext login called with token:", token);
-
-      if (onSuccess) {
-        onSuccess(); // trigger redirect to dashboard
-        console.log("onSuccess called, redirecting...");
-      }
+      onSuccess?.(); // redirect to dashboard if provided
     } catch (err) {
-      console.error("Login failed:", err);
       setError(err.response?.data?.message || "Login failed");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="login-form">
       <input
         type="text"
         placeholder="Username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
         required
+        className="login-input login-username"
       />
       <input
         type="password"
@@ -49,9 +54,12 @@ export default function LoginForm({ onSuccess }) {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         required
+        className="login-input login-password"
       />
-      <button type="submit">Login</button>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      <button type="submit" className="login-button">
+        Login
+      </button>
+      {error && <p className="login-error">{error}</p>}
     </form>
   );
 }

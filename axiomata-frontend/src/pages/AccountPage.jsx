@@ -6,14 +6,18 @@ import { useAuth } from "../context/AuthContext";
 
 export default function AccountPage() {
   const { logout } = useAuth();
+
+  // -------------------- State --------------------
   const [user, setUser] = useState({ username: "", password: "" });
   const [passwordConfirm, setPasswordConfirm] = useState("");
-  const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(false);
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [toasts, setToasts] = useState([]);
+
+  // Validation errors
+  const [errors, setErrors] = useState({ username: null, password: null, passwordConfirm: null });
 
   // -------------------- Toast Helper --------------------
   const showToast = (message, type = "info") => {
@@ -27,7 +31,7 @@ export default function AccountPage() {
     const fetchUser = async () => {
       try {
         const data = await getCurrentUser();
-        setUser({ username: data.username, password: "" }); // only username
+        setUser({ username: data.username, password: "" });
       } catch {
         showToast("Failed to load user info", "error");
       }
@@ -35,24 +39,31 @@ export default function AccountPage() {
     fetchUser();
   }, []);
 
+  // -------------------- Validation --------------------
+  const validate = () => {
+    const newErrors = { username: null, password: null, passwordConfirm: null };
+
+    if (!user.username.trim()) newErrors.username = "Username is required";
+    if (user.password && user.password.length < 6) newErrors.password = "Password must be at least 6 characters";
+    if (user.password && user.password !== passwordConfirm) newErrors.passwordConfirm = "Passwords do not match";
+
+    setErrors(newErrors);
+    return !Object.values(newErrors).some(Boolean);
+  };
+
   // -------------------- Save Updates --------------------
   const handleSave = async () => {
-    if (user.password && user.password !== passwordConfirm) {
-      showToast("Passwords do not match", "error");
-      return;
-    }
+    if (!validate()) return;
 
-    setLoading(true);
     try {
       await updateUser({ username: user.username, password: user.password || undefined });
       showToast("Account updated", "success");
       setUser({ ...user, password: "" });
       setPasswordConfirm("");
       setEditing(false);
+      setErrors({ username: null, password: null, passwordConfirm: null });
     } catch {
       showToast("Failed to update account", "error");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -63,10 +74,10 @@ export default function AccountPage() {
     setConfirmOpen(false);
     setDeleting(true);
     try {
-      await deleteUser();       // Actually call API to delete
+      await deleteUser();
       showToast("Account deleted", "success");
-      logout();                 // Clear token
-      window.location.href = "/"; // Redirect home
+      logout();
+      window.location.href = "/";
     } catch {
       showToast("Failed to delete account", "error");
     } finally {
@@ -74,12 +85,15 @@ export default function AccountPage() {
     }
   };
 
+  // -------------------- Derived --------------------
+  const canSave = !errors.username && !errors.password && !errors.passwordConfirm;
+
   return (
     <div className="page-container">
       <h1 className="page-title">Account Page</h1>
       <p className="page-description">Manage your account information here.</p>
 
-      {/* -------------------- Username / Password Form -------------------- */}
+      {/* -------------------- Form -------------------- */}
       <div className="form-container">
         <div className="form-field">
           <label>Username</label>
@@ -88,7 +102,9 @@ export default function AccountPage() {
             value={user.username}
             disabled={!editing}
             onChange={(e) => setUser({ ...user, username: e.target.value })}
+            onBlur={validate}
           />
+          {errors.username && <span className="error-text">{errors.username}</span>}
         </div>
 
         {editing && (
@@ -100,7 +116,9 @@ export default function AccountPage() {
                 placeholder="Leave blank to keep current"
                 value={user.password}
                 onChange={(e) => setUser({ ...user, password: e.target.value })}
+                onBlur={validate}
               />
+              {errors.password && <span className="error-text">{errors.password}</span>}
             </div>
 
             <div className="form-field">
@@ -110,7 +128,9 @@ export default function AccountPage() {
                 placeholder="Confirm new password"
                 value={passwordConfirm}
                 onChange={(e) => setPasswordConfirm(e.target.value)}
+                onBlur={validate}
               />
+              {errors.passwordConfirm && <span className="error-text">{errors.passwordConfirm}</span>}
             </div>
           </>
         )}
@@ -120,8 +140,8 @@ export default function AccountPage() {
             <button type="button" onClick={() => setEditing(true)}>Edit</button>
           ) : (
             <>
-              <button type="button" onClick={handleSave} disabled={loading}>
-                {loading ? "Saving..." : "Save"}
+              <button type="button" onClick={handleSave} disabled={!canSave}>
+                Save
               </button>
               <button
                 type="button"
@@ -129,6 +149,7 @@ export default function AccountPage() {
                   setEditing(false);
                   setUser({ ...user, password: "" });
                   setPasswordConfirm("");
+                  setErrors({ username: null, password: null, passwordConfirm: null });
                 }}
               >
                 Cancel
