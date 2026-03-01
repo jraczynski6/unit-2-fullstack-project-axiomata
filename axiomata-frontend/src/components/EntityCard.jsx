@@ -72,9 +72,6 @@ export default function EntityCard({ item, category, world, isEditingProp, onCha
             ))}
           </select>
         )}
-        {category !== "Location" && category !== "Faction" && (
-          <p>No additional fields</p>
-        )}
       </div>
     );
   }
@@ -97,6 +94,7 @@ export default function EntityCard({ item, category, world, isEditingProp, onCha
     </div>
   );
 }
+
 // ==========================
 // EntityCard.jsx / non MVP
 // ==========================
