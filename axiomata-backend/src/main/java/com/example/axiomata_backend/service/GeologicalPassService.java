@@ -31,9 +31,18 @@ public class GeologicalPassService {
     );
 
     private static final Map<String, Map<String, Double>> TECTONICS_TO_RESOURCE = Map.of(
-            "dead", Map.of("iron", 2.0),
-            "stable", Map.of("gold", 2.0),
-            "active", Map.of("gems", 3.0)
+            "dead", Map.of(
+                    "iron", 3.0, "agriculture", 0.5, "livestock", 0.5, "timber", 0.8,
+                    "herbs", 0.5, "fish", 0.5, "silk", 0.2, "textiles", 0.5
+            ),
+            "stable", Map.of(
+                    "gold", 2.0, "agriculture", 3.0, "livestock", 3.0, "timber", 1.5,
+                    "herbs", 2.0, "fish", 1.5, "silk", 1.5, "textiles", 2.0
+            ),
+            "active", Map.of(
+                    "gems", 3.0, "agriculture", 1.0, "livestock", 1.0, "timber", 2.5,
+                    "herbs", 1.5, "fish", 1.5, "silk", 2.0, "textiles", 2.0
+            )
     );
 
     // Apply geological pass to proto.attributes, rolling attributes in sequence with dependencies
