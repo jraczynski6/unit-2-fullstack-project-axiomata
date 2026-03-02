@@ -9,9 +9,7 @@ import com.example.axiomata_backend.util.WeightedRandomUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class GeologicalPassService {
@@ -30,19 +28,34 @@ public class GeologicalPassService {
             "giant", Map.of("active", 1.5)
     );
 
-    private static final Map<String, Map<String, Double>> TECTONICS_TO_RESOURCE = Map.of(
-            "dead", Map.of(
-                    "iron", 3.0, "agriculture", 0.5, "livestock", 0.5, "timber", 0.8,
-                    "herbs", 0.5, "fish", 0.5, "silk", 0.2, "textiles", 0.5
-            ),
-            "stable", Map.of(
-                    "gold", 2.0, "agriculture", 3.0, "livestock", 3.0, "timber", 1.5,
-                    "herbs", 2.0, "fish", 1.5, "silk", 1.5, "textiles", 2.0
-            ),
-            "active", Map.of(
-                    "gems", 3.0, "agriculture", 1.0, "livestock", 1.0, "timber", 2.5,
-                    "herbs", 1.5, "fish", 1.5, "silk", 2.0, "textiles", 2.0
-            )
+    private static final Map<String, Map<String, Double>> TECTONICS_TO_RESOURCE = Map.ofEntries(
+
+            // DEAD worlds – generally poor, lower overall abundance
+            Map.entry("dead", Map.ofEntries(
+                    Map.entry("iron", 2.0), Map.entry("gold", 1.5), Map.entry("copper", 1.5), Map.entry("gems", 1.0),
+                    Map.entry("coal", 1.2), Map.entry("marble", 1.2), Map.entry("obsidian", 1.0), Map.entry("crystals", 1.0),
+                    Map.entry("stone", 1.8), Map.entry("spices", 0.8), Map.entry("agriculture", 1.5), Map.entry("livestock", 1.5),
+                    Map.entry("timber", 1.2), Map.entry("herbs", 1.2), Map.entry("fish", 1.0), Map.entry("silk", 1.0),
+                    Map.entry("textiles", 1.2)
+            )),
+
+            // STABLE worlds – moderate abundance, more balanced
+            Map.entry("stable", Map.ofEntries(
+                    Map.entry("iron", 2.5), Map.entry("gold", 2.0), Map.entry("copper", 2.2), Map.entry("gems", 2.0),
+                    Map.entry("coal", 1.5), Map.entry("marble", 1.5), Map.entry("obsidian", 2.0), Map.entry("crystals", 2.0),
+                    Map.entry("stone", 2.5), Map.entry("spices", 1.5), Map.entry("agriculture", 2.2), Map.entry("livestock", 2.2),
+                    Map.entry("timber", 2.0), Map.entry("herbs", 2.0), Map.entry("fish", 2.0), Map.entry("silk", 2.0),
+                    Map.entry("textiles", 2.2)
+            )),
+
+            // ACTIVE worlds – abundant, but no extreme weights
+            Map.entry("active", Map.ofEntries(
+                    Map.entry("iron", 2.2), Map.entry("gold", 2.0), Map.entry("copper", 2.2), Map.entry("gems", 2.2),
+                    Map.entry("coal", 1.8), Map.entry("marble", 1.8), Map.entry("obsidian", 2.2), Map.entry("crystals", 2.2),
+                    Map.entry("stone", 2.2), Map.entry("spices", 1.5), Map.entry("agriculture", 2.0), Map.entry("livestock", 2.0),
+                    Map.entry("timber", 2.0), Map.entry("herbs", 2.0), Map.entry("fish", 2.0), Map.entry("silk", 2.0),
+                    Map.entry("textiles", 2.2)
+            ))
     );
 
     // Apply geological pass to proto.attributes, rolling attributes in sequence with dependencies
@@ -55,11 +68,54 @@ public class GeologicalPassService {
         GeneratorEntity tectonicActivity = rollAttribute("TECTONIC_ACTIVITY", worldSize, WORLD_SIZE_TO_TECTONICS);
         proto.getAttributes().put("TECTONIC_ACTIVITY", tectonicActivity.getValue());
 
-        // Step 3: RESOURCE depends on TECTONIC_ACTIVITY
-        GeneratorEntity resource = rollAttribute("RESOURCE", tectonicActivity, TECTONICS_TO_RESOURCE);
-        proto.getAttributes().put("RESOURCE", resource.getValue());
+        // Step 3: DOMINANT_RESOURCE depends on TECTONIC_ACTIVITY
+        GeneratorEntity dominantResource = rollAttribute("RESOURCE", tectonicActivity, TECTONICS_TO_RESOURCE);
+        proto.getAttributes().put("DOMINANT_RESOURCE", dominantResource.getValue());
+
+        // Step 4: Populate RESOURCE_POOL with abundance descriptors
+        Map<String, String> resourcePool = buildResourcePool(tectonicActivity);
+        proto.getAttributes().put("RESOURCE_POOL", resourcePool);
 
         return proto;
+    }
+
+    // Build RESOURCE_POOL based on TECTONIC_ACTIVITY and rolled RESOURCE
+    private Map<String, String> buildResourcePool(GeneratorEntity tectonicActivity) {
+        GeneratorCategory category = generatorCategoryRepository.findByName("RESOURCE");
+        if (category == null) throw new RuntimeException("Category RESOURCE not found");
+
+        List<GeneratorEntity> resources = generatorEntityRepository.findByCategory(category);
+        if (resources.isEmpty()) throw new RuntimeException("No entities found for RESOURCE");
+
+        Map<String, Double> adjustedWeights = new HashMap<>();
+        Map<String, Double> overrides = TECTONICS_TO_RESOURCE.getOrDefault(tectonicActivity.getValue(), Map.of());
+
+        for (GeneratorEntity r : resources) {
+            double weight = overrides.getOrDefault(r.getValue(), 1.0);
+            adjustedWeights.put(r.getValue(), weight);
+        }
+
+        // Map weights to descriptors
+        return mapWeightsToDescriptors(adjustedWeights);
+    }
+
+    private Map<String, String> mapWeightsToDescriptors(Map<String, Double> weights) {
+        Map<String, String> descriptors = new HashMap<>();
+        Random random = new Random();
+
+        for (Map.Entry<String, Double> entry : weights.entrySet()) {
+            double weight = entry.getValue();
+
+            // Convert weight into probabilities for scarce/moderate/plentiful
+            // Example: weight normalized to 0–1 scale with soft randomness
+            double p = random.nextDouble() * weight;
+
+            if (p < 0.33) descriptors.put(entry.getKey(), "scarce");
+            else if (p < 0.66) descriptors.put(entry.getKey(), "moderate");
+            else descriptors.put(entry.getKey(), "plentiful");
+        }
+
+        return descriptors;
     }
 
     // Roll an attribute for a given category
@@ -88,11 +144,13 @@ public class GeologicalPassService {
         Map<String, Double> overrides = weightMap.getOrDefault(previous.getValue(), Map.of());
 
         for (GeneratorEntity e : entities) {
-            double weight = overrides.getOrDefault(e.getValue(), 1.0); // default weight = 1
+            double weight = overrides.getOrDefault(e.getValue(), 1.0); // default weight = 1.0
             GeneratorEntity copy = new GeneratorEntity();
             copy.setId(e.getId());
             copy.setValue(e.getValue());
-            copy.setBaseWeight((int) weight);
+            copy.setCategory(e.getCategory());
+            copy.setType(e.getType());
+            copy.setBaseWeight(weight); // <-- use double directly, no cast
             adjusted.add(copy);
         }
         return adjusted;

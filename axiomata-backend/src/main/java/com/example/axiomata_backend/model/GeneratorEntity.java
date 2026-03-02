@@ -23,7 +23,7 @@ public class GeneratorEntity {
     private String type;
 
     @Column(name = "base_weight", nullable = false)
-    private Integer baseWeight = 1;
+    private double baseWeight = 1;
 
     // Constructors
     public GeneratorEntity() {}
@@ -48,6 +48,6 @@ public class GeneratorEntity {
     public String getType() { return type; }
     public void setType(String type) { this.type = type; }
 
-    public Integer getBaseWeight() { return baseWeight; }
-    public void setBaseWeight(Integer baseWeight) { this.baseWeight = baseWeight; }
+    public double getBaseWeight() { return baseWeight; }
+    public void setBaseWeight(double baseWeight) { this.baseWeight = baseWeight; }
 }

@@ -30,13 +30,51 @@ public class BiologicalPassService {
     );
 
     // Weight modifiers based on resource availability
-    private static final Map<String, Map<String, Double>> RESOURCE_TO_SPECIES_WEIGHT = Map.of(
-            "iron", Map.of("dwarf", 3.0, "human", 1.5, "elf", 1.0, "beast-folk", 1.0, "daemon", 0.5, "monsters", 0.5),
-            "gold", Map.of("human", 2.0, "elf", 1.5, "dwarf", 1.0, "beast-folk", 1.0, "daemon", 1.0, "monsters", 0.5),
-            "copper", Map.of("dwarf", 2.0, "human", 1.0, "elf", 1.0, "beast-folk", 1.0, "daemon", 0.5, "monsters", 0.5),
-            "gems", Map.of("elf", 3.0, "beast-folk", 1.5, "human", 1.5, "dwarf", 1.0, "daemon", 1.0, "monsters", 1.0),
-            "coal", Map.of("dwarf", 2.0, "beast-folk", 1.0, "human", 1.0, "elf", 1.0, "daemon", 0.5, "monsters", 0.5),
-            "stone", Map.of("dwarf", 1.5, "beast-folk", 1.5, "human", 1.0, "elf", 1.0, "daemon", 0.5, "monsters", 0.5)
+    private static final Map<String, Map<String, Double>> RESOURCE_TO_SPECIES_WEIGHT = Map.ofEntries(
+            Map.entry("iron", Map.ofEntries(
+                    Map.entry("dwarf", 3.0), Map.entry("human", 1.5), Map.entry("elf", 1.0),
+                    Map.entry("beast-folk", 1.0), Map.entry("daemon", 0.5), Map.entry("monsters", 0.5)
+            )),
+            Map.entry("gold", Map.ofEntries(
+                    Map.entry("human", 2.0), Map.entry("elf", 1.5), Map.entry("dwarf", 1.0),
+                    Map.entry("beast-folk", 1.0), Map.entry("daemon", 1.0), Map.entry("monsters", 0.5)
+            )),
+            Map.entry("copper", Map.ofEntries(
+                    Map.entry("dwarf", 3.0), Map.entry("human", 1.0), Map.entry("elf", 1.0),
+                    Map.entry("beast-folk", 1.0), Map.entry("daemon", 0.5), Map.entry("monsters", 0.5)
+            )),
+            Map.entry("gems", Map.ofEntries(
+                    Map.entry("elf", 3.0), Map.entry("dwarf", 2.0), Map.entry("human", 1.5),
+                    Map.entry("beast-folk", 1.0), Map.entry("daemon", 1.5), Map.entry("monsters", 1.0)
+            )),
+            Map.entry("coal", Map.ofEntries(
+                    Map.entry("dwarf", 3.0), Map.entry("human", 1.0), Map.entry("elf", 1.0),
+                    Map.entry("beast-folk", 1.0), Map.entry("daemon", 0.5), Map.entry("monsters", 0.5)
+            )),
+            Map.entry("stone", Map.ofEntries(
+                    Map.entry("dwarf", 3.0), Map.entry("human", 1.5), Map.entry("elf", 1.0),
+                    Map.entry("beast-folk", 1.0), Map.entry("daemon", 0.5), Map.entry("monsters", 0.5)
+            )),
+            Map.entry("agriculture", Map.ofEntries(
+                    Map.entry("human", 3.0), Map.entry("beast-folk", 2.5), Map.entry("dwarf", 1.0),
+                    Map.entry("elf", 1.0), Map.entry("daemon", 0.5), Map.entry("monsters", 0.5)
+            )),
+            Map.entry("livestock", Map.ofEntries(
+                    Map.entry("beast-folk", 3.0), Map.entry("human", 2.5), Map.entry("dwarf", 1.0),
+                    Map.entry("elf", 1.0), Map.entry("daemon", 0.5), Map.entry("monsters", 0.5)
+            )),
+            Map.entry("timber", Map.ofEntries(
+                    Map.entry("elf", 3.0), Map.entry("beast-folk", 2.0), Map.entry("human", 1.5),
+                    Map.entry("dwarf", 1.0), Map.entry("daemon", 0.5), Map.entry("monsters", 0.5)
+            )),
+            Map.entry("fish", Map.ofEntries(
+                    Map.entry("human", 2.5), Map.entry("beast-folk", 2.0), Map.entry("dwarf", 1.0),
+                    Map.entry("elf", 1.0), Map.entry("daemon", 0.5), Map.entry("monsters", 0.5)
+            )),
+            Map.entry("crystals", Map.ofEntries(
+                    Map.entry("elf", 3.0), Map.entry("daemon", 2.5), Map.entry("human", 1.0),
+                    Map.entry("dwarf", 1.0), Map.entry("beast-folk", 1.0), Map.entry("monsters", 1.0)
+            ))
     );
 
     public ProtoWorldDto apply(ProtoWorldDto proto) {
@@ -79,7 +117,7 @@ public class BiologicalPassService {
         Map<String, Double> adjusted = new HashMap<>();
 
         String worldSize = (String) proto.getAttributes().get("WORLD_SIZE");
-        String resource = (String) proto.getAttributes().get("RESOURCE");
+        String resource = (String) proto.getAttributes().get("DOMINANT_RESOURCE");
 
         Map<String, Double> sizeOverrides = worldSize != null ? WORLD_SIZE_TO_SPECIES_WEIGHT.getOrDefault(worldSize, Map.of()) : Map.of();
         Map<String, Double> resourceOverrides = resource != null ? RESOURCE_TO_SPECIES_WEIGHT.getOrDefault(resource, Map.of()) : Map.of();
