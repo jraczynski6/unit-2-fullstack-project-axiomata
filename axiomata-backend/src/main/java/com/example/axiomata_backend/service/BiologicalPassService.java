@@ -103,7 +103,7 @@ public class BiologicalPassService {
                     GeneratorEntity copy = new GeneratorEntity();
                     copy.setId(e.getId());
                     copy.setValue(e.getValue());
-                    copy.setBaseWeight((int) Math.round(adjustedWeights.getOrDefault(e.getValue(), 1.0)));
+                    copy.setBaseWeight(adjustedWeights.getOrDefault(e.getValue(), 1.0));
                     return copy;
                 }).toList()
         );
