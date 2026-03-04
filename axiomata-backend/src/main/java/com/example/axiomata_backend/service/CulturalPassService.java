@@ -42,7 +42,7 @@ public class CulturalPassService {
     public ProtoWorldDto apply(ProtoWorldDto proto) {
 
         // 1. Load CULTURE category and entities from DB
-        List<GeneratorEntity> cultures = fetchEntitiesByCategory("CULTURE");
+        List<GeneratorEntity> cultures = fetchEntitiesByCategory("DOMINANT_CULTURE");
 
         // 2. Adjust weights based on dominant species and dominant resource
         List<GeneratorEntity> adjustedCultures = adjustWeights(cultures, proto);
@@ -103,5 +103,4 @@ public class CulturalPassService {
 
         return adjusted;
     }
-
 }
