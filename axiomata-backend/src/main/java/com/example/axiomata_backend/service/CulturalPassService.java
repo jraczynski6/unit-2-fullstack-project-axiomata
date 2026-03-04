@@ -90,28 +90,57 @@ public class CulturalPassService {
             "communal", Map.of("ancestor worship", 1.5, "animistic", 1.3, "philosophical", 1.2)
     );
 
+    // Dominant Culture to Conflict Level influence (multiplicative)
+    private static final Map<String, Map<String, Double>> CULTURE_TO_CONFLICT_WEIGHT = Map.of(
+            "militaristic", Map.of("high", 2.0, "medium", 1.0, "low", 0.5),
+            "agrarian", Map.of("medium", 1.5, "low", 1.2, "high", 0.5),
+            "mercantile", Map.of("medium", 1.5, "low", 1.2, "high", 0.5),
+            "tribal", Map.of("high", 1.5, "medium", 1.2, "low", 0.5),
+            "industrial", Map.of("medium", 1.8, "high", 1.2, "low", 0.5),
+            "scholarly", Map.of("low", 2.0, "medium", 1.0),
+            "mystical", Map.of("medium", 1.5, "low", 1.2),
+            "artistic", Map.of("low", 1.8, "medium", 1.0),
+            "nomadic", Map.of("medium", 1.5, "high", 1.2)
+    );
+
+    // Dominant Social Structure to Conflict Level influence (multiplicative)
+    private static final Map<String, Map<String, Double>> SOCIAL_TO_CONFLICT_WEIGHT = Map.of(
+            "monarchy", Map.of("high", 1.5, "medium", 1.2, "low", 1.0),
+            "magocracy", Map.of("medium", 1.5, "high", 1.2, "low", 1.0),
+            "oligarchy", Map.of("medium", 1.5, "low", 1.2, "high", 1.0),
+            "democracy", Map.of("low", 1.5, "medium", 1.2, "high", 1.0),
+            "theocracy", Map.of("high", 1.8, "medium", 1.2, "low", 1.0),
+            "tribal council", Map.of("high", 1.5, "medium", 1.2, "low", 1.0),
+            "feudal", Map.of("high", 1.5, "medium", 1.2, "low", 1.0),
+            "communal", Map.of("low", 1.5, "medium", 1.2, "high", 1.0)
+    );
+
     public ProtoWorldDto apply(ProtoWorldDto proto) {
 
         applyDominantCulture(proto);
         applySocialStructure(proto);
         applyReligion(proto);
         applyTechnology(proto);
+        applyConflict(proto);
 
         return proto;
     }
 
-    // fetch entities by category
+    // Fetch all generator entities for a given category
     private List<GeneratorEntity> fetchEntitiesByCategory(String categoryName) {
+        // Step 1: Look up the category by name
         GeneratorCategory category = generatorCategoryRepository.findByName(categoryName);
         if (category == null) {
             throw new RuntimeException("Category " + categoryName + " not found");
         }
 
+        // Step 2: Fetch all entities belonging to this category
         List<GeneratorEntity> entities = generatorEntityRepository.findByCategory(category);
         if (entities.isEmpty()) {
             throw new RuntimeException("No entities found for category " + categoryName);
         }
 
+        // Step 3: Return the list of entities
         return entities;
     }
 
@@ -170,49 +199,77 @@ public class CulturalPassService {
     }
 
     private void applyDominantCulture(ProtoWorldDto proto) {
+        // Step 1: Fetch all dominant culture entities from the database
         List<GeneratorEntity> cultures = fetchEntitiesByCategory("DOMINANT_CULTURE");
+
+        // Step 2: Adjust weights based on dominant species and resource
         List<GeneratorEntity> adjusted = adjustWeights(cultures, proto, SPECIES_TO_CULTURE_WEIGHT, RESOURCE_TO_CULTURE_WEIGHT,
                 "DOMINANT_SPECIES", "DOMINANT_RESOURCE");
+
+        // Step 3: Select one entity using weighted random
         GeneratorEntity selected = WeightedRandomUtil.pickWeighted(adjusted);
+
+        // Step 4: Store the selected dominant culture in proto
         proto.getAttributes().put("DOMINANT_CULTURE", selected.getValue());
     }
 
     private void applySocialStructure(ProtoWorldDto proto) {
+        // Step 1: Fetch all social structure entities from the database
         List<GeneratorEntity> socialEntities = fetchEntitiesByCategory("SOCIAL_STRUCTURE");
+
+        // Step 2: Adjust weights based on dominant culture
         List<GeneratorEntity> adjusted = adjustWeights(socialEntities, proto, CULTURE_TO_SOCIAL_WEIGHT, Map.of(),
                 "DOMINANT_CULTURE", null);
+
+        // Step 3: Select one entity using weighted random
         GeneratorEntity selected = WeightedRandomUtil.pickWeighted(adjusted);
+
+        // Step 4: Store the selected social structure in proto
         proto.getAttributes().put("SOCIAL_STRUCTURE", selected.getValue());
     }
 
     private void applyReligion(ProtoWorldDto proto) {
-        // Fetch all religion entities from DB
+        // Step 1: Fetch all religion entities from the database
         List<GeneratorEntity> religions = fetchEntitiesByCategory("RELIGION_OR_BELIEF_SYSTEM");
 
-        // Adjust weights (returns List<GeneratorEntity> with updated baseWeight)
+        // Step 2: Adjust weights based on social structure
         List<GeneratorEntity> adjusted = adjustWeights(religions, proto, SOCIAL_TO_RELIGION_WEIGHT, Map.of(),
                 "SOCIAL_STRUCTURE", null);
 
-        // Pick weighted random from adjusted list
+        // Step 3: Select one entity using weighted random
         GeneratorEntity selected = WeightedRandomUtil.pickWeighted(adjusted);
 
-        // Store in proto
+        // Step 4: Store the selected religion in proto
         proto.getAttributes().put("RELIGION_OR_BELIEF_SYSTEM", selected.getValue());
     }
 
     private void applyTechnology(ProtoWorldDto proto) {
-
-        // Step 1: Fetch all technology level entities from the DB
+        // Step 1: Fetch all technological level entities from the database
         List<GeneratorEntity> techEntities = fetchEntitiesByCategory("TECHNOLOGICAL_LEVEL");
 
-        // Step 2: Adjust weights using social structure as primary, dominant resource as secondary
+        // Step 2: Adjust weights based on social structure and dominant resource
         List<GeneratorEntity> adjustedTech = adjustWeights(techEntities, proto, SOCIAL_TO_TECH_LEVEL_WEIGHT, RESOURCE_TO_CULTURE_WEIGHT,
                 "SOCIAL_STRUCTURE", "DOMINANT_RESOURCE");
 
-        // Step 3: Pick weighted random tech level
+        // Step 3: Select one entity using weighted random
         GeneratorEntity selectedTech = WeightedRandomUtil.pickWeighted(adjustedTech);
 
-        // Step 4: Store the result in proto
+        // Step 4: Store the selected technological level in proto
         proto.getAttributes().put("TECHNOLOGICAL_LEVEL", selectedTech.getValue());
+    }
+
+    private void applyConflict(ProtoWorldDto proto) {
+        // Step 1: Fetch all conflict tendency entities from the database
+        List<GeneratorEntity> conflictEntities = fetchEntitiesByCategory("CONFLICT_TENDENCY");
+
+        // Step 2: Adjust weights based on dominant culture and social structure
+        List<GeneratorEntity> adjusted = adjustWeights(conflictEntities, proto, CULTURE_TO_CONFLICT_WEIGHT, SOCIAL_TO_CONFLICT_WEIGHT,
+                "DOMINANT_CULTURE", "SOCIAL_STRUCTURE");
+
+        // Step 3: Select one entity using weighted random
+        GeneratorEntity selected = WeightedRandomUtil.pickWeighted(adjusted);
+
+        // Step 4: Store the selected conflict tendency in proto
+        proto.getAttributes().put("CONFLICT_TENDENCY", selected.getValue());
     }
 }
