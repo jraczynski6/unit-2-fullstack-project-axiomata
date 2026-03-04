@@ -39,21 +39,49 @@ public class CulturalPassService {
             "fish", Map.of("nomadic", 1.5, "mercantile", 1.2)
     );
 
+    // Dominant culture-to-social structure influence (multiplicative)
+    private static final Map<String, Map<String, Double>> CULTURE_TO_SOCIAL_WEIGHT = Map.of(
+            "militaristic", Map.of("monarchy", 1.5, "feudal", 1.8, "Oligarchy", 1.3),
+            "agrarian", Map.of("feudal", 2.0, "theocracy", 1.5, "communal", 1.3),
+            "mercantile", Map.of("oligarchy", 2.0, "democracy", 1.5),
+            "tribal", Map.of("tribal council", 2.5, "communal", 1.5),
+            "industrial", Map.of("oligarchy", 1.8, "democracy", 1.5, "monarchy", 1.2),
+            "scholarly", Map.of("magocracy", 2.0, "democracy", 1.3),
+            "mystical", Map.of("theocracy", 2.0, "magocracy", 1.5),
+            "artistic", Map.of("oligarchy", 1.3, "democracy", 1.5),
+            "nomadic", Map.of("tribal council", 1.8, "communal", 1.5)
+    );
+
+    // Dominant social structure-to-religion influence (multiplicative)
+    private static final Map<String, Map<String, Double>> SOCIAL_TO_RELIGION_WEIGHT = Map.of(
+            "monarchy", Map.of("organized religion", 1.5, "mono-pantheon", 1.2, "polytheistic", 1.0,
+                    "ancestor worship", 0.8, "animistic", 0.5, "philosophical", 0.5, "mystical", 0.8),
+            "magocracy", Map.of("organized religion", 1.0, "mono-pantheon", 1.5, "polytheistic", 1.2,
+                    "philosophical", 1.3, "mystical", 1.2),
+            "oligarchy", Map.of("organized religion", 1.0, "polytheistic", 1.5,
+                    "philosophical", 1.5, "mono-pantheon", 1.2),
+            "democracy", Map.of("organized religion", 0.8, "polytheistic", 1.3,
+                    "philosophical", 1.5, "mono-pantheon", 1.0),
+            "theocracy", Map.of("organized religion", 2.0, "polytheistic", 1.5,
+                    "ancestor worship", 1.3, "animistic", 1.2),
+            "tribal council", Map.of("ancestor worship", 1.8, "animistic", 1.5, "polytheistic", 1.2),
+            "feudal", Map.of("organized religion", 1.5, "mono-pantheon", 1.2, "ancestor worship", 1.2),
+            "communal", Map.of("ancestor worship", 1.5, "animistic", 1.3, "philosophical", 1.2)
+    );
+
     public ProtoWorldDto apply(ProtoWorldDto proto) {
 
-        // 1. Load CULTURE category and entities from DB
-        List<GeneratorEntity> cultures = fetchEntitiesByCategory("DOMINANT_CULTURE");
+        applyDominantCulture(proto);
 
-        // 2. Adjust weights based on dominant species and dominant resource
-        List<GeneratorEntity> adjustedCultures = adjustWeights(cultures, proto);
+        applySocialStructure(proto);
 
-        // 3. Pick Dominant Culture using weightedRandomUtil.pickWeighted and store in proto.attributes
-        GeneratorEntity dominantCulture = WeightedRandomUtil.pickWeighted(adjustedCultures);
-        proto.getAttributes().put("DOMINANT_CULTURE", dominantCulture.getValue());
+        applyReligion(proto);
+
 
         return proto;
     }
 
+    // fetch entities by category
     private List<GeneratorEntity> fetchEntitiesByCategory(String categoryName) {
         GeneratorCategory category = generatorCategoryRepository.findByName(categoryName);
         if (category == null) {
@@ -68,39 +96,88 @@ public class CulturalPassService {
         return entities;
     }
 
-    private List<GeneratorEntity> adjustWeights(List<GeneratorEntity> cultures, ProtoWorldDto proto) {
+    // adjust weights based on primary and secondary attributes
+    private List<GeneratorEntity> adjustWeights(List<GeneratorEntity> entities, ProtoWorldDto proto,
+                                                Map<String, Map<String, Double>> primaryMap,
+                                                Map<String, Map<String, Double>> secondaryMap,
+                                                String primaryKey, String secondaryKey) {
 
-        // 1. Get dominant species and resource from proto.attributes
-        String dominantSpecies = (String) proto.getAttributes().get("DOMINANT_SPECIES");
-        String dominantResource = (String) proto.getAttributes().get("DOMINANT_RESOURCE");
-
-        // 2. Fetch override maps from static final maps
-        Map<String, Double> speciesOverrides = dominantSpecies != null
-                ? SPECIES_TO_CULTURE_WEIGHT.getOrDefault(dominantSpecies, Map.of())
-                : Map.of();
-        Map<String, Double> resourceOverrides = dominantResource != null
-                ? RESOURCE_TO_CULTURE_WEIGHT.getOrDefault(dominantResource, Map.of())
-                : Map.of();
-
-        // 3. Apply multipliers and create copies
+        // Step 1: Initialize a list to store the adjusted entities
         List<GeneratorEntity> adjusted = new ArrayList<>();
-        for (GeneratorEntity c : cultures) {
-            double weight = c.getBaseWeight();
-            weight *= speciesOverrides.getOrDefault(c.getValue(), 1.0);
-            weight *= resourceOverrides.getOrDefault(c.getValue(), 1.0);
+
+        // Step 2: Get the primary attribute value from the ProtoWorld (e.g., DOMINANT_SPECIES or DOMINANT_CULTURE)
+        String primaryValue = primaryKey != null ? (String) proto.getAttributes().get(primaryKey) : null;
+
+        // Step 3: Look up the weight overrides for the primary attribute from the provided map
+        Map<String, Double> primaryOverrides = primaryValue != null ? primaryMap.getOrDefault(primaryValue, Map.of()) : Map.of();
+
+        // Step 4: Get the secondary attribute value from the ProtoWorld (optional, e.g., DOMINANT_RESOURCE)
+        String secondaryValue = secondaryKey != null ? (String) proto.getAttributes().get(secondaryKey) : null;
+
+        // Step 5: Look up the weight overrides for the secondary attribute from the provided map
+        Map<String, Double> secondaryOverrides = secondaryValue != null ? secondaryMap.getOrDefault(secondaryValue, Map.of()) : Map.of();
+
+        // Step 6: Loop over each entity in the list to adjust its weight
+        for (GeneratorEntity e : entities) {
+
+            // Start with the entity's base weight from the database
+            double weight = e.getBaseWeight();
+
+            // Multiply by the primary override
+            weight *= primaryOverrides.getOrDefault(e.getValue(), 1.0);
+
+            // Multiply by the secondary override
+            weight *= secondaryOverrides.getOrDefault(e.getValue(), 1.0);
+
+            // Ensure no weight is zero
             if (weight <= 0.0) weight = 0.1;
 
-            // Copy entity
+            // Step 7: Create a copy of the entity so we don't modify the original database entity
             GeneratorEntity copy = new GeneratorEntity();
-            copy.setId(c.getId());
-            copy.setValue(c.getValue());
-            copy.setCategory(c.getCategory());
-            copy.setType(c.getType());
+            copy.setId(e.getId());
+            copy.setValue(e.getValue());
+            copy.setCategory(e.getCategory());
+            copy.setType(e.getType());
+
+            // Assign the adjusted weight to the copy
             copy.setBaseWeight(weight);
 
+            // Add the adjusted copy
             adjusted.add(copy);
         }
 
+        // Step 8: Return adjusted list
         return adjusted;
+    }
+
+    private void applyDominantCulture(ProtoWorldDto proto) {
+        List<GeneratorEntity> cultures = fetchEntitiesByCategory("DOMINANT_CULTURE");
+        List<GeneratorEntity> adjusted = adjustWeights(cultures, proto, SPECIES_TO_CULTURE_WEIGHT, RESOURCE_TO_CULTURE_WEIGHT,
+                "DOMINANT_SPECIES", "DOMINANT_RESOURCE");
+        GeneratorEntity selected = WeightedRandomUtil.pickWeighted(adjusted);
+        proto.getAttributes().put("DOMINANT_CULTURE", selected.getValue());
+    }
+
+    private void applySocialStructure(ProtoWorldDto proto) {
+        List<GeneratorEntity> socialEntities = fetchEntitiesByCategory("SOCIAL_STRUCTURE");
+        List<GeneratorEntity> adjusted = adjustWeights(socialEntities, proto, CULTURE_TO_SOCIAL_WEIGHT, Map.of(),
+                "DOMINANT_CULTURE", null);
+        GeneratorEntity selected = WeightedRandomUtil.pickWeighted(adjusted);
+        proto.getAttributes().put("SOCIAL_STRUCTURE", selected.getValue());
+    }
+
+    private void applyReligion(ProtoWorldDto proto) {
+        // Fetch all religion entities from DB
+        List<GeneratorEntity> religions = fetchEntitiesByCategory("RELIGION_OR_BELIEF_SYSTEM");
+
+        // Adjust weights (returns List<GeneratorEntity> with updated baseWeight)
+        List<GeneratorEntity> adjusted = adjustWeights(religions, proto, SOCIAL_TO_RELIGION_WEIGHT, Map.of(),
+                "SOCIAL_STRUCTURE", null);
+
+        // Pick weighted random from adjusted list
+        GeneratorEntity selected = WeightedRandomUtil.pickWeighted(adjusted);
+
+        // Store in proto
+        proto.getAttributes().put("RELIGION_OR_BELIEF_SYSTEM", selected.getValue());
     }
 }
