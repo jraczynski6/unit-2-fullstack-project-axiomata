@@ -60,65 +60,93 @@ public class GeologicalPassService {
 
     // Apply geological pass to proto.attributes, rolling attributes in sequence with dependencies
     public ProtoWorldDto apply(ProtoWorldDto proto) {
+
         // Step 1: WORLD_SIZE
         GeneratorEntity worldSize = rollAttribute("WORLD_SIZE", null, null);
         proto.getAttributes().put("WORLD_SIZE", worldSize.getValue());
 
-        // Step 2: TECTONIC_ACTIVITY depends on WORLD_SIZE
-        GeneratorEntity tectonicActivity = rollAttribute("TECTONIC_ACTIVITY", worldSize, WORLD_SIZE_TO_TECTONICS);
+        // Step 2: TECTONIC_ACTIVITY
+        GeneratorEntity tectonicActivity =
+                rollAttribute("TECTONIC_ACTIVITY", worldSize, WORLD_SIZE_TO_TECTONICS);
         proto.getAttributes().put("TECTONIC_ACTIVITY", tectonicActivity.getValue());
 
-        // Step 3: DOMINANT_RESOURCE depends on TECTONIC_ACTIVITY
-        GeneratorEntity dominantResource = rollAttribute("RESOURCE", tectonicActivity, TECTONICS_TO_RESOURCE);
+        // Step 3: DOMINANT_RESOURCE
+        GeneratorEntity dominantResource =
+                rollAttribute("RESOURCE", tectonicActivity, TECTONICS_TO_RESOURCE);
         proto.getAttributes().put("DOMINANT_RESOURCE", dominantResource.getValue());
 
-        // Step 4: Populate RESOURCE_POOL with abundance descriptors
-        Map<String, String> resourcePool = buildResourcePool(tectonicActivity);
+        // Step 4: RESOURCE_POOL (NEW STRUCTURED SYSTEM)
+        Map<String, String> resourcePool =
+                buildResourcePool(dominantResource);
+
         proto.getAttributes().put("RESOURCE_POOL", resourcePool);
 
         return proto;
     }
 
+
     // Build RESOURCE_POOL based on TECTONIC_ACTIVITY and rolled RESOURCE
-    private Map<String, String> buildResourcePool(GeneratorEntity tectonicActivity) {
+    private Map<String, String> buildResourcePool(GeneratorEntity dominantResource) {
+
         GeneratorCategory category = generatorCategoryRepository.findByName("RESOURCE");
         if (category == null) throw new RuntimeException("Category RESOURCE not found");
 
         List<GeneratorEntity> resources = generatorEntityRepository.findByCategory(category);
         if (resources.isEmpty()) throw new RuntimeException("No entities found for RESOURCE");
 
-        Map<String, Double> adjustedWeights = new HashMap<>();
-        Map<String, Double> overrides = TECTONICS_TO_RESOURCE.getOrDefault(tectonicActivity.getValue(), Map.of());
-
-        for (GeneratorEntity r : resources) {
-            double weight = overrides.getOrDefault(r.getValue(), 1.0);
-            adjustedWeights.put(r.getValue(), weight);
-        }
-
-        // Map weights to descriptors
-        return mapWeightsToDescriptors(adjustedWeights);
-    }
-
-    private Map<String, String> mapWeightsToDescriptors(Map<String, Double> weights) {
-        Map<String, String> descriptors = new HashMap<>();
+        Map<String, String> resourcePool = new HashMap<>();
         Random random = new Random();
 
-        for (Map.Entry<String, Double> entry : weights.entrySet()) {
-            double weight = entry.getValue();
+        String dominant = dominantResource.getValue();
 
-            // Convert weight into probabilities for scarce/moderate/plentiful
-            double p = random.nextDouble() * weight;
+        // 1 — Lock dominant as PLENTIFUL
+        resourcePool.put(dominant, "plentiful");
 
-            if (p < 0.33) descriptors.put(entry.getKey(), "scarce");
-            else if (p < 0.66) descriptors.put(entry.getKey(), "moderate");
-            else descriptors.put(entry.getKey(), "plentiful");
+        // Build remaining list
+        List<String> remaining = new ArrayList<>();
+        for (GeneratorEntity r : resources) {
+            if (!r.getValue().equals(dominant)) {
+                remaining.add(r.getValue());
+            }
         }
 
-        return descriptors;
+        Collections.shuffle(remaining, random);
+
+        // 2  Determine tier counts
+        int totalPlentiful = 1 + random.nextInt(2);
+        int abundantCount  = 1 + random.nextInt(3);
+        int scarceCount    = 1 + random.nextInt(2);
+
+        int additionalPlentiful = totalPlentiful - 1;
+
+        // 3  Additional PLENTIFUL
+        for (int i = 0; i < additionalPlentiful && !remaining.isEmpty(); i++) {
+            resourcePool.put(remaining.remove(0), "plentiful");
+        }
+
+        // 4  ABUNDANT
+        for (int i = 0; i < abundantCount && !remaining.isEmpty(); i++) {
+            resourcePool.put(remaining.remove(0), "abundant");
+        }
+
+        // 5  SCARCE
+        for (int i = 0; i < scarceCount && !remaining.isEmpty(); i++) {
+            resourcePool.put(remaining.remove(0), "scarce");
+        }
+
+        // 6  MODERATE
+        for (String res : remaining) {
+            resourcePool.put(res, "moderate");
+        }
+
+        return resourcePool;
     }
 
-    // Roll an attribute for a given category
-    private GeneratorEntity rollAttribute(String categoryName, GeneratorEntity previous, Map<String, Map<String, Double>> weightMap) {
+    private GeneratorEntity rollAttribute(
+            String categoryName,
+            GeneratorEntity previous,
+            Map<String, Map<String, Double>> weightMap
+    ) {
         GeneratorCategory category = generatorCategoryRepository.findByName(categoryName);
         if (category == null) {
             throw new RuntimeException("Category " + categoryName + " not found");
@@ -129,29 +157,34 @@ public class GeologicalPassService {
             throw new RuntimeException("No entities found for category " + categoryName);
         }
 
-        // Adjust weights based on previous attribute and weight map
-        List<GeneratorEntity> adjustedEntities = adjustWeights(entities, previous, weightMap);
-
-        // weighted random selection
-        return WeightedRandomUtil.pickWeighted(adjustedEntities);
+        List<GeneratorEntity> adjusted = adjustWeights(entities, previous, weightMap);
+        return WeightedRandomUtil.pickWeighted(adjusted);
     }
 
-    private List<GeneratorEntity> adjustWeights(List<GeneratorEntity> entities, GeneratorEntity previous, Map<String, Map<String, Double>> weightMap) {
+    private List<GeneratorEntity> adjustWeights(
+            List<GeneratorEntity> entities,
+            GeneratorEntity previous,
+            Map<String, Map<String, Double>> weightMap
+    ) {
         if (previous == null || weightMap == null) return entities;
 
         List<GeneratorEntity> adjusted = new ArrayList<>();
-        Map<String, Double> overrides = weightMap.getOrDefault(previous.getValue(), Map.of());
+        Map<String, Double> overrides =
+                weightMap.getOrDefault(previous.getValue(), Map.of());
 
         for (GeneratorEntity e : entities) {
-            double weight = overrides.getOrDefault(e.getValue(), 1.0); // default weight = 1.0
+            double weight = overrides.getOrDefault(e.getValue(), 1.0);
+
             GeneratorEntity copy = new GeneratorEntity();
             copy.setId(e.getId());
             copy.setValue(e.getValue());
             copy.setCategory(e.getCategory());
             copy.setType(e.getType());
-            copy.setBaseWeight(weight); // <-- use double directly, no cast
+            copy.setBaseWeight(weight);
+
             adjusted.add(copy);
         }
+
         return adjusted;
     }
 }

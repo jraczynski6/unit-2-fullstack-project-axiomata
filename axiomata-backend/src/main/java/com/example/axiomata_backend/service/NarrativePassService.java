@@ -11,35 +11,38 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 @Service
 public class NarrativePassService {
 
-    Map<String, String> sizeFragments = Map.of(
-            "tiny", "a cramped and volatile world",
-            "small", "a compact and bustling world",
-            "medium", "a balanced and diverse world",
-            "large", "a vast and sprawling world",
-            "giant", "an enormous and majestic world"
+    private static final Random RANDOM = new Random();
+
+    private static final Map<String, String[]> SIZE_FRAGMENTS = Map.of(
+            "tiny", new String[]{"a cramped and volatile world", "a fragile and compact world", "a constrained but lively world"},
+            "small", new String[]{"a compact and bustling world", "a dense yet vibrant world", "a snug and active realm"},
+            "medium", new String[]{"a balanced and diverse world", "a moderately flourishing world", "a world of mixed fortunes"},
+            "large", new String[]{"a vast and sprawling world", "an expansive and rich world", "a broad and fertile land"},
+            "giant", new String[]{"an enormous and majestic world", "a colossal and awe-inspiring realm", "a grand and legendary land"}
     );
 
-    Map<String, String> speciesFragments = Map.of(
-            "human", "dominated by adaptable humans",
-            "dwarf", "dominated by masterful miners and engineers",
-            "elf", "dominated by graceful and mystical elves",
-            "beast-folk", "dominated by fierce beast-folk tribes",
-            "daemon", "dominated by enigmatic daemons",
-            "monsters", "dominated by terrifying monsters",
-            "neutral", "dominated by varied and mysterious inhabitants"
+    private static final Map<String, String[]> SPECIES_FRAGMENTS = Map.of(
+            "human", new String[]{"dominated by adaptable humans", "ruled by ambitious humans", "home to industrious humans"},
+            "dwarf", new String[]{"dominated by masterful miners and engineers", "home to stubborn yet skilled dwarves", "where dwarves craft wonders underground"},
+            "elf", new String[]{"dominated by graceful and mystical elves", "where elves reign with elegance", "home to wise and ethereal elves"},
+            "beast-folk", new String[]{"dominated by fierce beast-folk tribes", "where beast-folk roam freely", "land of savage yet honorable beast-folk"},
+            "daemon", new String[]{"dominated by enigmatic daemons", "where daemons manipulate fate", "realm of mysterious daemonic forces"},
+            "monsters", new String[]{"dominated by terrifying monsters", "land haunted by monstrous beings", "where creatures of nightmare thrive"},
+            "neutral", new String[]{"dominated by varied and mysterious inhabitants", "a land of diverse, unpredictable peoples", "home to many enigmatic species"}
     );
 
-    Map<String, String> conflictFragments = Map.of(
-            "peaceful", "where peace generally prevails",
-            "defensive", "with societies on guard against threats",
-            "expansionist", "where civilizations strive to expand",
-            "opportunistic", "where cunning and chance shape survival",
-            "chaotic", "where disorder and conflict reign",
-            "aggressive", "where violence is common"
+    private static final Map<String, String[]> CONFLICT_FRAGMENTS = Map.of(
+            "peaceful", new String[]{"where peace generally prevails","a land of harmony and calm","societies flourish without war"},
+            "defensive", new String[]{"with societies on guard against threats","where vigilance defines daily life","fortresses and watchtowers dominate"},
+            "expansionist", new String[]{"where civilizations strive to expand","lands of conquest and ambition"},
+            "opportunistic", new String[]{"where cunning and chance shape survival","a world ruled by cunning strategies","opportunity defines the fate of many"},
+            "chaotic", new String[]{"where disorder and conflict reign","a turbulent and unpredictable realm","conflict and upheaval are daily life"},
+            "aggressive", new String[]{"where violence is common","a land of constant skirmishes","societies thrive through dominance"}
     );
 
     @Autowired
@@ -83,6 +86,8 @@ public class NarrativePassService {
                 !"agriculture".equals(attributes.get("DOMINANT_RESOURCE")) &&
                 !"livestock".equals(attributes.get("DOMINANT_RESOURCE"))) {
             attributes.put("DOMINANT_RESOURCE", "agriculture");
+            resourcePool.put("agriculture", "Plentiful");
+            resourcePool.put("livestock", "Abundant");
         }
 
         // --------------------------
@@ -91,6 +96,8 @@ public class NarrativePassService {
         if ("technomagical".equals(attributes.get("TECHNOLOGICAL_LEVEL")) &&
                 !"mystical".equals(attributes.get("DOMINANT_CULTURE"))) {
             attributes.put("DOMINANT_CULTURE", "mystical");
+            resourcePool.put("crystals", "Abundant");
+            resourcePool.put("herbs", "Abundant");
         }
 
         // --------------------------
@@ -104,9 +111,8 @@ public class NarrativePassService {
         }
 
         // --------------------------
-        // Step 5: Species + culture + conflict rules (high-frequency only)
+        // Step 5: Species + culture + conflict rules
         // --------------------------
-
         String species = (String) attributes.get("SPECIES");
         String culture = (String) attributes.get("DOMINANT_CULTURE");
         String conflict = (String) attributes.get("CONFLICT_TENDENCY");
@@ -119,7 +125,9 @@ public class NarrativePassService {
             attributes.put("CONFLICT_TENDENCY", "aggressive");
             attributes.put("TECHNOLOGICAL_LEVEL", "industrial");
             attributes.put("DOMINANT_CULTURE", "industrial");
-            resourcePool.put("iron", "Nearly Depleted");
+            resourcePool.put("iron", "Abundant");
+            resourcePool.put("stone", "Moderate");
+            resourcePool.put("coal", "Abundant");
         }
 
         // Elf-heavy mystical worlds
@@ -128,14 +136,18 @@ public class NarrativePassService {
             attributes.put("CONFLICT_TENDENCY", "peaceful");
             resourcePool.put("herbs", "Abundant");
             resourcePool.put("crystals", "Abundant");
+            resourcePool.put("silk", "Moderate");
+            resourcePool.put("marble", "Abundant");
         }
 
         // Human mercantile expansionist worlds
         if ("human".equals(species) && "mercantile".equals(culture) &&
                 "expansionist".equals(conflict)) {
             attributes.put("TECHNOLOGICAL_LEVEL", "industrial");
-            resourcePool.put("gold", "Abundant");
+            resourcePool.put("gold", "Plentiful");
             resourcePool.put("timber", "Abundant");
+            resourcePool.put("textiles", "Abundant");
+            resourcePool.put("spices", "Moderate");
         }
 
         // Beast-folk tribal worlds
@@ -144,6 +156,8 @@ public class NarrativePassService {
             attributes.put("TECHNOLOGICAL_LEVEL", "primitive");
             resourcePool.put("livestock", "Abundant");
             resourcePool.put("stone", "Moderate");
+            resourcePool.put("herbs", "Moderate");
+            resourcePool.put("fish", "Abundant");
         }
 
         // Daemon industrial worlds
@@ -152,6 +166,8 @@ public class NarrativePassService {
             attributes.put("TECHNOLOGICAL_LEVEL", "industrial");
             resourcePool.put("coal", "Abundant");
             resourcePool.put("iron", "Moderate");
+            resourcePool.put("obsidian", "Abundant");
+            resourcePool.put("crystals", "Moderate");
         }
 
         // commit back updated resource pool
@@ -210,7 +226,12 @@ public class NarrativePassService {
         return worldName;
     }
 
+    // Helper to pick a random fragment from an array of options
+    private String pickRandom(String[] options) {
+        return options[RANDOM.nextInt(options.length)];
+    }
 
+    // Generate a narrative summary based on key attributes
     private String generateWorldSummary(ProtoWorldDto proto) {
         String worldName = proto.getWorldName();
 
@@ -218,18 +239,10 @@ public class NarrativePassService {
         String dominantSpecies = (String) proto.getAttributes().get("DOMINANT_SPECIES");
         String conflictTendency = (String) proto.getAttributes().get("CONFLICT_TENDENCY");
 
-        String sizeFragment = sizeFragments.getOrDefault(worldSize, "an unknown size world");
-        String speciesFragment = speciesFragments.getOrDefault(dominantSpecies, "with mysterious inhabitants");
-        String conflictFragment = conflictFragments.getOrDefault(conflictTendency, "with unpredictable conflicts");
+        String sizeFragment = pickRandom(SIZE_FRAGMENTS.getOrDefault(worldSize, new String[]{"an unknown size world"}));
+        String speciesFragment = pickRandom(SPECIES_FRAGMENTS.getOrDefault(dominantSpecies, new String[]{"with mysterious inhabitants"}));
+        String conflictFragment = pickRandom(CONFLICT_FRAGMENTS.getOrDefault(conflictTendency, new String[]{"with unpredictable conflicts"}));
 
-        String summary = String.format(
-                "In %s, %s, %s, %s.",
-                worldName,
-                sizeFragment,
-                speciesFragment,
-                conflictFragment
-        );
-
-        return summary;
+        return String.format("%s, %s, %s, %s.", worldName, sizeFragment, speciesFragment, conflictFragment);
     }
 }
