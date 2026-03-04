@@ -107,7 +107,6 @@ public class GeologicalPassService {
             double weight = entry.getValue();
 
             // Convert weight into probabilities for scarce/moderate/plentiful
-            // Example: weight normalized to 0–1 scale with soft randomness
             double p = random.nextDouble() * weight;
 
             if (p < 0.33) descriptors.put(entry.getKey(), "scarce");
