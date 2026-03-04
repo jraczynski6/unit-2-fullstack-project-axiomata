@@ -52,6 +52,27 @@ public class CulturalPassService {
             "nomadic", Map.of("tribal council", 1.8, "communal", 1.5)
     );
 
+    // Dominant social structure-to-tech level influence (multiplicative)
+    private static final Map<String, Map<String, Double>> SOCIAL_TO_TECH_LEVEL_WEIGHT = Map.of(
+            "monarchy", Map.of("primitive", 0.8, "medieval", 1.2, "industrial", 1.5, "technomagical", 1.0),
+            "magocracy", Map.of("primitive", 0.5, "medieval", 1.0, "industrial", 1.3, "technomagical", 2.0),
+            "oligarchy", Map.of("primitive", 0.5, "medieval", 1.2, "industrial", 2.0, "technomagical", 1.2),
+            "democracy", Map.of("primitive", 0.6, "medieval", 1.3, "industrial", 1.5, "technomagical", 1.0),
+            "theocracy", Map.of("primitive", 1.0, "medieval", 1.5, "industrial", 1.2, "technomagical", 0.8),
+            "tribal council", Map.of("primitive", 2.0, "medieval", 1.0, "industrial", 0.5, "technomagical", 0.3),
+            "feudal", Map.of("primitive", 1.0, "medieval", 1.5, "industrial", 1.3, "technomagical", 0.5),
+            "communal", Map.of("primitive", 1.5, "medieval", 1.2, "industrial", 0.8, "technomagical", 0.3)
+    );
+
+    // Dominant resource-to-tech level influence (multiplicative)
+    private static final Map<String, Map<String, Double>> RESOURCE_TO_TECH_LEVEL_WEIGHT = Map.of(
+            "iron", Map.of("industrial", 2.0, "technomagical", 1.2),
+            "gold", Map.of("technomagical", 1.5, "industrial", 1.2),
+            "agriculture", Map.of("medieval", 1.5, "primitive", 1.2),
+            "timber", Map.of("primitive", 1.5, "medieval", 1.2),
+            "fish", Map.of("primitive", 1.2)
+    );
+
     // Dominant social structure-to-religion influence (multiplicative)
     private static final Map<String, Map<String, Double>> SOCIAL_TO_RELIGION_WEIGHT = Map.of(
             "monarchy", Map.of("organized religion", 1.5, "mono-pantheon", 1.2, "polytheistic", 1.0,
@@ -72,11 +93,9 @@ public class CulturalPassService {
     public ProtoWorldDto apply(ProtoWorldDto proto) {
 
         applyDominantCulture(proto);
-
         applySocialStructure(proto);
-
         applyReligion(proto);
-
+        applyTechnology(proto);
 
         return proto;
     }
@@ -105,13 +124,13 @@ public class CulturalPassService {
         // Step 1: Initialize a list to store the adjusted entities
         List<GeneratorEntity> adjusted = new ArrayList<>();
 
-        // Step 2: Get the primary attribute value from the ProtoWorld (e.g., DOMINANT_SPECIES or DOMINANT_CULTURE)
+        // Step 2: Get the primary attribute value from the ProtoWorld
         String primaryValue = primaryKey != null ? (String) proto.getAttributes().get(primaryKey) : null;
 
         // Step 3: Look up the weight overrides for the primary attribute from the provided map
         Map<String, Double> primaryOverrides = primaryValue != null ? primaryMap.getOrDefault(primaryValue, Map.of()) : Map.of();
 
-        // Step 4: Get the secondary attribute value from the ProtoWorld (optional, e.g., DOMINANT_RESOURCE)
+        // Step 4: Get the secondary attribute value from the ProtoWorld
         String secondaryValue = secondaryKey != null ? (String) proto.getAttributes().get(secondaryKey) : null;
 
         // Step 5: Look up the weight overrides for the secondary attribute from the provided map
@@ -179,5 +198,21 @@ public class CulturalPassService {
 
         // Store in proto
         proto.getAttributes().put("RELIGION_OR_BELIEF_SYSTEM", selected.getValue());
+    }
+
+    private void applyTechnology(ProtoWorldDto proto) {
+
+        // Step 1: Fetch all technology level entities from the DB
+        List<GeneratorEntity> techEntities = fetchEntitiesByCategory("TECHNOLOGICAL_LEVEL");
+
+        // Step 2: Adjust weights using social structure as primary, dominant resource as secondary
+        List<GeneratorEntity> adjustedTech = adjustWeights(techEntities, proto, SOCIAL_TO_TECH_LEVEL_WEIGHT, RESOURCE_TO_CULTURE_WEIGHT,
+                "SOCIAL_STRUCTURE", "DOMINANT_RESOURCE");
+
+        // Step 3: Pick weighted random tech level
+        GeneratorEntity selectedTech = WeightedRandomUtil.pickWeighted(adjustedTech);
+
+        // Step 4: Store the result in proto
+        proto.getAttributes().put("TECHNOLOGICAL_LEVEL", selectedTech.getValue());
     }
 }
