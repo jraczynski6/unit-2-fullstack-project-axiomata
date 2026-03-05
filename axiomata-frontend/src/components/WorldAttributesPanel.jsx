@@ -1,20 +1,25 @@
 import { useState, useEffect, useRef } from "react";
 
+// --------------------- Helper ---------------------
+// SCREAMING_SNAKE_CASE → Title Case with spaces
+export const normalizeKey = (key) =>
+  key
+    .toLowerCase()
+    .replace(/_/g, " ") // underscores → spaces
+    .replace(/\b\w/g, (c) => c.toUpperCase()); // capitalize each word
+
 export default function WorldAttributesPanel({
   attributes,
   editable = false,
   onChange,
   onValidationChange,
 }) {
-  // Internal state with stable IDs
-  // Each attribute: { key, value, tempKey? }
-  const [localAttributes, setLocalAttributes] = useState({}); // { id: { key, value, tempKey } }
+  const [localAttributes, setLocalAttributes] = useState({});
   const [collapsed, setCollapsed] = useState(false);
-  const idMapRef = useRef({}); // maps original keys → stable IDs
+  const idMapRef = useRef({}); // stable IDs for keys
 
   // --------------------- Sync with props ---------------------
   useEffect(() => {
-    // Convert { key: value } → { id: { key, value } }
     const mapped = {};
     Object.entries(attributes || {}).forEach(([k, v]) => {
       let id = idMapRef.current[k];
@@ -28,47 +33,51 @@ export default function WorldAttributesPanel({
     validateAttributes(mapped);
   }, [attributes]);
 
-  // -------------- Validate Attributes ------------------
+  // --------------------- Validation -------------------------
   const validateAttributes = (attrs) => {
     const errors = {};
+
+    const checkValue = (value) => {
+      if (typeof value === "string") return !value.trim() ? "Key and Value required" : null;
+      if (typeof value === "object" && value !== null) {
+        const nestedErrors = {};
+        Object.entries(value).forEach(([k, v]) => {
+          const err = checkValue(v);
+          if (err) nestedErrors[k] = err;
+        });
+        return Object.keys(nestedErrors).length > 0 ? nestedErrors : null;
+      }
+      return null;
+    };
+
     Object.entries(attrs).forEach(([id, attr]) => {
       const keyToCheck = attr.tempKey ?? attr.key;
-      errors[keyToCheck] =
-        !keyToCheck?.trim() || !attr.value?.trim()
-          ? "Key and Value required"
-          : null;
+      errors[keyToCheck] = checkValue(attr.value);
     });
+
     onValidationChange?.(errors);
   };
 
-  // --------------------- Helpers to flatten -----------------
+  // --------------------- Flatten for onChange ----------------
   const flattenAttributes = (attrs) => {
     const flat = {};
     Object.values(attrs).forEach((attr) => {
-      const keyToUse = attr.key;
-      if (keyToUse) flat[keyToUse] = attr.value;
+      flat[attr.key] = attr.value;
     });
     return flat;
   };
 
-  // --------------------- Update value ---------------------
+  // --------------------- Update value -----------------------
   const handleChangeValue = (id, value) => {
-    const updatedAttributes = {
-      ...localAttributes,
-      [id]: { ...localAttributes[id], value },
-    };
+    const updatedAttributes = { ...localAttributes, [id]: { ...localAttributes[id], value } };
     setLocalAttributes(updatedAttributes);
     onChange?.(flattenAttributes(updatedAttributes));
     validateAttributes(updatedAttributes);
   };
 
-  // --------------------- Update key -----------------------
-  // Use tempKey to allow smooth editing
+  // --------------------- Update key -------------------------
   const handleChangeKey = (id, tempKey) => {
-    const updatedAttributes = {
-      ...localAttributes,
-      [id]: { ...localAttributes[id], tempKey },
-    };
+    const updatedAttributes = { ...localAttributes, [id]: { ...localAttributes[id], tempKey } };
     setLocalAttributes(updatedAttributes);
     validateAttributes(updatedAttributes);
   };
@@ -77,41 +86,26 @@ export default function WorldAttributesPanel({
     const attr = localAttributes[id];
     const newKey = attr.tempKey?.trim();
     if (!newKey || newKey === attr.key) {
-      // discard tempKey if empty or unchanged
-      setLocalAttributes((prev) => ({
-        ...prev,
-        [id]: { ...prev[id], tempKey: undefined },
-      }));
+      setLocalAttributes((prev) => ({ ...prev, [id]: { ...prev[id], tempKey: undefined } }));
       return;
     }
-
-    const updatedAttributes = {
-      ...localAttributes,
-      [id]: { key: newKey, value: attr.value },
-    };
-
-    // Update idMapRef so future syncs keep the same ID
+    const updatedAttributes = { ...localAttributes, [id]: { key: newKey, value: attr.value } };
     idMapRef.current[newKey] = id;
-
     setLocalAttributes(updatedAttributes);
     onChange?.(flattenAttributes(updatedAttributes));
     validateAttributes(updatedAttributes);
   };
 
-  // --------------------- Add attribute --------------------
+  // --------------------- Add/Remove attribute ----------------
   const handleAddAttribute = () => {
     const id = `attr_${Date.now()}`;
     const newKey = `attribute_${Object.keys(localAttributes).length + 1}`;
-    const updatedAttributes = {
-      ...localAttributes,
-      [id]: { key: newKey, value: "" },
-    };
+    const updatedAttributes = { ...localAttributes, [id]: { key: newKey, value: "" } };
     setLocalAttributes(updatedAttributes);
     onChange?.(flattenAttributes(updatedAttributes));
     validateAttributes(updatedAttributes);
   };
 
-  // --------------------- Remove attribute -----------------
   const handleRemoveAttribute = (id) => {
     const updatedAttributes = { ...localAttributes };
     delete updatedAttributes[id];
@@ -120,10 +114,56 @@ export default function WorldAttributesPanel({
     validateAttributes(updatedAttributes);
   };
 
-  // --------------------- Display -------------------------
-  const toggleCollapse = () => setCollapsed(!collapsed);
+  // --------------------- Render nested attributes recursively ----------------
+  const renderAttribute = (attr, id) => {
+    if (typeof attr.value === "object" && attr.value !== null) {
+      return (
+        <div key={id} className="attribute-nested">
+          <span className="attribute-key">{normalizeKey(attr.tempKey ?? attr.key)}:</span>
+          <div className="nested-attributes">
+            {Object.entries(attr.value).map(([subKey, subValue]) =>
+              renderAttribute({ key: subKey, value: subValue }, `${id}_${subKey}`)
+            )}
+          </div>
+        </div>
+      );
+    }
 
+    return (
+      <div key={id} className="attribute-row">
+        {editable ? (
+          <>
+            <input
+              className="attribute-key"
+              value={attr.tempKey ?? attr.key}
+              onChange={(e) => handleChangeKey(id, e.target.value)}
+              onBlur={() => handleKeyBlur(id)}
+            />
+            <input
+              className="attribute-value"
+              value={attr.value}
+              onChange={(e) => handleChangeValue(id, e.target.value)}
+              placeholder="Value"
+            />
+            <button onClick={() => handleRemoveAttribute(id)}>&times;</button>
+            {(!attr.key?.trim() || !String(attr.value)?.trim()) && (
+              <span className="error-text">Key and Value required</span>
+            )}
+          </>
+        ) : (
+          <>
+            <span className="attribute-key">{normalizeKey(attr.key)}:</span>
+            <span className="attribute-value">{attr.value}</span>
+          </>
+        )}
+      </div>
+    );
+  };
+
+  // --------------------- Display -----------------------------
+  const toggleCollapse = () => setCollapsed(!collapsed);
   const attributeEntries = Object.entries(localAttributes);
+
   if (attributeEntries.length === 0)
     return <p className="world-attributes-empty">No attributes yet.</p>;
 
@@ -134,35 +174,7 @@ export default function WorldAttributesPanel({
       </button>
 
       {!collapsed &&
-        attributeEntries.map(([id, attr]) => (
-          <div key={id} className="attribute-row">
-            {editable ? (
-              <>
-                <input
-                  className="attribute-key"
-                  value={attr.tempKey ?? attr.key}
-                  onChange={(e) => handleChangeKey(id, e.target.value)}
-                  onBlur={() => handleKeyBlur(id)}
-                />
-                <input
-                  className="attribute-value"
-                  value={attr.value}
-                  onChange={(e) => handleChangeValue(id, e.target.value)}
-                  placeholder="Value"
-                />
-                <button onClick={() => handleRemoveAttribute(id)}>&times;</button>
-                {(!attr.key?.trim() || !attr.value?.trim()) && (
-                  <span className="error-text">Key and Value required</span>
-                )}
-              </>
-            ) : (
-              <>
-                <span className="attribute-key">{attr.key}:</span>
-                <span className="attribute-value">{attr.value}</span>
-              </>
-            )}
-          </div>
-        ))}
+        attributeEntries.map(([id, attr]) => renderAttribute(attr, id))}
 
       {editable && !collapsed && (
         <button className="attribute-add" onClick={handleAddAttribute}>
@@ -172,11 +184,3 @@ export default function WorldAttributesPanel({
     </div>
   );
 }
-
-// ==========================
-// WorldAttributesPanel.jsx / TODO
-// ==========================
-// - Add grid-based layout in future for multiple attributes
-// - Style key/value inputs and add/remove buttons to match Axiomata theme
-// - Integrate with FloatingControls Save button for backend persistence later
-// - Panel is collapsible to reduce clutter
