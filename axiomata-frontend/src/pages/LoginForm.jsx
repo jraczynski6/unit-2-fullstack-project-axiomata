@@ -39,27 +39,31 @@ export default function LoginForm({ onSuccess }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="login-form">
-      <input
-        type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        required
-        className="login-input login-username"
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-        className="login-input login-password"
-      />
-      <button type="submit" className="login-button">
+    <form onSubmit={handleSubmit} className="form-container login-form">
+      <div className="form-field">
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+          className="input-primary"
+        />
+      </div>
+      <div className="form-field">
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          className="input-primary"
+        />
+      </div>
+      <button type="submit" className="btn btn-confirm">
         Login
       </button>
-      {error && <p className="login-error">{error}</p>}
+      {error && <p className="error-text">{error}</p>}
     </form>
   );
 }

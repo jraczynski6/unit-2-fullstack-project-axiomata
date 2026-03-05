@@ -89,7 +89,7 @@ export default function AccountPage() {
   const canSave = !errors.username && !errors.password && !errors.passwordConfirm;
 
   return (
-    <div className="page-container">
+    <div className="account-page page-container">
       <h1 className="page-title">Account Page</h1>
       <p className="page-description">Manage your account information here.</p>
 
@@ -103,6 +103,7 @@ export default function AccountPage() {
             disabled={!editing}
             onChange={(e) => setUser({ ...user, username: e.target.value })}
             onBlur={validate}
+            className="input-field"
           />
           {errors.username && <span className="error-text">{errors.username}</span>}
         </div>
@@ -117,6 +118,7 @@ export default function AccountPage() {
                 value={user.password}
                 onChange={(e) => setUser({ ...user, password: e.target.value })}
                 onBlur={validate}
+                className="input-field"
               />
               {errors.password && <span className="error-text">{errors.password}</span>}
             </div>
@@ -129,6 +131,7 @@ export default function AccountPage() {
                 value={passwordConfirm}
                 onChange={(e) => setPasswordConfirm(e.target.value)}
                 onBlur={validate}
+                className="input-field"
               />
               {errors.passwordConfirm && <span className="error-text">{errors.passwordConfirm}</span>}
             </div>
@@ -137,10 +140,12 @@ export default function AccountPage() {
 
         <div className="form-actions">
           {!editing ? (
-            <button type="button" onClick={() => setEditing(true)}>Edit</button>
+            <button type="button" onClick={() => setEditing(true)} className="action-button">
+              Edit
+            </button>
           ) : (
             <>
-              <button type="button" onClick={handleSave} disabled={!canSave}>
+              <button type="button" onClick={handleSave} disabled={!canSave} className="action-button">
                 Save
               </button>
               <button
@@ -151,6 +156,7 @@ export default function AccountPage() {
                   setPasswordConfirm("");
                   setErrors({ username: null, password: null, passwordConfirm: null });
                 }}
+                className="action-button cancel-button"
               >
                 Cancel
               </button>

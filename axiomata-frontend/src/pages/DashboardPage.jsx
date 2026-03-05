@@ -4,42 +4,49 @@ import { getWorldsForUser } from "../services/worldService";
 import WorldCard from "../components/WorldCard";
 
 export default function DashboardPage() {
-    const [worlds, setWorlds] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const navigate = useNavigate();
+  const [worlds, setWorlds] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchWorlds = async () => {
-            try {
-                const data = await getWorldsForUser();
-                console.log("Worlds fetched:", data);
-                setWorlds(data);
-            } catch (error) {
-                console.log("Failed to fetch worlds:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
+  useEffect(() => {
+    const fetchWorlds = async () => {
+      try {
+        const data = await getWorldsForUser();
+        console.log("Worlds fetched:", data);
+        setWorlds(data);
+      } catch (error) {
+        console.log("Failed to fetch worlds:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-        fetchWorlds();
-    }, []);
+    fetchWorlds();
+  }, []);
 
-    const handleCreateWorld = () => {
-        navigate("/create-world");
-    }
-    
-    if (loading) return <div>Loading Worlds...</div>
-    if (worlds.length === 0) return <div>No worlds found.</div>
+  const handleCreateWorld = () => {
+    navigate("/create-world");
+  };
 
-    return (
-        <div>
-            <button onClick={handleCreateWorld}>Create New World</button>
-            <h1>Your Worlds</h1>
-            {worlds.map((world) => (
-                <WorldCard key={world.id} world={world} />
-            ))}
-        </div>
-    );
+  if (loading) return <div className="page-container"><p className="text-secondary">Loading Worlds...</p></div>;
+  if (worlds.length === 0) return <div className="page-container"><p className="text-secondary">No worlds found.</p></div>;
+
+  return (
+    <div className="page-container">
+      <div className="dashboard-header">
+        <button className="btn btn-confirm" onClick={handleCreateWorld}>
+          Create New World
+        </button>
+        <h1 className="page-title">Your Worlds</h1>
+      </div>
+
+      <div className="worlds-list">
+        {worlds.map((world) => (
+          <WorldCard key={world.id} world={world} />
+        ))}
+      </div>
+    </div>
+  );
 }
 // ----- WorldDashboard / WorldPanel (MVP) -----
 // TODO: Add delete confirmation modals for entities
