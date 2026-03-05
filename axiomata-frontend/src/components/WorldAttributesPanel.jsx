@@ -19,19 +19,23 @@ export default function WorldAttributesPanel({
 }) {
   const [localAttributes, setLocalAttributes] = useState({});
   const [collapsed, setCollapsed] = useState(false);
-  const idMapRef = useRef({}); // stable IDs for top-level
+  const idMapRef = useRef({});
 
   // ----------------- Initialize -----------------
   useEffect(() => {
+    if (!attributes) return;
+
     const mapped = {};
-    Object.entries(attributes || {}).forEach(([k, v]) => {
-      const id = idMapRef.current[k] || `attr_${Object.keys(idMapRef.current).length + 1}`;
-      idMapRef.current[k] = id;
-      mapped[id] = { key: k, value: v };
+    Object.entries(attributes).forEach(([category, categoryObj]) => {
+      Object.entries(categoryObj).forEach(([key, value]) => {
+        const id = idMapRef.current[`${category}_${key}`] || `attr_${Object.keys(idMapRef.current).length + 1}`;
+        idMapRef.current[`${category}_${key}`] = id;
+        mapped[id] = { category, key, value };
+      });
     });
+
     setLocalAttributes(mapped);
     validateAttributes(mapped);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [attributes]);
 
   // ----------------- Validation -----------------
@@ -48,17 +52,22 @@ export default function WorldAttributesPanel({
   // ----------------- Trigger Change -----------------
   const triggerChange = (updated) => {
     setLocalAttributes(updated);
-    const flat = {};
-    Object.values(updated).forEach(({ key, value }) => (flat[key] = value));
-    onChange?.(flat);
+    const structured = {};
+
+    Object.values(updated).forEach(({ category, key, value }) => {
+      if (!structured[category]) structured[category] = {};
+      structured[category][key] = value;
+    });
+
+    onChange?.(structured);
     validateAttributes(updated);
   };
 
-  // ----------------- Key / Value Handlers -----------------
+  // ----------------- Handlers -----------------
   const handleChangeKey = (id, newTempKey) => {
     setLocalAttributes((prev) => ({
       ...prev,
-      [id]: { ...prev[id], tempKey: newTempKey } // only tempKey updates
+      [id]: { ...prev[id], tempKey: newTempKey },
     }));
   };
 
@@ -67,13 +76,9 @@ export default function WorldAttributesPanel({
       const attr = prev[id];
       if (!attr) return prev;
       const newKey = attr.tempKey?.trim();
-      if (!newKey || newKey === attr.key) {
-        // discard tempKey if empty or unchanged
-        return { ...prev, [id]: { ...attr, tempKey: undefined } };
-      }
+      if (!newKey || newKey === attr.key) return { ...prev, [id]: { ...attr, tempKey: undefined } };
 
-      // commit new key
-      const updated = { ...prev, [id]: { key: denormalizeKey(newKey), value: attr.value } };
+      const updated = { ...prev, [id]: { ...attr, key: denormalizeKey(newKey), tempKey: undefined } };
       triggerChange(updated);
       return updated;
     });
@@ -82,7 +87,7 @@ export default function WorldAttributesPanel({
   const updateValue = (id, newValue) => {
     setLocalAttributes((prev) => {
       const attr = prev[id];
-      if (!attr || typeof attr.value === "object") return prev; // nested maps not editable
+      if (!attr || typeof attr.value === "object") return prev;
       const updated = { ...prev, [id]: { ...attr, value: newValue } };
       triggerChange(updated);
       return updated;
@@ -92,7 +97,7 @@ export default function WorldAttributesPanel({
   const addAttribute = () => {
     const id = `attr_${Date.now()}`;
     const newKey = `ATTRIBUTE_${Object.keys(localAttributes).length + 1}`;
-    triggerChange({ ...localAttributes, [id]: { key: newKey, value: "" } });
+    triggerChange({ ...localAttributes, [id]: { category: "Misc", key: newKey, value: "" } });
   };
 
   const removeAttribute = (id) => {
@@ -101,17 +106,15 @@ export default function WorldAttributesPanel({
     triggerChange(updated);
   };
 
-  // ----------------- Render Nested Read-Only Panel -----------------
+  // ----------------- Nested Readonly Panel -----------------
   const renderNestedPanel = (title, obj) => (
-    <div className="nested-readonly-panel">
+    <div className="nested-readonly-panel" key={title}>
       <h4>{normalizeKey(title)}</h4>
       {Object.entries(obj).map(([k, v]) => (
         <div key={`${title}_${k}`} className="attribute-row">
           <span className="attribute-key">{normalizeKey(k)}:</span>
           <span className="attribute-value">
-            {typeof v === "string"
-              ? v.charAt(0).toUpperCase() + v.slice(1)
-              : "[Object]"}
+            {typeof v === "string" ? v.charAt(0).toUpperCase() + v.slice(1) : "[Object]"}
           </span>
         </div>
       ))}
@@ -123,20 +126,15 @@ export default function WorldAttributesPanel({
 
   return (
     <div className="attributes-panel">
-      <button
-        className="attribute-toggle-btn"
-        onClick={() => setCollapsed(!collapsed)}
-      >
+      <button className="attribute-toggle-btn" onClick={() => setCollapsed(!collapsed)}>
         {collapsed ? "Show Attributes" : "Hide Attributes"}
       </button>
 
       {!collapsed && (
         <>
           {/* Nested read-only panels */}
-          {attributes["RESOURCE_POOL"] &&
-            renderNestedPanel("Resource Pool", attributes["RESOURCE_POOL"])}
-          {attributes["SPECIES_POOL"] &&
-            renderNestedPanel("Species Pool", attributes["SPECIES_POOL"])}
+          {attributes.Geological?.RESOURCE_POOL && renderNestedPanel("Resource Pool", attributes.Geological.RESOURCE_POOL)}
+          {attributes.Biological?.SPECIES_POOL && renderNestedPanel("Species Pool", attributes.Biological.SPECIES_POOL)}
 
           {/* Editable primitives */}
           {Object.entries(localAttributes)
@@ -159,14 +157,10 @@ export default function WorldAttributesPanel({
                       value={attr.value}
                       onChange={(e) => updateValue(id, e.target.value)}
                     />
-                    <button
-                      className="attribute-remove-btn"
-                      onClick={() => removeAttribute(id)}
-                    >
+                    <button className="attribute-remove-btn" onClick={() => removeAttribute(id)}>
                       &times;
                     </button>
-                    {(!attr.key?.trim() ||
-                      String(attr.value)?.trim() === "") && (
+                    {(!attr.key?.trim() || String(attr.value)?.trim() === "") && (
                       <span className="error-text">Key and Value required</span>
                     )}
                   </>

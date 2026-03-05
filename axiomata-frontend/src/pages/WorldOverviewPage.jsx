@@ -1,200 +1,107 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { getWorldById, updateWorld, deleteWorld } from "../services/worldService";
-import SectionPanel from "../components/SectionPanel";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import FloatingControls from "../components/FloatingControls";
-import Spinner from "../components/ui/Spinner";
-import { useToast } from "../context/ToastContext";
 import WorldAttributesPanel from "../components/WorldAttributesPanel";
+import { getWorldById, updateWorld } from "../services/worldService";
+import { useToast } from "../context/ToastContext";
 
 export default function WorldOverviewPage() {
   const { worldId } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
   const { addToast } = useToast();
 
   const [world, setWorld] = useState(null);
-
-  // Editing state
-  const [isEditingWorld, setIsEditingWorld] = useState(false);
-  const [editedName, setEditedName] = useState("");
-  const [editedDescription, setEditedDescription] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
   const [editedAttributes, setEditedAttributes] = useState({});
+  const [hasErrors, setHasErrors] = useState(false);
 
-  // Validation state
-  const [validationErrors, setValidationErrors] = useState({
-    name: null,
-    description: null,
-    attributes: {},
-  });
+  console.log("WorldOverviewPage rendered", { worldId, isEditing });
 
-  // ---------------- Fetch World ----------------
-  const fetchWorld = async () => {
-    try {
-      const data = await getWorldById(worldId);
-      setWorld({ ...data, attributesObj: data.attributes || {} });
-      setEditedAttributes(data.attributes || {});
-    } catch (err) {
-      console.error("Failed to fetch world:", err);
-      addToast({ message: "Failed to load world.", type: "error" });
-    }
-  };
-
+  // ---------------- Load World ----------------
   useEffect(() => {
-    if (worldId) fetchWorld();
-  }, [worldId, location.key]);
+    const fetchWorld = async () => {
+      console.log("Fetching world:", worldId);
+      try {
+        const data = await getWorldById(worldId);
+        console.log("World loaded:", data);
+        setWorld(data);
+        setEditedAttributes(data.attributes || {});
+      } catch (err) {
+        console.error("Failed to fetch world:", err);
+        addToast({ message: "Failed to load world.", type: "error" });
+        navigate("/dashboard");
+      }
+    };
+    fetchWorld();
+  }, [worldId, addToast, navigate]);
 
-  // ---------------- World Controls ----------------
-  const handleEditWorld = () => {
-    if (!world) return;
-    setIsEditingWorld(true);
-    setEditedName(world.name || "");
-    setEditedDescription(world.description || "");
-    setEditedAttributes({ ...world.attributesObj });
-    setValidationErrors({
-      name: world.name ? null : "Name is required",
-      description: null,
-      attributes: {},
-    });
+  // ---------------- Edit / Save Handlers ----------------
+  const handleEdit = () => {
+    console.log("Edit clicked");
+    setIsEditing(true);
   };
 
-  const handleCancelEditWorld = () => {
-    if (!world) return;
-    setEditedName(world.name || "");
-    setEditedDescription(world.description || "");
-    setEditedAttributes({ ...world.attributesObj });
-    setIsEditingWorld(false);
-    setValidationErrors({ name: null, description: null, attributes: {} });
+  const handleCancelEdit = () => {
+    console.log("Cancel edit");
+    setEditedAttributes(world.attributes || {});
+    setIsEditing(false);
+    setHasErrors(false);
   };
 
-  const handleSaveWorld = async () => {
-    if (!world) return;
-
+  const handleSave = async () => {
+    console.log("Save clicked", { editedAttributes, hasErrors });
     if (hasErrors) {
-      addToast({ message: "Cannot save: fix invalid fields first.", type: "error" });
+      console.log("Cannot save, validation errors exist");
       return;
     }
-
-    const updatedWorld = {
-      ...world,
-      name: editedName,
-      description: editedDescription,
-      attributes: editedAttributes,
-    };
-
     try {
-      const savedWorld = await updateWorld(worldId, updatedWorld);
-      setWorld({ ...savedWorld, attributesObj: { ...editedAttributes } });
-      setIsEditingWorld(false);
-      addToast({ message: "World saved successfully.", type: "success" });
-      setValidationErrors({ name: null, description: null, attributes: {} });
+      const updated = await updateWorld(worldId, {
+        ...world,
+        attributes: editedAttributes,
+      });
+      console.log("World saved:", updated);
+      setWorld(updated);
+      setEditedAttributes(updated.attributes || {});
+      setIsEditing(false);
+      addToast({ message: "World updated successfully.", type: "success" });
     } catch (err) {
-      console.error(err);
+      console.error("Failed to save world:", err);
       addToast({ message: "Failed to save world.", type: "error" });
     }
   };
 
-  const handleDeleteWorld = async () => {
-    try {
-      await deleteWorld(worldId);
-      addToast({ message: "World deleted successfully.", type: "success" });
-      navigate("/dashboard");
-    } catch (err) {
-      console.error(err);
-      addToast({ message: "Failed to delete world.", type: "error" });
-    }
+  const handleAttributesChange = (attrs) => {
+    console.log("Attributes changed:", attrs);
+    setEditedAttributes(attrs);
+  };
+  const handleValidationChange = (errors) => {
+    console.log("Validation errors:", errors);
+    setHasErrors(Object.keys(errors).length > 0);
   };
 
-  const handleAddEntity = (entityType) => {
-    navigate(`/world-content/${worldId}`);
-  };
-
-  if (!world) return <Spinner />;
-
-  // --------------------- Validation --------------------
-  const hasErrors =
-    Boolean(validationErrors.name) ||
-    Boolean(validationErrors.description) ||
-    Object.keys(validationErrors.attributes).some((k) => validationErrors.attributes[k]);
+  if (!world) return <p>Loading world...</p>;
 
   return (
     <div className="world-overview-page">
-      {/* Editable Name & Description */}
-      <div className="world-header">
-        {isEditingWorld ? (
-          <div className="world-edit-fields">
-            <input
-              type="text"
-              value={editedName}
-              onChange={(e) => {
-                setEditedName(e.target.value);
-                setValidationErrors((prev) => ({
-                  ...prev,
-                  name: e.target.value.trim() ? null : "Name is required",
-                }));
-              }}
-              placeholder="World Name"
-              className="world-name-input"
-            />
-            {validationErrors.name && <span className="error-text">{validationErrors.name}</span>}
+      <h1>{world.name || "Unnamed World"}</h1>
+      <p>{world.description || "No description available."}</p>
 
-            <textarea
-              value={editedDescription}
-              onChange={(e) => {
-                setEditedDescription(e.target.value);
-                setValidationErrors((prev) => ({ ...prev, description: null }));
-              }}
-              placeholder="World Description"
-              className="world-description-input"
-            />
-            {validationErrors.description && (
-              <span className="error-text">{validationErrors.description}</span>
-            )}
-          </div>
-        ) : (
-          <div className="world-display">
-            <h1 className="world-name">{world.name || "Unnamed World"}</h1>
-            <p className="world-description">
-              {world.description || "High-level view of a world."}
-            </p>
-          </div>
-        )}
-      </div>
+      <WorldAttributesPanel
+        attributes={editedAttributes}
+        editable={isEditing}
+        onChange={handleAttributesChange}
+        onValidationChange={handleValidationChange}
+      />
 
-      {/* Section Panel */}
-      <div className="world-section-panel">
-        <SectionPanel
-          world={world}
-          onSelectEntity={(entity) =>
-            navigate(`/world-content/${worldId}`, { state: { selectedEntity: entity } })
-          }
-        />
-      </div>
-
-      {/* World Attributes Panel */}
-      <div className="world-attributes-panel">
-        <WorldAttributesPanel
-          attributes={isEditingWorld ? editedAttributes : world.attributesObj || {}}
-          editable={isEditingWorld}
-          onChange={(updatedAttributes) => setEditedAttributes(updatedAttributes)}
-          onValidationChange={(errors) =>
-            setValidationErrors((prev) => ({ ...prev, attributes: errors }))
-          }
-        />
-      </div>
-
-      {/* Floating Controls */}
       <FloatingControls
         pageType="worldOverview"
         worldId={worldId}
         world={world}
-        isEditingProp={isEditingWorld}
+        isEditingProp={isEditing}
         hasErrors={hasErrors}
-        onEdit={handleEditWorld}
-        onSave={handleSaveWorld}
-        onCancelEdit={handleCancelEditWorld}
-        onAddEntity={handleAddEntity}
-        onDeleteWorld={handleDeleteWorld}
+        onEdit={handleEdit}
+        onSave={handleSave}
+        onCancelEdit={handleCancelEdit}
       />
     </div>
   );

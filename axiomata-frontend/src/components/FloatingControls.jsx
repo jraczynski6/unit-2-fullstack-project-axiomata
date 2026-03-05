@@ -3,14 +3,8 @@ import { useNavigate } from "react-router-dom";
 import AddEntityModal from "./AddEntityModal";
 import ConfirmModal from "./ConfirmModal";
 import {
-  createLocation,
-  createFaction,
-  createCharacter,
-  createItem,
-  deleteLocation,
-  deleteFaction,
-  deleteCharacter,
-  deleteItem,
+  createLocation, createFaction, createCharacter, createItem,
+  deleteLocation, deleteFaction, deleteCharacter, deleteItem,
   deleteWorld
 } from "../services/worldService";
 import { useToast } from "../context/ToastContext";
@@ -23,7 +17,6 @@ export default function FloatingControls({
   isEditingProp,
   hasErrors,
   onAddEntity,
-  onDeleteWorld,
   onEdit,
   onSave,
   onCancelEdit
@@ -69,7 +62,6 @@ export default function FloatingControls({
 
   const handleConfirmDeleteEntity = async () => {
     if (!selectedEntity) return;
-
     const { category, id } = selectedEntity;
     if (!category || !id) return;
 
@@ -82,7 +74,7 @@ export default function FloatingControls({
         default: throw new Error(`Unknown category: ${category}`);
       }
       addToast({ message: `${category} deleted successfully.`, type: "success" });
-      onAddEntity?.(); // refresh after deletion
+      onAddEntity?.(); // refresh
     } catch (err) {
       console.error("Failed to delete entity:", err);
       addToast({ message: "Failed to delete entity.", type: "error" });
@@ -93,8 +85,10 @@ export default function FloatingControls({
 
   // --------------------- Delete World ---------------------
   const handleDeleteWorld = async () => {
+    console.log("handleDeleteWorld triggered"); // <- track
     try {
       await deleteWorld(worldId);
+      console.log("World deleted successfully");       // <- track
       addToast({ message: "World deleted successfully.", type: "success" });
       navigate("/dashboard");
     } catch (err) {
@@ -126,10 +120,13 @@ export default function FloatingControls({
             </>
           )}
 
+          {/* Delete World always enabled */}
           <button
-            className="control-button"
-            onClick={() => setConfirmDeleteWorld(true)}
-            disabled={isEditingProp}
+            className="control-button delete-world-btn"
+            onClick={() => {
+              console.log("Delete World clicked");
+              setConfirmDeleteWorld(true);
+            }}
           >
             Delete World
           </button>
@@ -194,6 +191,7 @@ export default function FloatingControls({
 
       {confirmDeleteWorld && (
         <ConfirmModal
+          open={confirmDeleteWorld}
           message="Deleting this world will remove everything. Are you sure?"
           onConfirm={handleDeleteWorld}
           onCancel={() => setConfirmDeleteWorld(false)}
