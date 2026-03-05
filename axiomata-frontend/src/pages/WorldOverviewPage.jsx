@@ -25,19 +25,15 @@ export default function WorldOverviewPage() {
   const [validationErrors, setValidationErrors] = useState({
     name: null,
     description: null,
-    attributes: {}
+    attributes: {},
   });
 
   // ---------------- Fetch World ----------------
   const fetchWorld = async () => {
     try {
       const data = await getWorldById(worldId);
-
-      console.log("FETCH WORLD ATTRIBUTES:", data.attributes);
-
       setWorld({ ...data, attributesObj: data.attributes || {} });
       setEditedAttributes(data.attributes || {});
-      console.log("STATE SET: world.attributesObj & editedAttributes", data.attributes || {});
     } catch (err) {
       console.error("Failed to fetch world:", err);
       addToast({ message: "Failed to load world.", type: "error" });
@@ -54,11 +50,11 @@ export default function WorldOverviewPage() {
     setIsEditingWorld(true);
     setEditedName(world.name || "");
     setEditedDescription(world.description || "");
-    setEditedAttributes(world.attributesObj || {});
+    setEditedAttributes({ ...world.attributesObj });
     setValidationErrors({
       name: world.name ? null : "Name is required",
       description: null,
-      attributes: {}
+      attributes: {},
     });
   };
 
@@ -66,7 +62,7 @@ export default function WorldOverviewPage() {
     if (!world) return;
     setEditedName(world.name || "");
     setEditedDescription(world.description || "");
-    setEditedAttributes(world.attributesObj || {});
+    setEditedAttributes({ ...world.attributesObj });
     setIsEditingWorld(false);
     setValidationErrors({ name: null, description: null, attributes: {} });
   };
@@ -83,12 +79,12 @@ export default function WorldOverviewPage() {
       ...world,
       name: editedName,
       description: editedDescription,
-      attributes: editedAttributes
+      attributes: editedAttributes,
     };
 
     try {
       const savedWorld = await updateWorld(worldId, updatedWorld);
-      setWorld({ ...savedWorld, attributesObj: editedAttributes });
+      setWorld({ ...savedWorld, attributesObj: { ...editedAttributes } });
       setIsEditingWorld(false);
       addToast({ message: "World saved successfully.", type: "success" });
       setValidationErrors({ name: null, description: null, attributes: {} });
@@ -101,6 +97,7 @@ export default function WorldOverviewPage() {
   const handleDeleteWorld = async () => {
     try {
       await deleteWorld(worldId);
+      addToast({ message: "World deleted successfully.", type: "success" });
       navigate("/dashboard");
     } catch (err) {
       console.error(err);
@@ -108,7 +105,7 @@ export default function WorldOverviewPage() {
     }
   };
 
-  const handleAddEntity = async (entityType) => {
+  const handleAddEntity = (entityType) => {
     navigate(`/world-content/${worldId}`);
   };
 
@@ -118,7 +115,7 @@ export default function WorldOverviewPage() {
   const hasErrors =
     Boolean(validationErrors.name) ||
     Boolean(validationErrors.description) ||
-    Object.keys(validationErrors.attributes).some(k => validationErrors.attributes[k]);
+    Object.keys(validationErrors.attributes).some((k) => validationErrors.attributes[k]);
 
   return (
     <div className="world-overview-page">
@@ -131,9 +128,9 @@ export default function WorldOverviewPage() {
               value={editedName}
               onChange={(e) => {
                 setEditedName(e.target.value);
-                setValidationErrors(prev => ({
+                setValidationErrors((prev) => ({
                   ...prev,
-                  name: e.target.value.trim() ? null : "Name is required"
+                  name: e.target.value.trim() ? null : "Name is required",
                 }));
               }}
               placeholder="World Name"
@@ -145,17 +142,21 @@ export default function WorldOverviewPage() {
               value={editedDescription}
               onChange={(e) => {
                 setEditedDescription(e.target.value);
-                setValidationErrors(prev => ({ ...prev, description: null })); // optional field
+                setValidationErrors((prev) => ({ ...prev, description: null }));
               }}
               placeholder="World Description"
               className="world-description-input"
             />
-            {validationErrors.description && <span className="error-text">{validationErrors.description}</span>}
+            {validationErrors.description && (
+              <span className="error-text">{validationErrors.description}</span>
+            )}
           </div>
         ) : (
           <div className="world-display">
             <h1 className="world-name">{world.name || "Unnamed World"}</h1>
-            <p className="world-description">{world.description || "High-level view of a world."}</p>
+            <p className="world-description">
+              {world.description || "High-level view of a world."}
+            </p>
           </div>
         )}
       </div>
@@ -173,11 +174,11 @@ export default function WorldOverviewPage() {
       {/* World Attributes Panel */}
       <div className="world-attributes-panel">
         <WorldAttributesPanel
-          attributes={isEditingWorld ? editedAttributes : world?.attributesObj || {}}
+          attributes={isEditingWorld ? editedAttributes : world.attributesObj || {}}
           editable={isEditingWorld}
           onChange={(updatedAttributes) => setEditedAttributes(updatedAttributes)}
           onValidationChange={(errors) =>
-            setValidationErrors(prev => ({ ...prev, attributes: errors }))
+            setValidationErrors((prev) => ({ ...prev, attributes: errors }))
           }
         />
       </div>

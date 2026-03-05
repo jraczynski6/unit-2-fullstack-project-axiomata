@@ -61,8 +61,6 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
       data.type = subType.trim();
     }
 
-
-
     // ---------------- Call parent submit ----------------
     onSubmit(typeCategory, data);
 
