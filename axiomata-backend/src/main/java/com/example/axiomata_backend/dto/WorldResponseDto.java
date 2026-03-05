@@ -41,7 +41,7 @@ public class WorldResponseDto {
     public Long getId() { return id; }
     public String getName() { return name; }
     public String getDescription() { return description; }
-    public Map<String, Object> getAttributes() { return attributes; } // <-- change here
+    public Map<String, Object> getAttributes() { return attributes; }
     public String getUsername() { return username; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
