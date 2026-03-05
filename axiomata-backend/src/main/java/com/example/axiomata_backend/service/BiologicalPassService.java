@@ -22,17 +22,17 @@ public class BiologicalPassService {
 
     // Weight modifiers based on world size
     private static final Map<String, Map<String, Double>> WORLD_SIZE_TO_SPECIES_WEIGHT = Map.of(
-            "tiny", Map.of("human", 2.0, "dwarf", 1.5, "elf", 1.0, "beast-folk", 1.0, "daemon", 0.5, "monsters", 0.5),
-            "small", Map.of("human", 2.0, "dwarf", 2.0, "elf", 1.5, "beast-folk", 1.0, "daemon", 1.0, "monsters", 0.5),
-            "medium", Map.of("human", 1.5, "dwarf", 2.0, "elf", 2.0, "beast-folk", 1.5, "daemon", 1.0, "monsters", 1.0),
-            "large", Map.of("human", 1.0, "dwarf", 1.5, "elf", 2.0, "beast-folk", 2.0, "daemon", 1.5, "monsters", 2.0),
+            "tiny", Map.of("human", 2.0, "dwarf", 1.0, "elf", 1.0, "beast-folk", 1.0, "daemon", 0.5, "monsters", 0.5),
+            "small", Map.of("human", 2.0, "dwarf", 1.2, "elf", 1.5, "beast-folk", 1.0, "daemon", 1.0, "monsters", 0.5),
+            "medium", Map.of("human", 1.5, "dwarf", 1.5, "elf", 2.0, "beast-folk", 1.5, "daemon", 1.0, "monsters", 1.0),
+            "large", Map.of("human", 1.0, "dwarf", 1.2, "elf", 2.0, "beast-folk", 2.0, "daemon", 1.5, "monsters", 2.0),
             "giant", Map.of("human", 1.0, "dwarf", 1.0, "elf", 1.5, "beast-folk", 2.0, "daemon", 2.0, "monsters", 3.0)
     );
 
     // Weight modifiers based on resource availability
     private static final Map<String, Map<String, Double>> RESOURCE_TO_SPECIES_WEIGHT = Map.ofEntries(
             Map.entry("iron", Map.ofEntries(
-                    Map.entry("dwarf", 3.0), Map.entry("human", 1.5), Map.entry("elf", 1.0),
+                    Map.entry("dwarf", 2.0), Map.entry("human", 1.5), Map.entry("elf", 1.0),
                     Map.entry("beast-folk", 1.0), Map.entry("daemon", 0.5), Map.entry("monsters", 0.5)
             )),
             Map.entry("gold", Map.ofEntries(
@@ -40,19 +40,19 @@ public class BiologicalPassService {
                     Map.entry("beast-folk", 1.0), Map.entry("daemon", 1.0), Map.entry("monsters", 0.5)
             )),
             Map.entry("copper", Map.ofEntries(
-                    Map.entry("dwarf", 3.0), Map.entry("human", 1.0), Map.entry("elf", 1.0),
+                    Map.entry("dwarf", 2.0), Map.entry("human", 1.0), Map.entry("elf", 1.0),
                     Map.entry("beast-folk", 1.0), Map.entry("daemon", 0.5), Map.entry("monsters", 0.5)
             )),
             Map.entry("gems", Map.ofEntries(
-                    Map.entry("elf", 3.0), Map.entry("dwarf", 2.0), Map.entry("human", 1.5),
+                    Map.entry("elf", 3.0), Map.entry("dwarf", 1.5), Map.entry("human", 1.5),
                     Map.entry("beast-folk", 1.0), Map.entry("daemon", 1.5), Map.entry("monsters", 1.0)
             )),
             Map.entry("coal", Map.ofEntries(
-                    Map.entry("dwarf", 3.0), Map.entry("human", 1.0), Map.entry("elf", 1.0),
+                    Map.entry("dwarf", 2.0), Map.entry("human", 1.0), Map.entry("elf", 1.0),
                     Map.entry("beast-folk", 1.0), Map.entry("daemon", 0.5), Map.entry("monsters", 0.5)
             )),
             Map.entry("stone", Map.ofEntries(
-                    Map.entry("dwarf", 3.0), Map.entry("human", 1.5), Map.entry("elf", 1.0),
+                    Map.entry("dwarf", 2.0), Map.entry("human", 1.5), Map.entry("elf", 1.0),
                     Map.entry("beast-folk", 1.0), Map.entry("daemon", 0.5), Map.entry("monsters", 0.5)
             )),
             Map.entry("agriculture", Map.ofEntries(
