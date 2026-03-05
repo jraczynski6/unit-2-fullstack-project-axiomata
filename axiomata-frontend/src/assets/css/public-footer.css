@@ -1,0 +1,46 @@
+/* ===== Public Footer ===== */
+.footer-container {
+  width: 100%;
+  padding: 1rem;
+  background: #E6D7B2; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #222222;
+}
+
+.footer-container a {
+  color: #222222;
+  text-decoration: none;
+}
+
+.footer-container a:hover {
+  color: #444444;
+}
+
+.footer-links {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.footer-info {
+  text-align: center;
+  font-size: 0.8rem;
+}
+
+/* ===== Mobile Media Query (max-width: 767px) ===== */
+@media (max-width: 767px) {
+  .footer-links {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .footer-info {
+    font-size: 0.75rem;
+  }
+}

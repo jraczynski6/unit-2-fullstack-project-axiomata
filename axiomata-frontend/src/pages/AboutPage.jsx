@@ -1,3 +1,5 @@
+import './../assets/css/about-page.css';
+
 export default function AboutPage() {
     return (
         <div className="page-container">

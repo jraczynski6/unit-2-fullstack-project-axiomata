@@ -1,0 +1,70 @@
+/* ===== Login/Register Form ===== */
+.form-container.login-form,
+.form-container.register-form {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem 1rem;
+  background: #FDE8B9; /* light parchment */
+  border: 1px solid #D8CFC4;
+  border-radius: 0.5rem;
+  color: #222222;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.input-primary {
+  padding: 0.75rem 1rem;
+  border: 1px solid #D8CFC4;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  color: #222222;
+  background: #FFFFFF;
+}
+
+.input-primary::placeholder {
+  color: #666666;
+}
+
+.btn-confirm {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  background: var(--btn-confirm);
+  color: var(--btn-confirm-text);
+}
+
+.btn-confirm:hover {
+  background: var(--btn-confirm-hover);
+}
+
+.error-text {
+  color: var(--highlight-error);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+/* ===== Mobile Media Query (max-width: 767px) ===== */
+@media (max-width: 767px) {
+  .form-container.login-form,
+  .form-container.register-form {
+    padding: 1rem;
+  }
+
+  .input-primary {
+    font-size: 0.95rem;
+  }
+
+  .btn-confirm {
+    font-size: 0.95rem;
+    padding: 0.65rem 1.25rem;
+  }
+}

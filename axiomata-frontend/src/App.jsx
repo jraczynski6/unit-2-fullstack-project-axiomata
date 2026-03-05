@@ -12,6 +12,8 @@ import Layout from "./components/Layout";
 import { ToastProvider } from "./context/ToastContext";
 import ToastContainer from "./components/ui/ToastContainer";
 import { useAuth } from "./context/AuthContext";
+import './assets/css/base.css';
+import './assets/css/variables.css';
 
 function AuthRedirect({ children }) {
   const { isAuthenticated, loading } = useAuth();

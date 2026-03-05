@@ -1,0 +1,66 @@
+/* ===== Landing Page ===== */
+.landing-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  min-height: 60vh; 
+  text-align: center;
+
+  /* ===== Temporary High-Contrast Card for Readability ===== */
+  background: #FDE8B9; 
+  border: 1px solid #D8CFC4;
+  border-radius: 0.5rem;
+  color: #222222;
+}
+
+.landing-page .page-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #222222;
+}
+
+.landing-page .text-body {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 2rem;
+  max-width: 600px;
+  color: #444444;
+}
+
+.landing-page .btn-confirm {
+  background: var(--btn-confirm);
+  color: var(--btn-confirm-text);
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+}
+
+.landing-page .btn-confirm:hover {
+  background: var(--btn-confirm-hover);
+}
+
+/* ===== Mobile Media Query (max-width: 767px) ===== */
+@media (max-width: 767px) {
+  .landing-page {
+    padding: 1.5rem 1rem;
+  }
+
+  .landing-page .page-title {
+    font-size: 1.5rem;
+  }
+
+  .landing-page .text-body {
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .landing-page .btn-confirm {
+    font-size: 0.95rem;
+    padding: 0.6rem 1.2rem;
+  }
+}

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import './../assets/css/public-footer.css';
 
 export default function PublicFooter() {
   return (
