@@ -1,0 +1,40 @@
+:root {
+  /* ===== Page / App Background ===== */
+  --bg-gradient-top: #2A2A2A;
+  --bg-gradient-bottom: #1E1E1E;
+
+  /* ===== Cards / Components ===== */
+  --card-parchment: #FDE8B9;
+  --card-border: #D8CFC4;
+
+  /* ===== Content Section ===== */
+  --content-contrast: #F7D999;
+
+  /* ===== Text Colors ===== */
+  --text-primary: #222222;
+  --text-secondary: #555555;
+
+  /* ===== Buttons - Neutral ===== */
+  --btn-bg: #444444;
+  --btn-hover: #666666;
+  --btn-text: #FAF0E6;
+
+  /* ===== Buttons - Confirm ===== */
+  --btn-confirm: #2E7D32;
+  --btn-confirm-hover: #388E3C;
+  --btn-confirm-text: #FFFFFF;
+
+  /* ===== Buttons - Danger / Warning ===== */
+  --btn-danger: #B23A3A;
+  --btn-danger-hover: #C44A4A;
+  --btn-danger-text: #FFFFFF;
+
+  /* ===== Optional Highlights ===== */
+  --highlight-success: #4CAF50;
+  --highlight-warning: #FFC107;
+  --highlight-error: #F44336;
+
+  /* ===== Overlay / Misc ===== */
+  --overlay-dark: rgba(0, 0, 0, 0.5);
+  --overlay-light: rgba(255, 255, 255, 0.25);
+}

@@ -87,10 +87,3 @@ function App() {
 }
 
 export default App;
-
-// ----- App / Vite Setup -----
-// TODO: Verify Vite React app builds and runs
-// TODO: Test Auth context: login, logout, token storage
-// TODO: Confirm Protected routes redirect correctly when unauthenticated
-// TODO: Ensure Axios instance injects tokens for API calls
-// TODO: Confirm Register page redirects correctly after registration

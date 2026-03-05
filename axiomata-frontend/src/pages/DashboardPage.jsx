@@ -51,5 +51,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-// ----- WorldDashboard / WorldPanel (MVP) -----
-// TODO: Add delete confirmation modals for entities
