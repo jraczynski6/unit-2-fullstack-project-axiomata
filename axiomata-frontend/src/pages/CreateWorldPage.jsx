@@ -7,12 +7,11 @@ import Spinner from "../components/ui/Spinner";
 import { useToast } from "../context/ToastContext";
 
 // ------------------ Helper: Normalize Attributes ------------------
-// Keeps original keys, only recursively ensures nested objects are normalized
 const normalizeAttributes = (attrs) => {
   const normalized = {};
   Object.entries(attrs || {}).forEach(([key, value]) => {
     if (value && typeof value === "object" && !Array.isArray(value)) {
-      normalized[key] = normalizeAttributes(value); // recursively normalize nested objects
+      normalized[key] = normalizeAttributes(value);
     } else {
       normalized[key] = value;
     }
@@ -29,14 +28,12 @@ export default function CreateWorldPage() {
   const { addToast } = useToast();
   const navigate = useNavigate();
 
-  // ------------------ Generate ProtoWorld ------------------
   const handleGenerateWorld = async () => {
     setGenerating(true);
     try {
       const generated = await generateWorld();
       const normalized = normalizeAttributes(generated.attributes || {});
 
-      // ------------------ Assign Attributes to Passes ------------------
       const passes = {
         Geological: {
           TECTONIC_ACTIVITY: normalized.TECTONIC_ACTIVITY,
@@ -58,8 +55,6 @@ export default function CreateWorldPage() {
       };
 
       setProtoWorld({ ...generated, attributes: passes });
-
-      // Pre-fill name & description
       setName(generated.worldName);
       setDescription(generated.description);
 
@@ -72,7 +67,6 @@ export default function CreateWorldPage() {
     }
   };
 
-  // ------------------ Update Pass ------------------
   const handlePassChange = (passKey, updatedAttributes) => {
     setProtoWorld({
       ...protoWorld,
@@ -83,7 +77,6 @@ export default function CreateWorldPage() {
     });
   };
 
-  // ------------------ Save World ------------------
   const handleSaveWorld = async (e) => {
     e.preventDefault();
     if (!protoWorld) return;
@@ -108,13 +101,13 @@ export default function CreateWorldPage() {
 
   return (
     <div className="create-world-page">
-      <h1>Create World</h1>
+      <h1 className="page-title">Create World</h1>
 
-      {/* ------------------ World Form ------------------ */}
       <form onSubmit={handleSaveWorld} className="world-form">
-        <div>
-          <label>World Name:</label>
+        <div className="form-field">
+          <label className="form-label">World Name:</label>
           <input
+            className="input-primary"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -123,9 +116,11 @@ export default function CreateWorldPage() {
             disabled={generating}
           />
         </div>
-        <div>
-          <label>Description (optional):</label>
+
+        <div className="form-field">
+          <label className="form-label">Description (optional):</label>
           <textarea
+            className="input-primary"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Enter description"
@@ -133,12 +128,11 @@ export default function CreateWorldPage() {
           />
         </div>
 
-        {/* ------------------ Generate Button ------------------ */}
         <button
           type="button"
+          className="btn"
           onClick={handleGenerateWorld}
           disabled={generating || loading}
-          style={{ marginTop: "1rem" }}
         >
           {generating ? "Generating..." : "Generate World"}
         </button>
@@ -146,23 +140,21 @@ export default function CreateWorldPage() {
         {generating && (
           <div className="generator-loading">
             <Spinner />
-            <p>Generating world...</p>
+            <p className="text-secondary">Generating world...</p>
           </div>
         )}
 
-        {/* ------------------ Save World Button ------------------ */}
         <button
           type="submit"
+          className="btn btn-confirm"
           disabled={generating || loading}
-          style={{ marginTop: "1rem" }}
         >
           {loading ? "Saving..." : "Save World"}
         </button>
       </form>
 
-      {/* ------------------ Display Passes ------------------ */}
       {protoWorld && !generating && (
-        <div className="pass-panels" style={{ marginTop: "1.5rem" }}>
+        <div className="pass-panels">
           {["Geological", "Biological", "Cultural"].map((pass) => (
             <ExpandablePassPanel
               key={pass}

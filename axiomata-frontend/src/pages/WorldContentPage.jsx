@@ -168,18 +168,20 @@ export default function WorldContentPage() {
   if (!world) return <Spinner />;
 
   return (
-    <div style={{ display: "flex", gap: "2rem" }}>
-      <SectionPanel
-        world={world}
-        onSelectEntity={(entity) => {
-          setSelectedItem(entity);
-          setSelectedCategory(entity.category);
-          setIsEditing(false);
-          setDraftEntity(null);
-        }}
-      />
+    <div className="world-content-page">
+      <div className="world-panel-container">
+        <SectionPanel
+          world={world}
+          onSelectEntity={(entity) => {
+            setSelectedItem(entity);
+            setSelectedCategory(entity.category);
+            setIsEditing(false);
+            setDraftEntity(null);
+          }}
+        />
+      </div>
 
-      <div>
+      <div className="entity-card-container">
         {selectedItem ? (
           <EntityCard
             item={draftEntity || selectedItem}
@@ -189,7 +191,7 @@ export default function WorldContentPage() {
             onChange={setDraftEntity}
           />
         ) : (
-          <div>Select an item from the panel</div>
+          <div className="select-placeholder">Select an item from the panel</div>
         )}
       </div>
 
@@ -209,6 +211,7 @@ export default function WorldContentPage() {
     </div>
   );
 }
+
 // ==========================
 // Non-MVP (Backlog / Future Enhancements)
 // ==========================

@@ -120,63 +120,67 @@ export default function WorldOverviewPage() {
     Boolean(validationErrors.description) ||
     Object.keys(validationErrors.attributes).some(k => validationErrors.attributes[k]);
 
-
   return (
-    <div>
+    <div className="world-overview-page">
       {/* Editable Name & Description */}
-      {isEditingWorld ? (
-        <>
-          <input
-            type="text"
-            value={editedName}
-            onChange={(e) => {
-              setEditedName(e.target.value);
-              setValidationErrors(prev => ({
-                ...prev,
-                name: e.target.value.trim() ? null : "Name is required"
-              }));
-            }}
-            placeholder="World Name"
-          />
-          {validationErrors.name && <span className="error-text">{validationErrors.name}</span>}
+      <div className="world-header">
+        {isEditingWorld ? (
+          <div className="world-edit-fields">
+            <input
+              type="text"
+              value={editedName}
+              onChange={(e) => {
+                setEditedName(e.target.value);
+                setValidationErrors(prev => ({
+                  ...prev,
+                  name: e.target.value.trim() ? null : "Name is required"
+                }));
+              }}
+              placeholder="World Name"
+              className="world-name-input"
+            />
+            {validationErrors.name && <span className="error-text">{validationErrors.name}</span>}
 
-          <textarea
-            value={editedDescription}
-            onChange={(e) => {
-              setEditedDescription(e.target.value);
-              setValidationErrors(prev => ({
-                ...prev,
-                description: null // optional field
-              }));
-            }}
-            placeholder="World Description"
-          />
-          {validationErrors.description && <span className="error-text">{validationErrors.description}</span>}
-        </>
-      ) : (
-        <>
-          <h1>{world.name || "Unnamed World"}</h1>
-          <p>{world.description || "High-level view of a world."}</p>
-        </>
-      )}
+            <textarea
+              value={editedDescription}
+              onChange={(e) => {
+                setEditedDescription(e.target.value);
+                setValidationErrors(prev => ({ ...prev, description: null })); // optional field
+              }}
+              placeholder="World Description"
+              className="world-description-input"
+            />
+            {validationErrors.description && <span className="error-text">{validationErrors.description}</span>}
+          </div>
+        ) : (
+          <div className="world-display">
+            <h1 className="world-name">{world.name || "Unnamed World"}</h1>
+            <p className="world-description">{world.description || "High-level view of a world."}</p>
+          </div>
+        )}
+      </div>
 
       {/* Section Panel */}
-      <SectionPanel
-        world={world}
-        onSelectEntity={(entity) =>
-          navigate(`/world-content/${worldId}`, { state: { selectedEntity: entity } })
-        }
-      />
+      <div className="world-section-panel">
+        <SectionPanel
+          world={world}
+          onSelectEntity={(entity) =>
+            navigate(`/world-content/${worldId}`, { state: { selectedEntity: entity } })
+          }
+        />
+      </div>
 
       {/* World Attributes Panel */}
-      <WorldAttributesPanel
-        attributes={isEditingWorld ? editedAttributes : world?.attributesObj || {}}
-        editable={isEditingWorld}
-        onChange={(updatedAttributes) => setEditedAttributes(updatedAttributes)}
-        onValidationChange={(errors) =>
-          setValidationErrors(prev => ({ ...prev, attributes: errors }))
-        }
-      />
+      <div className="world-attributes-panel">
+        <WorldAttributesPanel
+          attributes={isEditingWorld ? editedAttributes : world?.attributesObj || {}}
+          editable={isEditingWorld}
+          onChange={(updatedAttributes) => setEditedAttributes(updatedAttributes)}
+          onValidationChange={(errors) =>
+            setValidationErrors(prev => ({ ...prev, attributes: errors }))
+          }
+        />
+      </div>
 
       {/* Floating Controls */}
       <FloatingControls

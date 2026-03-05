@@ -8,6 +8,7 @@ export default function RegisterForm({ onSuccess }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState(null);
 
   const validate = () => {
@@ -48,43 +49,56 @@ export default function RegisterForm({ onSuccess }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="register-form">
-      <input
-        type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        required
-        className="register-input register-username"
-      />
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-        className="register-input register-email"
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-        className="register-input register-password"
-      />
-      <input
-        type="password"
-        placeholder="Confirm Password"
-        value={confirmPassword}
-        onChange={(e) => setConfirmPassword(e.target.value)}
-        required
-        className="register-input register-confirm-password"
-      />
-      <button type="submit" className="register-button">
+    <form onSubmit={handleSubmit} className="form-container register-form">
+      <div className="form-field">
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+          className="input-primary"
+        />
+      </div>
+
+      <div className="form-field">
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          className="input-primary"
+        />
+      </div>
+
+      <div className="form-field">
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          className="input-primary"
+        />
+      </div>
+
+      <div className="form-field">
+        <input
+          type="password"
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
+          className="input-primary"
+        />
+      </div>
+
+      <button type="submit" className="btn btn-confirm">
         Register
       </button>
-      {error && <p className="register-error">{error}</p>}
+
+      {error && <p className="error-text">{error}</p>}
     </form>
   );
 }
