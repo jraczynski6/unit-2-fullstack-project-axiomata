@@ -190,6 +190,7 @@ public class NarrativePassService {
 
         // Step 2: Filter by DOMINANT_SPECIES
         List<String> namePool = new ArrayList<>();
+        // Iterate over each GeneratorEntity to check if it matches the dominant species
         for (GeneratorEntity entity : allWorldNames) {
             if (dominantSpecies.equals(entity.getType())) {
                 namePool.add(entity.getValue());
