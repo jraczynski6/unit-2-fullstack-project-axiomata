@@ -28,7 +28,9 @@ export default function WorldAttributesPanel({
     const mapped = {};
     Object.entries(attributes).forEach(([category, categoryObj]) => {
       Object.entries(categoryObj).forEach(([key, value]) => {
-        const id = idMapRef.current[`${category}_${key}`] || `attr_${Object.keys(idMapRef.current).length + 1}`;
+        const id =
+          idMapRef.current[`${category}_${key}`] ||
+          `attr_${Object.keys(idMapRef.current).length + 1}`;
         idMapRef.current[`${category}_${key}`] = id;
         mapped[id] = { category, key, value };
       });
@@ -76,7 +78,8 @@ export default function WorldAttributesPanel({
       const attr = prev[id];
       if (!attr) return prev;
       const newKey = attr.tempKey?.trim();
-      if (!newKey || newKey === attr.key) return { ...prev, [id]: { ...attr, tempKey: undefined } };
+      if (!newKey || newKey === attr.key)
+        return { ...prev, [id]: { ...attr, tempKey: undefined } };
 
       const updated = { ...prev, [id]: { ...attr, key: denormalizeKey(newKey), tempKey: undefined } };
       triggerChange(updated);
@@ -97,7 +100,10 @@ export default function WorldAttributesPanel({
   const addAttribute = () => {
     const id = `attr_${Date.now()}`;
     const newKey = `ATTRIBUTE_${Object.keys(localAttributes).length + 1}`;
-    triggerChange({ ...localAttributes, [id]: { category: "Misc", key: newKey, value: "" } });
+    triggerChange({
+      ...localAttributes,
+      [id]: { category: "Misc", key: newKey, value: "" },
+    });
   };
 
   const removeAttribute = (id) => {
@@ -133,15 +139,14 @@ export default function WorldAttributesPanel({
       {!collapsed && (
         <>
           {/* Nested read-only panels */}
-          {attributes.Geological?.RESOURCE_POOL && renderNestedPanel("Resource Pool", attributes.Geological.RESOURCE_POOL)}
-          {attributes.Biological?.SPECIES_POOL && renderNestedPanel("Species Pool", attributes.Biological.SPECIES_POOL)}
+          {attributes.Geological?.RESOURCE_POOL &&
+            renderNestedPanel("Resource Pool", attributes.Geological.RESOURCE_POOL)}
+          {attributes.Biological?.SPECIES_POOL &&
+            renderNestedPanel("Species Pool", attributes.Biological.SPECIES_POOL)}
 
           {/* Editable primitives */}
           {Object.entries(localAttributes)
-            .filter(
-              ([, attr]) =>
-                !["RESOURCE_POOL", "SPECIES_POOL"].includes(attr.key)
-            )
+            .filter(([_, attr]) => !["RESOURCE_POOL", "SPECIES_POOL"].includes(attr.key))
             .map(([id, attr]) => (
               <div key={id} className="attribute-row">
                 {editable ? (
@@ -157,7 +162,10 @@ export default function WorldAttributesPanel({
                       value={attr.value}
                       onChange={(e) => updateValue(id, e.target.value)}
                     />
-                    <button className="attribute-remove-btn" onClick={() => removeAttribute(id)}>
+                    <button
+                      className="attribute-remove-btn"
+                      onClick={() => removeAttribute(id)}
+                    >
                       &times;
                     </button>
                     {(!attr.key?.trim() || String(attr.value)?.trim() === "") && (

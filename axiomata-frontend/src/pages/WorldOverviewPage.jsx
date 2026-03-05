@@ -15,19 +15,14 @@ export default function WorldOverviewPage() {
   const [editedAttributes, setEditedAttributes] = useState({});
   const [hasErrors, setHasErrors] = useState(false);
 
-  console.log("WorldOverviewPage rendered", { worldId, isEditing });
-
   // ---------------- Load World ----------------
   useEffect(() => {
     const fetchWorld = async () => {
-      console.log("Fetching world:", worldId);
       try {
         const data = await getWorldById(worldId);
-        console.log("World loaded:", data);
         setWorld(data);
         setEditedAttributes(data.attributes || {});
       } catch (err) {
-        console.error("Failed to fetch world:", err);
         addToast({ message: "Failed to load world.", type: "error" });
         navigate("/dashboard");
       }
@@ -37,45 +32,36 @@ export default function WorldOverviewPage() {
 
   // ---------------- Edit / Save Handlers ----------------
   const handleEdit = () => {
-    console.log("Edit clicked");
     setIsEditing(true);
   };
 
   const handleCancelEdit = () => {
-    console.log("Cancel edit");
     setEditedAttributes(world.attributes || {});
     setIsEditing(false);
     setHasErrors(false);
   };
 
   const handleSave = async () => {
-    console.log("Save clicked", { editedAttributes, hasErrors });
-    if (hasErrors) {
-      console.log("Cannot save, validation errors exist");
-      return;
-    }
+    if (hasErrors) return;
     try {
       const updated = await updateWorld(worldId, {
         ...world,
         attributes: editedAttributes,
       });
-      console.log("World saved:", updated);
       setWorld(updated);
       setEditedAttributes(updated.attributes || {});
       setIsEditing(false);
       addToast({ message: "World updated successfully.", type: "success" });
     } catch (err) {
-      console.error("Failed to save world:", err);
       addToast({ message: "Failed to save world.", type: "error" });
     }
   };
 
   const handleAttributesChange = (attrs) => {
-    console.log("Attributes changed:", attrs);
     setEditedAttributes(attrs);
   };
+
   const handleValidationChange = (errors) => {
-    console.log("Validation errors:", errors);
     setHasErrors(Object.keys(errors).length > 0);
   };
 

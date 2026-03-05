@@ -49,7 +49,6 @@ export default function FloatingControls({
       }
       onAddEntity?.({ ...result, category: entityType }, entityType);
     } catch (err) {
-      console.error("Failed to create entity:", err);
       addToast({ message: `Failed to create ${entityType}.`, type: "error" });
     } finally {
       setModalOpen(false);
@@ -75,8 +74,7 @@ export default function FloatingControls({
       }
       addToast({ message: `${category} deleted successfully.`, type: "success" });
       onAddEntity?.(); // refresh
-    } catch (err) {
-      console.error("Failed to delete entity:", err);
+    } catch {
       addToast({ message: "Failed to delete entity.", type: "error" });
     } finally {
       setConfirmOpen(false);
@@ -85,14 +83,11 @@ export default function FloatingControls({
 
   // --------------------- Delete World ---------------------
   const handleDeleteWorld = async () => {
-    console.log("handleDeleteWorld triggered"); // <- track
     try {
       await deleteWorld(worldId);
-      console.log("World deleted successfully");       // <- track
       addToast({ message: "World deleted successfully.", type: "success" });
       navigate("/dashboard");
-    } catch (err) {
-      console.error("Failed to delete world:", err);
+    } catch {
       addToast({ message: "Failed to delete world.", type: "error" });
     } finally {
       setConfirmDeleteWorld(false);
@@ -120,13 +115,9 @@ export default function FloatingControls({
             </>
           )}
 
-          {/* Delete World always enabled */}
           <button
             className="control-button delete-world-btn"
-            onClick={() => {
-              console.log("Delete World clicked");
-              setConfirmDeleteWorld(true);
-            }}
+            onClick={() => setConfirmDeleteWorld(true)}
           >
             Delete World
           </button>

@@ -29,7 +29,6 @@ export default function DashboardPage() {
   };
 
   if (loading) return <div className="page-container"><p className="text-secondary">Loading Worlds...</p></div>;
-  if (worlds.length === 0) return <div className="page-container"><p className="text-secondary">No worlds found.</p></div>;
 
   return (
     <div className="page-container">
@@ -37,14 +36,18 @@ export default function DashboardPage() {
         <button className="btn btn-confirm" onClick={handleCreateWorld}>
           Create New World
         </button>
-        <h1 className="page-title">Your Worlds</h1>
+        {worlds.length > 0 && <h1 className="page-title">Your Worlds</h1>}
       </div>
 
-      <div className="worlds-list">
-        {worlds.map((world) => (
-          <WorldCard key={world.id} world={world} />
-        ))}
-      </div>
+      {worlds.length === 0 ? (
+        <p className="text-secondary">No worlds found. Click "Create New World" to start.</p>
+      ) : (
+        <div className="worlds-list">
+          {worlds.map((world) => (
+            <WorldCard key={world.id} world={world} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
