@@ -1,83 +1,15 @@
-/* ===== Base panel ===== */
+/* ===== Base panel visuals ===== */
 .section-panel-content {
-  background: #FDF1D5;
+  background: #FDF4E3;  /* parchment-like warm cream */
   padding: 1rem;
   box-shadow: 2px 0 8px rgba(0,0,0,0.1);
   overflow-y: auto;
   flex-shrink: 0;
+  color: #2a2a2a;       /* dark text for readability */
+  font-family: 'Georgia', serif; /* optional parchment-feel font */
 }
 
-/* ===== Desktop: sticky floating panel ===== */
-@media (min-width: 768px) {
-  .section-panel-content {
-    position: sticky;
-    top: var(--header-height, 60px);
-    width: 280px;
-    max-height: calc(100vh - var(--header-height, 60px) - var(--footer-height, 40px));
-    background: #FDF1D5;
-    box-shadow: 2px 0 8px rgba(0,0,0,0.1);
-    padding: 1rem;
-    overflow-y: auto;
-    flex-shrink: 0;
-    z-index: 1;
-  }
-
-  .layout-main {
-    margin-left: 0;
-  }
-
-  /* Hide mobile-only elements */
-  .section-panel-toggle,
-  .section-panel-overlay {
-    display: none;
-  }
-}
-
-/* ===== Mobile drawer ===== */
-@media (max-width: 767px) {
-  .section-panel-content {
-    position: fixed;
-    top: var(--header-height, 60px);
-    left: 0;
-    width: 80vw;
-    max-width: 300px;
-    bottom: var(--footer-height, 40px);
-    transform: translateX(-100%);
-    z-index: 1000;
-    transition: transform 0.3s ease-in-out;
-    background: #FDF1D5;
-  }
-
-  .section-panel-content.open {
-    transform: translateX(0);
-  }
-
-  .section-panel-toggle {
-    display: block;
-    position: fixed;
-    top: calc(var(--header-height, 60px) + 1rem);
-    right: 1rem;
-    z-index: 1100;
-    background: var(--btn-bg);
-    color: var(--btn-text);
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    cursor: pointer;
-  }
-
-  .section-panel-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0,0,0,0.3);
-    z-index: 900;
-  }
-}
-
-/* ===== Section headers & lists ===== */
+/* ===== Section headers ===== */
 .section-panel-content .section-header {
   font-weight: 700;
   margin-top: 1rem;
@@ -85,24 +17,58 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.4rem;
+  color: #2a2a2a;       /* slightly darker than panel for contrast */
+  border-left: 4px solid transparent; /* subtle accent for hover/focus */
+  transition: background 0.2s, border-left 0.2s;
 }
 
+/* Section-specific header backgrounds */
+.section-panel-content .section-header.locations { background: #E6D9B8; }
+.section-panel-content .section-header.factions  { background: #EADFB7; }
+.section-panel-content .section-header.characters{ background: #D9C68A; }
+.section-panel-content .section-header.items     { background: #E7D9AA; }
+
+/* Hover effect for all headers */
+.section-panel-content .section-header:hover {
+  filter: brightness(0.95);
+  border-left: 4px solid #B98B4B; /* subtle parchment accent */
+}
+
+/* ===== List items under section headers ===== */
 .section-panel-content ul {
   list-style: none;
-  padding-left: 1rem;
-  margin: 0.25rem 0 1rem 0;
+  padding-left: 0.5rem;
+  margin-top: 0.5rem;
 }
 
-.section-panel-content li div {
+.section-panel-content li {
+  margin-bottom: 0.5rem;
+}
+
+.section-panel-content li > div {
+  background: #F7E6C1; /* darker cream for higher contrast */
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.35rem;
+  border: 1px solid #DCC49D; /* slightly darker border for separation */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08); /* more pronounced shadow */
   cursor: pointer;
-  padding: 0.25rem 0;
+  transition: background 0.2s, transform 0.1s;
+  font-size: 0.95rem;
+  color: #3A2F1A; /* darker text for readability */
 }
 
-.section-panel-content li div.bold {
-  font-weight: 700;
+/* Nested items slightly lighter but still higher contrast */
+.section-panel-content li ul li > div {
+  background: #FBEED3; 
+  border-color: #E6D9B8;
+  padding-left: 1rem;
+  color: #3A2F1A;
 }
 
-.section-panel-content h3 {
-  font-weight: 700;
-  margin-top: 1rem;
+/* Hover effect */
+.section-panel-content li > div:hover {
+  background: #FFE38C; /* bright highlight */
+  transform: translateY(-1px);
 }

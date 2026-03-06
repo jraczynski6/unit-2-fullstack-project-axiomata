@@ -153,32 +153,39 @@ export default function WorldAttributesPanel({
           {editableAttrs.map(([id, attr], idx) => (
             <div
               key={id}
-              className={`editable-attribute-card ${editable ? "editing" : ""}`}
+              className={`editable-attribute-card ${editable ? "editing" : "readonly"}`}
               style={{ backgroundColor: idx % 2 === 0 ? "#FDF1D5" : "#F5E6C0" }}
             >
-              {editable && (
-                <div className="attribute-header">
-                  <button
-                    className="attribute-remove-btn"
-                    onClick={() => removeAttribute(id)}
-                  >
-                    &times;
-                  </button>
-                </div>
-              )}
-              <input
-                className="attribute-key-input"
-                value={attr.tempKey ?? normalizeKey(attr.key)}
-                onChange={(e) => handleChangeKey(id, e.target.value)}
-                onBlur={() => handleKeyBlur(id)}
-              />
-              <input
-                className="attribute-value-input"
-                value={attr.value}
-                onChange={(e) => updateValue(id, e.target.value)}
-              />
-              {(!attr.key?.trim() || String(attr.value)?.trim() === "") && (
-                <span className="error-text">Key and Value required</span>
+              {editable ? (
+                <>
+                  <div className="attribute-header">
+                    <button
+                      className="attribute-remove-btn"
+                      onClick={() => removeAttribute(id)}
+                    >
+                      &times;
+                    </button>
+                  </div>
+                  <input
+                    className="attribute-key-input"
+                    value={attr.tempKey ?? normalizeKey(attr.key)}
+                    onChange={(e) => handleChangeKey(id, e.target.value)}
+                    onBlur={() => handleKeyBlur(id)}
+                  />
+                  <input
+                    className="attribute-value-input"
+                    value={attr.value}
+                    onChange={(e) => updateValue(id, e.target.value)}
+                  />
+                  {(!attr.key?.trim() || String(attr.value)?.trim() === "") && (
+                    <span className="error-text">Key and Value required</span>
+                  )}
+                </>
+              ) : (
+                <>
+                  <div className="attribute-key">{normalizeKey(attr.key)}:</div>
+                  <div className="attribute-value">{attr.value}</div>
+                </>
               )}
             </div>
           ))}

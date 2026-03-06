@@ -36,7 +36,20 @@ export default function SectionPanel({ world, isOpen, setIsOpen, onSelectEntity 
       <div className={`section-panel-content ${isOpen ? "open" : ""}`}>
         {Object.entries(sections).map(([section, list]) => (
           <div key={section}>
-            <div className="section-header" onClick={() => toggleSection(section)}>
+            {/* Section header with specific classes for styling */}
+            <div
+              className={`section-header ${section === "Locations"
+                  ? "locations"
+                  : section === "Factions"
+                    ? "factions"
+                    : section === "Characters"
+                      ? "characters"
+                      : section === "Items"
+                        ? "items"
+                        : ""
+                }`}
+              onClick={() => toggleSection(section)}
+            >
               {section} {openSections[section] ? "▼" : "►"}
             </div>
 
@@ -47,7 +60,10 @@ export default function SectionPanel({ world, isOpen, setIsOpen, onSelectEntity 
                     {regions.length === 0 && nonRegions.length === 0 && <li>(No locations)</li>}
                     {regions.map(region => (
                       <li key={region.id}>
-                        <div style={{ fontWeight: "bold" }} onClick={() => handleSelect(region, section)}>
+                        <div
+                          style={{ fontWeight: "bold" }}
+                          onClick={() => handleSelect(region, section)}
+                        >
                           {region.name}
                         </div>
                         <ul>

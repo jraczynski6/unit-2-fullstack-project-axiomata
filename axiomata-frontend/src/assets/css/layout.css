@@ -1,6 +1,6 @@
 /* ===== Layout body ===== */
 .layout-body {
-  display: flex;      /* side-by-side children */
+  display: flex;      
   flex-direction: row;
   width: 100%;
 }
@@ -8,9 +8,8 @@
 /* ===== Main content ===== */
 .layout-main {
   flex: 1;
-  padding: 2rem 1rem;
   overflow-y: auto;
-  /* Remove margin-left; panel floats independently */
+  padding: 2rem 1rem;
 }
 
 /* ===== Desktop SectionPanel ===== */
@@ -18,30 +17,31 @@
   .section-panel-content {
     position: sticky;
     top: var(--header-height, 60px);
-    width: 280px;  /* fixed width */
+    width: 280px;  
     height: calc(100vh - var(--header-height, 60px) - var(--footer-height, 40px));
-    background: #FDF1D5;
-    box-shadow: 2px 0 8px rgba(0,0,0,0.1);
-    padding: 1rem;
-    overflow-y: auto;
     flex-shrink: 0;
     z-index: 1;
   }
 }
 
+  .section-panel-toggle {
+    display: none;
+  }
+
+
 /* ===== Mobile drawer ===== */
 @media (max-width: 767px) {
   .layout-main {
-    margin-left: 0; /* panel slides over content */
+    margin-left: 0; 
   }
 
   .section-panel-content {
-    position: fixed;   /* stays disconnected from scroll */
+    position: fixed;
     top: 0;
     left: 0;
     width: 80vw;
     max-width: 300px;
-    height: 100vh;     /* full viewport height */
+    height: 100vh;
     transform: translateX(-100%);
     z-index: 1000;
     transition: transform 0.3s ease-in-out;
@@ -53,7 +53,7 @@
 
   .section-panel-toggle {
     display: block;
-    position: fixed;  /* so it floats on screen */
+    position: fixed;
     top: 1rem;
     right: 1rem;
     z-index: 1100;
@@ -63,5 +63,15 @@
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
     cursor: pointer;
+  }
+
+  .section-panel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.3);
+    z-index: 900;
   }
 }
