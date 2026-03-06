@@ -5,9 +5,9 @@
   align-items: center;
   min-height: 60vh;
   padding: 1rem;
-  background: var(--bg-gradient-top);
 }
 
+/* Self-contained page container */
 .page-container.auth-page {
   display: flex;
   flex-direction: column;
@@ -16,13 +16,17 @@
   max-width: 500px;
   width: 100%;
   min-height: 60vh;
-  background: #FDE8B9;
-  border: 1px solid #D8CFC4;
+
+
+  background: var(--card-parchment, #D4BC8C); /* fallback if variable missing */
+  border: 1px solid var(--card-border, #483C32);
   border-radius: 0.5rem;
-  color: #222222;
+  color: var(--text-primary, #283618);
+  box-shadow: 0 6px 15px rgba(40, 54, 24, 0.1);
+  position: relative;
 }
 
-/* Wrapper around forms to prevent toggle button from moving */
+/* Wrapper around forms */
 .form-wrapper {
   width: 100%;
   max-width: 400px;
@@ -41,15 +45,17 @@
   border: none;
   font-size: 1rem;
   cursor: pointer;
-  background: var(--btn-bg);
-  color: var(--btn-text);
+
+  /* Palette-based button colors */
+  background: var(--btn-bg, #A6531C);
+  color: var(--btn-text, #F8F5EF);
   align-self: center;
   margin-top: 1.5rem;
 }
 
 .page-container.auth-page .btn:hover,
 .toggle-btn:hover {
-  background: var(--btn-hover);
+  background: var(--btn-hover, #8A4210);
 }
 
 /* ===== Mobile Media Query (max-width: 767px) ===== */

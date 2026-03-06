@@ -1,5 +1,5 @@
 /* ===== About Page ===== */
-.page-container {
+.page-container.about-page {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -7,13 +7,23 @@
   max-width: 800px;
   margin: 0 auto;
   text-align: center;
-  background: #FDE8B9; 
+
+  /* Easier-to-read linear gradient background */
+  background: linear-gradient(
+    180deg,
+    rgba(245, 225, 180, 1) 0%,  /* soft parchment top */
+    rgb(82, 104, 67) 100%  /* light green bottom */
+  );
+
   border: 1px solid #D8CFC4;
   border-radius: 0.5rem;
-  min-height: 60vh; 
+  min-height: 60vh;
   color: #222222;
+  box-shadow: 0 6px 15px rgba(40, 54, 24, 0.1);
+  position: relative;
 }
 
+/* Headings */
 .heading-primary {
   font-size: 2rem;
   font-weight: bold;
@@ -21,6 +31,7 @@
   color: #222222;
 }
 
+/* Body text */
 .text-body {
   font-size: 1rem;
   line-height: 1.5;
@@ -30,7 +41,7 @@
 
 /* ===== Mobile Media Query (max-width: 767px) ===== */
 @media (max-width: 767px) {
-  .page-container {
+  .page-container.about-page {
     padding: 1.5rem 1rem;
   }
 

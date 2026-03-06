@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import '../assets/css/add-entity-modal.css';
 
 export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmit, world }) {
   // ---------------- State ----------------

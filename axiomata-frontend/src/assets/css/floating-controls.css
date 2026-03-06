@@ -1,0 +1,75 @@
+/* =========================
+   FloatingControls.css
+   ========================= */
+
+/* Base container */
+.floating-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+/* Individual buttons */
+.floating-controls .control-button {
+  background: #b8a96e;
+  color: #222;
+  border: none;
+  border-radius: 0.4rem;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: filter 0.2s;
+}
+
+.floating-controls .control-button:hover {
+  filter: brightness(0.9);
+}
+
+.floating-controls .control-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Delete world button highlight */
+.floating-controls .delete-world-btn {
+  background: #e07b7b;
+  color: #fff;
+}
+
+/* ------------------------
+   Mobile first: stick bottom
+   ------------------------ */
+@media (max-width: 767px) {
+  .floating-controls {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 245, 210, 0.95); /* matches parchment tone */
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.15);
+    z-index: 1200;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+
+  .floating-controls .control-button {
+    flex: 0 0 auto;
+    margin-right: 0.5rem;
+  }
+}
+
+/* ------------------------
+   Desktop: inline / docked
+   ------------------------ */
+@media (min-width: 768px) {
+  .floating-controls {
+    position: static;
+    width: auto;
+    background: transparent;
+    box-shadow: none;
+  }
+}

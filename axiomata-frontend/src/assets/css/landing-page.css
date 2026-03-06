@@ -1,65 +1,85 @@
 /* ===== Landing Page ===== */
-.landing-page {
+.page-container.landing-page {
+  /* Base layout */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem 1rem;
-  min-height: 60vh; 
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem;
   text-align: center;
+  min-height: 100vh;
+  /* full viewport height */
+  position: relative;
+  border: 1px solid var(--card-border);
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 20px rgba(40, 54, 24, 0.15);
+  color: var(--text-primary);
 
-  /* ===== Temporary High-Contrast Card for Readability ===== */
-  background: #FDE8B9; 
-  border: 1px solid #D8CFC4;
-  border-radius: 0.5rem;
-  color: #222222;
+  /* Gradient background */
+  background: radial-gradient(circle, rgba(212, 188, 140, 1) 0%, rgba(76, 117, 90, 1) 47%, rgba(176, 150, 106, 1) 100%);
 }
 
-.landing-page .page-title {
+/* Optional top accent bar */
+.page-container.landing-page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  border-radius: 0.75rem 0.75rem 0 0;
+  background: var(--origin-accent);
+}
+
+/* Typography */
+.page-container.landing-page .page-title {
   font-size: 2rem;
   font-weight: bold;
   margin-bottom: 1rem;
-  color: #222222;
 }
 
-.landing-page .text-body {
+.page-container.landing-page .text-body {
   font-size: 1rem;
   line-height: 1.5;
-  margin-bottom: 2rem;
   max-width: 600px;
-  color: #444444;
+  margin-bottom: 2rem;
 }
 
-.landing-page .btn-confirm {
-  background: var(--btn-confirm);
-  color: var(--btn-confirm-text);
+/* Call-to-action button */
+.page-container.landing-page .btn-confirm {
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
   font-size: 1rem;
-  cursor: pointer;
   border: none;
+  cursor: pointer;
+  background: var(--btn-confirm);
+  color: var(--btn-confirm-text);
+  transition: background 0.2s ease;
 }
 
-.landing-page .btn-confirm:hover {
+.page-container.landing-page .btn-confirm:hover {
   background: var(--btn-confirm-hover);
 }
 
-/* ===== Mobile Media Query (max-width: 767px) ===== */
+/* Mobile adjustments */
 @media (max-width: 767px) {
-  .landing-page {
+  .page-container.landing-page {
     padding: 1.5rem 1rem;
   }
 
-  .landing-page .page-title {
+  .page-container.landing-page .page-title {
     font-size: 1.5rem;
   }
 
-  .landing-page .text-body {
+  .page-container.landing-page .text-body {
     font-size: 0.95rem;
     line-height: 1.4;
   }
 
-  .landing-page .btn-confirm {
+  .page-container.landing-page .btn-confirm {
     font-size: 0.95rem;
     padding: 0.6rem 1.2rem;
   }

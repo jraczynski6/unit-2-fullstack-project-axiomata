@@ -8,6 +8,7 @@ import {
   deleteWorld
 } from "../services/worldService";
 import { useToast } from "../context/ToastContext";
+import "../assets/css/floating-controls.css";
 
 export default function FloatingControls({
   pageType,

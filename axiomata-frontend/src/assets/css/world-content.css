@@ -1,0 +1,129 @@
+/* =========================
+   WorldContentPage.css
+   Mobile-first, matches overview
+   ========================= */
+
+/* ----- WorldContentPage: mobile-friendly ----- */
+.world-content-page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;             /* shrink to content */
+  min-height: 100vh;        /* keep full viewport if content is small */
+  padding: 1rem;
+  color: var(--text-primary);
+  text-align: center;
+  background: var(--card-parchment); /* neutral Axiomata background */
+  overflow-x: hidden;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* ----- Entity Card Container ----- */
+.entity-card-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0.5rem 0;
+}
+
+/* ----- EntityCard ----- */
+.entity-card-container .entity-card {
+  width: 100%;
+  height: auto;
+  max-height: 90vh;
+  background: var(--card-parchment); /* neutral readable card */
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(40, 54, 24, 0.15);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* ----- Placeholder ----- */
+.select-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+/* ----- Floating Controls (mobile only) ----- */
+.floating-controls {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  background: var(--card-parchment); /* subtle Axiomata background */
+  padding: 0.5rem;
+  z-index: 1100;
+  box-shadow: 0 -2px 8px rgba(40, 54, 24, 0.15);
+}
+
+/* ----- Buttons ----- */
+.floating-controls .control-button {
+  flex: 1 1 45%;
+  margin: 0.25rem;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 0.4rem;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  cursor: pointer;
+  transition: filter 0.2s ease;
+}
+
+.floating-controls .control-button:hover {
+  filter: brightness(0.9);
+}
+
+.floating-controls .control-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ----- Desktop Layout ----- */
+@media (min-width: 768px) {
+  .world-content-page {
+    flex-direction: row;
+    overflow-x: hidden;
+  }
+
+  .entity-card-container {
+    flex: 1 1 auto;
+    padding: 2rem;
+    max-width: calc(100% - 300px); /* leave space for left panel if shown */
+  }
+
+  .entity-card-container .entity-card {
+    width: 100%;
+    height: auto;
+    max-height: 90vh;
+  }
+
+  .floating-controls {
+    position: static;
+    width: auto;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    padding: 0;
+    box-shadow: none;
+    background: transparent;
+  }
+}

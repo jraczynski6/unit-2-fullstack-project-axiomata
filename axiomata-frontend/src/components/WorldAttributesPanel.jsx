@@ -143,13 +143,7 @@ export default function WorldAttributesPanel({
 
       {!collapsed && (
         <>
-          {/* Nested read-only panels */}
-          {attributes.Geological?.RESOURCE_POOL &&
-            renderNestedPanel("Resource Pool", attributes.Geological.RESOURCE_POOL)}
-          {attributes.Biological?.SPECIES_POOL &&
-            renderNestedPanel("Species Pool", attributes.Biological.SPECIES_POOL)}
-
-          {/* Editable attributes as individual cards */}
+          {/* Editable attributes as individual cards first */}
           {editableAttrs.map(([id, attr], idx) => (
             <div
               key={id}
@@ -190,6 +184,13 @@ export default function WorldAttributesPanel({
             </div>
           ))}
 
+          {/* Nested read-only panels after editable cards */}
+          {attributes.Geological?.RESOURCE_POOL &&
+            renderNestedPanel("Resource Pool", attributes.Geological.RESOURCE_POOL)}
+          {attributes.Biological?.SPECIES_POOL &&
+            renderNestedPanel("Species Pool", attributes.Biological.SPECIES_POOL)}
+
+          {/* Add Attribute button remains at the bottom */}
           {editable && editableAttrs.length > 0 && (
             <button className="attribute-add-btn" onClick={addAttribute}>
               + Add Attribute

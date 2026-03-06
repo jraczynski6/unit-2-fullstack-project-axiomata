@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import '../assets/css/entity-card.css';
 
 // -------------------- EntityCard --------------------
 export default function EntityCard({ item, category, world, isEditingProp, onChange }) {

@@ -5,6 +5,7 @@ import { createWorld } from "../services/worldService";
 import ExpandablePassPanel from "../components/ExpandablePassPanel";
 import Spinner from "../components/ui/Spinner";
 import { useToast } from "../context/ToastContext";
+import "../assets/css/Create-World-Page.css";
 
 // ------------------ Helper: Normalize Attributes ------------------
 const normalizeAttributes = (attrs) => {

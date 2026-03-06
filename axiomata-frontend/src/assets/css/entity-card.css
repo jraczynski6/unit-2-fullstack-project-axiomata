@@ -1,0 +1,118 @@
+/* ==============================
+   src/assets/css/entity-card.css
+   ============================== */
+
+/* ===== Mobile-first: shrink-to-fit card ===== */
+.entity-card {
+  background: #FDF1D5;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  width: 100%;               /* fill parent container */
+  max-width: 600px;          /* prevent overly wide cards on tablets */
+  height: auto;              /* grow to fit content */
+  box-sizing: border-box;
+  overflow-y: visible;       /* expand naturally */
+  font-size: 1rem;
+  line-height: 1.4;
+  margin: 1rem auto;         /* center with spacing on top/bottom */
+}
+
+/* ===== Editable Mode ===== */
+.entity-card.editing {
+  background: #FFF9E5;
+  padding: 2rem;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+/* ===== Headings ===== */
+.entity-card h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #4A3F1F;
+}
+
+/* ===== Paragraphs ===== */
+.entity-card p {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  color: #3C3320;
+}
+
+/* ===== List items ===== */
+.entity-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.entity-card li {
+  margin-bottom: 0.75rem;
+  padding: 0.75rem;
+  background: #F5E6C0;
+  border-radius: 0.5rem;
+  cursor: default;
+  font-size: 1rem;
+}
+
+/* ===== Inputs for editing ===== */
+.entity-card.editing input,
+.entity-card.editing textarea,
+.entity-card.editing select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid #C1B48A;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  background: #FFF9E5;
+}
+
+/* ===== Desktop / Tablet ===== */
+@media (min-width: 768px) {
+   .entity-card {
+    width: 100%;                  /* fill the container */
+    max-width: none;               /* allow it to stretch fully inside container */
+    height: auto;                  /* shrink-to-fit content */
+    max-height: 90vh;              /* optional scroll if card is too tall */
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    font-size: 1.2rem;
+    line-height: 1.5;
+    margin: 0;                     /* remove margin-left, it was causing overflow */
+    overflow-y: auto;
+    box-sizing: border-box;
+  }
+
+  .entity-card-container {
+    flex: 1 1 auto;
+    padding: 2rem;
+    max-width: calc(100% - 320px); /* leaves space for SectionPanel */
+    margin-left: 320px;            /* pushes container next to panel */
+  }
+
+  .entity-card.editing input,
+  .entity-card.editing textarea,
+  .entity-card.editing select {
+    font-size: 1.1rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .entity-card h2 {
+    font-size: 2rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .entity-card p {
+    font-size: 1.2rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .entity-card li {
+    font-size: 1.1rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+}

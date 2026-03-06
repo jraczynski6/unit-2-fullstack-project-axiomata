@@ -1,15 +1,18 @@
 /* ===== Base panel visuals ===== */
 .section-panel-content {
-  background: #FDF4E3;  /* parchment-like warm cream */
+  background: var(--card-parchment);
+  /* Axiomata neutral parchment */
   padding: 1rem;
-  box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
   flex-shrink: 0;
-  color: #2a2a2a;       /* dark text for readability */
-  font-family: 'Georgia', serif; /* optional parchment-feel font */
+  color: var(--text-primary);
+  /* dark text for readability */
+  font-family: 'Georgia', serif;
+  /* optional parchment-feel font */
 }
 
-/* ===== Section headers ===== */
+/* ===== Section headers with underline flair ===== */
 .section-panel-content .section-header {
   font-weight: 700;
   margin-top: 1rem;
@@ -18,22 +21,41 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 0.75rem;
-  border-radius: 0.4rem;
-  color: #2a2a2a;       /* slightly darker than panel for contrast */
-  border-left: 4px solid transparent; /* subtle accent for hover/focus */
-  transition: background 0.2s, border-left 0.2s;
+  border-top-left-radius: 0.4rem;
+  border-top-right-radius: 0.4rem;
+  /* only round top corners */
+  border-bottom-left-radius: 0;
+  /* ensure bottom is straight */
+  border-bottom-right-radius: 0;
+  color: var(--text-primary);
+  border-left: 4px solid transparent;
+  /* optional hover accent */
+  border-bottom: 3px solid transparent;
+  /* base underline for flair */
+  transition: border-bottom 0.2s, color 0.2s, filter 0.2s;
 }
 
-/* Section-specific header backgrounds */
-.section-panel-content .section-header.locations { background: #E6D9B8; }
-.section-panel-content .section-header.factions  { background: #EADFB7; }
-.section-panel-content .section-header.characters{ background: #D9C68A; }
-.section-panel-content .section-header.items     { background: #E7D9AA; }
+/* Section-specific underline colors */
+.section-panel-content .section-header.locations {
+  border-bottom-color: var(--origin-green);
+}
+
+.section-panel-content .section-header.factions {
+  border-bottom-color: var(--origin-orange);
+}
+
+.section-panel-content .section-header.characters {
+  border-bottom-color: var(--origin-red);
+}
+
+.section-panel-content .section-header.items {
+  border-bottom-color: var(--origin-brown);
+}
 
 /* Hover effect for all headers */
 .section-panel-content .section-header:hover {
-  filter: brightness(0.95);
-  border-left: 4px solid #B98B4B; /* subtle parchment accent */
+  filter: brightness(1.05);
+  border-left: 4px solid var(--origin-accent);
 }
 
 /* ===== List items under section headers ===== */
@@ -47,28 +69,32 @@
   margin-bottom: 0.5rem;
 }
 
-.section-panel-content li > div {
-  background: #F7E6C1; /* darker cream for higher contrast */
+.section-panel-content li>div {
+  background: var(--card-light);
+  /* darker cream for higher contrast */
   padding: 0.5rem 0.75rem;
   border-radius: 0.35rem;
-  border: 1px solid #DCC49D; /* slightly darker border for separation */
-  box-shadow: 0 2px 4px rgba(0,0,0,0.08); /* more pronounced shadow */
+  border: 1px solid var(--card-border);
+  /* slightly darker border */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
   cursor: pointer;
   transition: background 0.2s, transform 0.1s;
   font-size: 0.95rem;
-  color: #3A2F1A; /* darker text for readability */
+  color: var(--text-primary);
+  /* consistent text color */
 }
 
 /* Nested items slightly lighter but still higher contrast */
-.section-panel-content li ul li > div {
-  background: #FBEED3; 
-  border-color: #E6D9B8;
+.section-panel-content li ul li>div {
+  background: var(--card-lighter);
+  border-color: var(--card-border);
   padding-left: 1rem;
-  color: #3A2F1A;
+  color: var(--text-primary);
 }
 
 /* Hover effect */
-.section-panel-content li > div:hover {
-  background: #FFE38C; /* bright highlight */
+.section-panel-content li>div:hover {
+  background: var(--btn-hover);
+  /* highlight using Axiomata accent */
   transform: translateY(-1px);
 }

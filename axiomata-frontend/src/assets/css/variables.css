@@ -1,40 +1,60 @@
+/* ===== variables.css ===== */
+/* Axiomata Core Color Palette - Readable Version */
+
+/* ---------------------------
+   Page / App Background
+---------------------------- */
 :root {
-  /* ===== Page / App Background ===== */
-  --bg-gradient-top: #2A2A2A;
-  --bg-gradient-bottom: #1E1E1E;
+  --bg-gradient-top: #D4BC8C;        /* light parchment top */
+  --bg-gradient-bottom: #C9B179;     /* slightly darker parchment bottom */
 
-  /* ===== Cards / Components ===== */
-  --card-parchment: #FDE8B9;
-  --card-border: #D8CFC4;
+  /* ---------------------------
+     Cards / Components
+  ---------------------------- */
+  --card-parchment: #D4BC8C;         /* main parchment color */
+  --card-border: #483C32;            /* dark taupe for card borders */
 
-  /* ===== Content Section ===== */
-  --content-contrast: #F7D999;
+  /* ---------------------------
+     Content Section
+  ---------------------------- */
+  --content-contrast: #A6531C;       /* burnt orange for emphasis, headings, highlights */
 
-  /* ===== Text Colors ===== */
-  --text-primary: #222222;
-  --text-secondary: #555555;
+  /* ---------------------------
+     Text
+  ---------------------------- */
+  --text-primary: #283618;           /* deep earthy green/brown for main text */
+  --text-secondary: #4B5230;         /* slightly darker olive for secondary text */
 
-  /* ===== Buttons - Neutral ===== */
-  --btn-bg: #444444;
-  --btn-hover: #666666;
-  --btn-text: #FAF0E6;
+  /* ---------------------------
+     Buttons - Neutral
+  ---------------------------- */
+  --btn-bg: #5C633A;                 /* olive neutral button background */
+  --btn-hover: #6B7242;              /* slightly lighter olive on hover */
+  --btn-text: #FDE8B9;               /* light parchment text on buttons */
 
-  /* ===== Buttons - Confirm ===== */
-  --btn-confirm: #2E7D32;
-  --btn-confirm-hover: #388E3C;
-  --btn-confirm-text: #FFFFFF;
+  /* ---------------------------
+     Buttons - Confirm (Green)
+  ---------------------------- */
+  --btn-confirm: #283618;             /* deep dark green */
+  --btn-confirm-hover: #3A4A26;       /* slightly brighter on hover */
+  --btn-confirm-text: #D4BC8C;        /* parchment text */
 
-  /* ===== Buttons - Danger / Warning ===== */
-  --btn-danger: #B23A3A;
-  --btn-danger-hover: #C44A4A;
-  --btn-danger-text: #FFFFFF;
+  /* ---------------------------
+     Buttons - Warning / Danger
+  ---------------------------- */
+  --btn-danger: #9A4918;             /* darker burnt orange for contrast */
+  --btn-danger-hover: #A6531C;       /* original burnt orange on hover */
+  --btn-danger-text: #D4BC8C;        /* parchment text */
 
-  /* ===== Optional Highlights ===== */
-  --highlight-success: #4CAF50;
-  --highlight-warning: #FFC107;
-  --highlight-error: #F44336;
+  /* ---------------------------
+     Accent
+  ---------------------------- */
+  --origin-accent: #A6531C;          /* primary accent color */
 
-  /* ===== Overlay / Misc ===== */
-  --overlay-dark: rgba(0, 0, 0, 0.5);
-  --overlay-light: rgba(255, 255, 255, 0.25);
+  /* ---------------------------
+     Optional Highlights
+  ---------------------------- */
+  --highlight-success: #5C633A;      /* olive for success */
+  --highlight-warning: #A6531C;      /* burnt orange warning */
+  --highlight-error: #B7622B;        /* slightly brighter burnt orange/red */
 }
