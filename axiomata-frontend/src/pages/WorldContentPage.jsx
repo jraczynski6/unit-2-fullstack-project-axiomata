@@ -28,6 +28,15 @@ export default function WorldContentPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
 
+  // ------------------- Entity selection -------------------
+  const handleSelectEntity = (entity) => {
+    setIsPanelOpen(false);
+    setSelectedItem(entity);
+    setSelectedCategory(entity.category);
+    setIsEditing(false);
+  };
+
+
   // ------------------- Fetch world -------------------
   useEffect(() => {
     if (!worldId) return;
@@ -66,6 +75,14 @@ export default function WorldContentPage() {
 
     fetchWorld();
   }, [worldId, location.state, addToast, navigate]);
+
+  // ------------------- Sync draft with selected item -------------------
+  useEffect(() => {
+    if (selectedItem) {
+      setDraftEntity(selectedItem);
+    }
+  }, [selectedItem]);
+
 
   // ------------------- CRUD handlers -------------------
   const handleAddEntity = (newItem, category) => {
