@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import FloatingControls from "../components/FloatingControls";
-import WorldAttributesPanel from "../components/WorldAttributesPanel";
 import SectionPanel from "../components/SectionPanel";
+import WorldAttributesPanel from "../components/WorldAttributesPanel";
+import FloatingControls from "../components/FloatingControls";
 import { getWorldById, updateWorld } from "../services/worldService";
 import { useToast } from "../context/ToastContext";
-import '../assets/css/world-overview.css';
-import '../assets/css/section-panel.css';
+import "../assets/css/world-overview.css";
+import "../assets/css/section-panel.css";
 
 export default function WorldOverviewPage() {
   const { worldId } = useParams();
@@ -21,7 +21,6 @@ export default function WorldOverviewPage() {
   const [hasErrors, setHasErrors] = useState(false);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
 
-  // ---------------- Load World ----------------
   useEffect(() => {
     const fetchWorld = async () => {
       try {
@@ -30,7 +29,7 @@ export default function WorldOverviewPage() {
         setEditedAttributes(data.attributes || {});
         setEditedName(data.name || "");
         setEditedDescription(data.description || "");
-      } catch (err) {
+      } catch {
         addToast({ message: "Failed to load world.", type: "error" });
         navigate("/dashboard");
       }
@@ -46,6 +45,7 @@ export default function WorldOverviewPage() {
     setIsEditing(false);
     setHasErrors(false);
   };
+
   const handleSave = async () => {
     if (hasErrors) return;
     try {
@@ -73,21 +73,20 @@ export default function WorldOverviewPage() {
 
   return (
     <div className="world-overview-page">
+      {/* ===== SectionPanel via portal ===== */}
+      {typeof document !== "undefined" && (
+        <SectionPanel
+          world={world}
+          isOpen={isPanelOpen}
+          setIsOpen={setIsPanelOpen}
+          onSelectEntity={(entity) => {
+            setIsPanelOpen(false);
+            navigate(`/world-content/${worldId}`, { state: { selectedEntity: entity } });
+          }}
+        />
+      )}
 
-      {/* ===== Detached Section Panel ===== */}
-      <SectionPanel
-        world={world}
-        className={`section-panel-content ${isPanelOpen ? "open" : ""} hidden-on-mobile`}
-        onSelectEntity={(entity) => {
-          setIsPanelOpen(false);
-          navigate(`/world-content/${worldId}`, { state: { selectedEntity: entity } });
-        }}
-      />
-
-      {/* ===== Mobile Overlay ===== */}
-      {isPanelOpen && <div className="section-panel-overlay" onClick={() => setIsPanelOpen(false)} />}
-
-      {/* ===== Main Content ===== */}
+      {/* ===== Main Page Content ===== */}
       <div className="world-main">
         <div className="world-header-card">
           {isEditing ? (
@@ -132,7 +131,7 @@ export default function WorldOverviewPage() {
         />
       </div>
 
-      {/* ===== Mobile Toggle Button ===== */}
+      {/* Mobile toggle button */}
       <button
         className="section-panel-toggle"
         onClick={() => setIsPanelOpen(!isPanelOpen)}

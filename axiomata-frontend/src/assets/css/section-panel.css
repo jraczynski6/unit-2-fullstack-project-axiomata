@@ -1,30 +1,83 @@
-/* ===== Section Panel ===== */
+/* ===== Base panel ===== */
 .section-panel-content {
-  position: fixed;          /* detach from layout */
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 280px;             /* desktop panel width */
   background: #FDF1D5;
-  box-shadow: 2px 0 8px rgba(0,0,0,0.1);
-  overflow-y: auto;         /* scroll panel content */
-  z-index: 1000;
   padding: 1rem;
-  transition: transform 0.3s ease-in-out;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+  overflow-y: auto;
+  flex-shrink: 0;
 }
 
-/* Default hidden for mobile */
-.section-panel-content.hidden-on-mobile {
-  transform: translateX(-100%);
+/* ===== Desktop: sticky floating panel ===== */
+@media (min-width: 768px) {
+  .section-panel-content {
+    position: sticky;
+    top: var(--header-height, 60px);
+    width: 280px;
+    max-height: calc(100vh - var(--header-height, 60px) - var(--footer-height, 40px));
+    background: #FDF1D5;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+    padding: 1rem;
+    overflow-y: auto;
+    flex-shrink: 0;
+    z-index: 1;
+  }
+
+  .layout-main {
+    margin-left: 0;
+  }
+
+  /* Hide mobile-only elements */
+  .section-panel-toggle,
+  .section-panel-overlay {
+    display: none;
+  }
 }
 
-/* Open state */
-.section-panel-content.open {
-  transform: translateX(0);
+/* ===== Mobile drawer ===== */
+@media (max-width: 767px) {
+  .section-panel-content {
+    position: fixed;
+    top: var(--header-height, 60px);
+    left: 0;
+    width: 80vw;
+    max-width: 300px;
+    bottom: var(--footer-height, 40px);
+    transform: translateX(-100%);
+    z-index: 1000;
+    transition: transform 0.3s ease-in-out;
+    background: #FDF1D5;
+  }
+
+  .section-panel-content.open {
+    transform: translateX(0);
+  }
+
+  .section-panel-toggle {
+    display: block;
+    position: fixed;
+    top: calc(var(--header-height, 60px) + 1rem);
+    right: 1rem;
+    z-index: 1100;
+    background: var(--btn-bg);
+    color: var(--btn-text);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+  }
+
+  .section-panel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.3);
+    z-index: 900;
+  }
 }
 
-/* Section headers inside panel */
-.section-panel-content h3,
+/* ===== Section headers & lists ===== */
 .section-panel-content .section-header {
   font-weight: 700;
   margin-top: 1rem;
@@ -34,7 +87,6 @@
   align-items: center;
 }
 
-/* List styling */
 .section-panel-content ul {
   list-style: none;
   padding-left: 1rem;
@@ -46,46 +98,11 @@
   padding: 0.25rem 0;
 }
 
-/* ===== Mobile overlay ===== */
-.section-panel-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0,0,0,0.3);
-  z-index: 900;
+.section-panel-content li div.bold {
+  font-weight: 700;
 }
 
-/* ===== Mobile toggle button ===== */
-.section-panel-toggle {
-  display: none; /* hidden on desktop */
-}
-
-@media (max-width: 767px) {
-  /* Slide-in drawer on mobile */
-  .section-panel-content {
-    width: 80vw;
-    max-width: 300px;
-    transform: translateX(-100%);
-  }
-
-  .section-panel-content.open {
-    transform: translateX(0);
-  }
-
-  /* Show toggle button */
-  .section-panel-toggle {
-    display: block;
-    position: fixed;
-    top: 1rem;
-    left: 1rem;
-    z-index: 1100;
-    background: var(--btn-bg);
-    color: var(--btn-text);
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    cursor: pointer;
-  }
+.section-panel-content h3 {
+  font-weight: 700;
+  margin-top: 1rem;
 }

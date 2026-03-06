@@ -1,0 +1,67 @@
+/* ===== Layout body ===== */
+.layout-body {
+  display: flex;      /* side-by-side children */
+  flex-direction: row;
+  width: 100%;
+}
+
+/* ===== Main content ===== */
+.layout-main {
+  flex: 1;
+  padding: 2rem 1rem;
+  overflow-y: auto;
+  /* Remove margin-left; panel floats independently */
+}
+
+/* ===== Desktop SectionPanel ===== */
+@media (min-width: 768px) {
+  .section-panel-content {
+    position: sticky;
+    top: var(--header-height, 60px);
+    width: 280px;  /* fixed width */
+    height: calc(100vh - var(--header-height, 60px) - var(--footer-height, 40px));
+    background: #FDF1D5;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+    padding: 1rem;
+    overflow-y: auto;
+    flex-shrink: 0;
+    z-index: 1;
+  }
+}
+
+/* ===== Mobile drawer ===== */
+@media (max-width: 767px) {
+  .layout-main {
+    margin-left: 0; /* panel slides over content */
+  }
+
+  .section-panel-content {
+    position: fixed;   /* stays disconnected from scroll */
+    top: 0;
+    left: 0;
+    width: 80vw;
+    max-width: 300px;
+    height: 100vh;     /* full viewport height */
+    transform: translateX(-100%);
+    z-index: 1000;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .section-panel-content.open {
+    transform: translateX(0);
+  }
+
+  .section-panel-toggle {
+    display: block;
+    position: fixed;  /* so it floats on screen */
+    top: 1rem;
+    right: 1rem;
+    z-index: 1100;
+    background: var(--btn-bg);
+    color: var(--btn-text);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+  }
+}
