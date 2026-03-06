@@ -74,7 +74,7 @@ export default function FloatingControls({
         default: throw new Error(`Unknown category: ${category}`);
       }
       addToast({ message: `${category} deleted successfully.`, type: "success" });
-      onAddEntity?.(); // refresh
+      onAddEntity?.();
     } catch {
       addToast({ message: "Failed to delete entity.", type: "error" });
     } finally {

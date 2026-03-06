@@ -23,7 +23,7 @@ export default function SectionPanel({ world, isOpen, setIsOpen, onSelectEntity 
   };
 
   const handleSelect = (entity, section) => {
-    setIsOpen(false); // close mobile drawer
+    setIsOpen(false);
     onSelectEntity?.({ ...entity, category: section.slice(0, -1) });
   };
 

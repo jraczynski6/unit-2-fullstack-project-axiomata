@@ -27,7 +27,7 @@ export default function EntityCard({ item, category, world, isEditingProp, onCha
 
   // ---------------- Helper for dropdowns ----------------
   const locationTypeOptions = ["Region", "City", "Dungeon", "Town"];
-  const factionTypeOptions = ["Guild", "Tribe", "Order"]; // example, adjust to your backend types
+  const factionTypeOptions = ["Guild", "Tribe", "Order"];
 
   // ---------------- Notify parent of changes ----------------
   useEffect(() => {

@@ -18,7 +18,7 @@
   min-height: 60vh;
 
 
-  background: var(--card-parchment, #D4BC8C); /* fallback if variable missing */
+  background: var(--card-parchment, #D4BC8C);
   border: 1px solid var(--card-border, #483C32);
   border-radius: 0.5rem;
   color: var(--text-primary, #283618);

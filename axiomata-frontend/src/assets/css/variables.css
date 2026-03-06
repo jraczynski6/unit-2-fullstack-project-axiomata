@@ -1,60 +1,58 @@
 /* ===== variables.css ===== */
-/* Axiomata Core Color Palette - Readable Version */
 
 /* ---------------------------
    Page / App Background
 ---------------------------- */
 :root {
-  --bg-gradient-top: #D4BC8C;        /* light parchment top */
-  --bg-gradient-bottom: #C9B179;     /* slightly darker parchment bottom */
+  --bg-gradient-top: #D4BC8C;
+  --bg-gradient-bottom: #C9B179;    
 
   /* ---------------------------
      Cards / Components
   ---------------------------- */
-  --card-parchment: #D4BC8C;         /* main parchment color */
-  --card-border: #483C32;            /* dark taupe for card borders */
-
+  --card-parchment: #D4BC8C;        
+  --card-border: #483C32;           
   /* ---------------------------
      Content Section
   ---------------------------- */
-  --content-contrast: #A6531C;       /* burnt orange for emphasis, headings, highlights */
+  --content-contrast: #A6531C;      
 
   /* ---------------------------
      Text
   ---------------------------- */
-  --text-primary: #283618;           /* deep earthy green/brown for main text */
-  --text-secondary: #4B5230;         /* slightly darker olive for secondary text */
+  --text-primary: #283618;         
+  --text-secondary: #4B5230;        
 
   /* ---------------------------
      Buttons - Neutral
   ---------------------------- */
-  --btn-bg: #5C633A;                 /* olive neutral button background */
-  --btn-hover: #6B7242;              /* slightly lighter olive on hover */
-  --btn-text: #FDE8B9;               /* light parchment text on buttons */
+  --btn-bg: #5C633A;              
+  --btn-hover: #6B7242;            
+  --btn-text: #FDE8B9;               
 
   /* ---------------------------
      Buttons - Confirm (Green)
   ---------------------------- */
-  --btn-confirm: #283618;             /* deep dark green */
-  --btn-confirm-hover: #3A4A26;       /* slightly brighter on hover */
-  --btn-confirm-text: #D4BC8C;        /* parchment text */
+  --btn-confirm: #283618;        
+  --btn-confirm-hover: #3A4A26;      
+  --btn-confirm-text: #D4BC8C;       
 
   /* ---------------------------
      Buttons - Warning / Danger
   ---------------------------- */
-  --btn-danger: #9A4918;             /* darker burnt orange for contrast */
-  --btn-danger-hover: #A6531C;       /* original burnt orange on hover */
-  --btn-danger-text: #D4BC8C;        /* parchment text */
+  --btn-danger: #9A4918;
+  --btn-danger-hover: #A6531C;
+  --btn-danger-text: #D4BC8C;        
 
   /* ---------------------------
      Accent
   ---------------------------- */
-  --origin-accent: #A6531C;          /* primary accent color */
+  --origin-accent: #A6531C;
 
   /* ---------------------------
      Optional Highlights
   ---------------------------- */
-  --highlight-success: #5C633A;      /* olive for success */
-  --highlight-warning: #A6531C;      /* burnt orange warning */
-  --highlight-error: #B7622B;        /* slightly brighter burnt orange/red */
+  --highlight-success: #5C633A;
+  --highlight-warning: #A6531C;
+  --highlight-error: #B7622B;
 }

@@ -11,8 +11,8 @@
   /* Easier-to-read linear gradient background */
   background: linear-gradient(
     180deg,
-    rgba(245, 225, 180, 1) 0%,  /* soft parchment top */
-    rgb(82, 104, 67) 100%  /* light green bottom */
+    rgba(245, 225, 180, 1) 0%,
+    rgb(82, 104, 67) 100%
   );
 
   border: 1px solid #D8CFC4;

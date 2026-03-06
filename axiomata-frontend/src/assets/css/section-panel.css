@@ -1,15 +1,12 @@
 /* ===== Base panel visuals ===== */
 .section-panel-content {
   background: var(--card-parchment);
-  /* Axiomata neutral parchment */
   padding: 1rem;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
   flex-shrink: 0;
   color: var(--text-primary);
-  /* dark text for readability */
   font-family: 'Georgia', serif;
-  /* optional parchment-feel font */
 }
 
 /* ===== Section headers with underline flair ===== */
@@ -23,15 +20,11 @@
   padding: 0.5rem 0.75rem;
   border-top-left-radius: 0.4rem;
   border-top-right-radius: 0.4rem;
-  /* only round top corners */
   border-bottom-left-radius: 0;
-  /* ensure bottom is straight */
   border-bottom-right-radius: 0;
   color: var(--text-primary);
   border-left: 4px solid transparent;
-  /* optional hover accent */
   border-bottom: 3px solid transparent;
-  /* base underline for flair */
   transition: border-bottom 0.2s, color 0.2s, filter 0.2s;
 }
 
@@ -71,20 +64,17 @@
 
 .section-panel-content li>div {
   background: var(--card-light);
-  /* darker cream for higher contrast */
   padding: 0.5rem 0.75rem;
   border-radius: 0.35rem;
   border: 1px solid var(--card-border);
-  /* slightly darker border */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
   cursor: pointer;
   transition: background 0.2s, transform 0.1s;
   font-size: 0.95rem;
   color: var(--text-primary);
-  /* consistent text color */
+
 }
 
-/* Nested items slightly lighter but still higher contrast */
 .section-panel-content li ul li>div {
   background: var(--card-lighter);
   border-color: var(--card-border);
@@ -92,9 +82,7 @@
   color: var(--text-primary);
 }
 
-/* Hover effect */
 .section-panel-content li>div:hover {
   background: var(--btn-hover);
-  /* highlight using Axiomata accent */
   transform: translateY(-1px);
 }

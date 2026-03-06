@@ -1,21 +1,17 @@
-/* ==============================
-   src/assets/css/entity-card.css
-   ============================== */
 
-/* ===== Mobile-first: shrink-to-fit card ===== */
 .entity-card {
   background: #FDF1D5;
   padding: 1.5rem;
   border-radius: 0.75rem;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  width: 100%;               /* fill parent container */
-  max-width: 600px;          /* prevent overly wide cards on tablets */
-  height: auto;              /* grow to fit content */
+  width: 100%;
+  max-width: 600px;
+  height: auto;
   box-sizing: border-box;
-  overflow-y: visible;       /* expand naturally */
+  overflow-y: visible;
   font-size: 1rem;
   line-height: 1.4;
-  margin: 1rem auto;         /* center with spacing on top/bottom */
+  margin: 1rem auto;
 }
 
 /* ===== Editable Mode ===== */
@@ -71,16 +67,16 @@
 /* ===== Desktop / Tablet ===== */
 @media (min-width: 768px) {
    .entity-card {
-    width: 100%;                  /* fill the container */
-    max-width: none;               /* allow it to stretch fully inside container */
-    height: auto;                  /* shrink-to-fit content */
-    max-height: 90vh;              /* optional scroll if card is too tall */
+    width: 100%;
+    max-width: none;
+    height: auto;
+    max-height: 90vh;
     padding: 2rem;
     border-radius: 1rem;
     box-shadow: 0 8px 24px rgba(0,0,0,0.2);
     font-size: 1.2rem;
     line-height: 1.5;
-    margin: 0;                     /* remove margin-left, it was causing overflow */
+    margin: 0;
     overflow-y: auto;
     box-sizing: border-box;
   }
@@ -88,8 +84,8 @@
   .entity-card-container {
     flex: 1 1 auto;
     padding: 2rem;
-    max-width: calc(100% - 320px); /* leaves space for SectionPanel */
-    margin-left: 320px;            /* pushes container next to panel */
+    max-width: calc(100% - 320px);
+    margin-left: 320px;
   }
 
   .entity-card.editing input,
