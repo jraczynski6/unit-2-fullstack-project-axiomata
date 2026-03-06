@@ -26,7 +26,7 @@ export function ToastProvider({ children }) {
     </ToastContext.Provider>
   );
 }
-// Custom hook for easy access
+// hook
 export function useToast() {
   const context = useContext(ToastContext);
   if (!context) {

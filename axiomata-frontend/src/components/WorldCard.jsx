@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import './../assets/css/dashboard-page.css';
 
 export default function WorldCard({ world }) {
     const navigate = useNavigate();

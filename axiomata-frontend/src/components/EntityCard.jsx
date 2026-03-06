@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
+import '../assets/css/entity-card.css';
 
+// -------------------- EntityCard --------------------
 export default function EntityCard({ item, category, world, isEditingProp, onChange }) {
   if (!item) return null;
 
   // ---------------- Edit Mode ----------------
   const [isEditing, setIsEditing] = useState(false);
-
   useEffect(() => {
     if (typeof isEditingProp === "boolean") setIsEditing(isEditingProp);
   }, [isEditingProp]);
@@ -26,7 +27,7 @@ export default function EntityCard({ item, category, world, isEditingProp, onCha
 
   // ---------------- Helper for dropdowns ----------------
   const locationTypeOptions = ["Region", "City", "Dungeon", "Town"];
-  const factionTypeOptions = ["Guild", "Tribe", "Order"]; // example, adjust to your backend types
+  const factionTypeOptions = ["Guild", "Tribe", "Order"];
 
   // ---------------- Notify parent of changes ----------------
   useEffect(() => {
@@ -96,7 +97,7 @@ export default function EntityCard({ item, category, world, isEditingProp, onCha
 }
 
 // ==========================
-// EntityCard.jsx / non MVP
+// EntityCard.jsx / non-MVP
 // ==========================
 // - Detect and warn when creating a new entity with duplicate name within same parent
 // - Optionally merge duplicates

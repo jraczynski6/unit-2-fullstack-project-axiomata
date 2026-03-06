@@ -1,0 +1,234 @@
+/* ===== base.css ===== */
+/* Axiomata Base / Global Styles */
+
+/* ---------------------------
+   Reset & Box-sizing
+---------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ---------------------------
+   HTML & Body
+---------------------------- */
+html, body {
+  width: 100%;
+  min-height: 100%;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: linear-gradient(var(--bg-gradient-top), var(--bg-gradient-bottom));
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+/* ---------------------------
+   Main
+---------------------------- */
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+/* ---------------------------
+   Links
+---------------------------- */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ---------------------------
+   Buttons
+---------------------------- */
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* ---------------------------
+   Layout Containers
+---------------------------- */
+.page-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  background: var(--card-parchment);
+  border: 1px solid var(--card-border);
+  border-radius: 0.75rem;
+  min-height: 60vh;
+  color: var(--text-primary);
+  box-shadow: 0 8px 20px rgba(40, 54, 24, 0.15);
+  position: relative;
+}
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ---------------------------
+   Cards
+---------------------------- */
+.card {
+  background: var(--card-parchment);
+  border: 1px solid var(--card-border);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* ---------------------------
+   Buttons
+---------------------------- */
+.btn {
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+}
+
+.btn:hover {
+  background: var(--btn-hover);
+}
+
+.btn-confirm {
+  background: var(--btn-confirm);
+  color: var(--btn-confirm-text);
+}
+
+.btn-confirm:hover {
+  background: var(--btn-confirm-hover);
+}
+
+.btn-danger {
+  background: var(--btn-danger);
+  color: var(--btn-danger-text);
+}
+
+.btn-danger:hover {
+  background: var(--btn-danger-hover);
+}
+
+/* ---------------------------
+   Forms
+---------------------------- */
+input, textarea, select {
+  background: var(--card-parchment);
+  border: 1px solid var(--card-border);
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  color: var(--text-primary);
+  width: 100%;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: 2px solid var(--btn-hover);
+}
+
+/* ---------------------------
+   Modals / Overlays
+---------------------------- */
+.modal-overlay,
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: var(--card-parchment);
+  border: 1px solid var(--card-border);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  max-width: 90%;
+}
+
+/* ---------------------------
+   Toasts
+---------------------------- */
+.toast {
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  padding: 0.75rem 1rem;
+  border-radius: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.toast-info {
+  color: var(--text-primary);
+}
+
+/* ---------------------------
+   Headers & Footers
+---------------------------- */
+header, .footer-container {
+  width: 100%;
+  padding: 1rem;
+  background: var(--bg-gradient-top);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+footer {
+  background: var(--bg-gradient-bottom);
+  color: var(--text-secondary);
+}
+
+/* ---------------------------
+   Typography
+---------------------------- */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+p, span, li {
+  color: var(--text-secondary);
+}
+
+/* ---------------------------
+   Grid / List Helpers
+---------------------------- */
+.grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.flex {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+/* ---------------------------
+   Empty States
+---------------------------- */
+.empty-state {
+  background: var(--card-parchment);
+  color: var(--text-secondary);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  text-align: center;
+}

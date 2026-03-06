@@ -1,0 +1,88 @@
+/* ===== Base panel visuals ===== */
+.section-panel-content {
+  background: var(--card-parchment);
+  padding: 1rem;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  flex-shrink: 0;
+  color: var(--text-primary);
+  font-family: 'Georgia', serif;
+}
+
+/* ===== Section headers with underline flair ===== */
+.section-panel-content .section-header {
+  font-weight: 700;
+  margin-top: 1rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  border-top-left-radius: 0.4rem;
+  border-top-right-radius: 0.4rem;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  color: var(--text-primary);
+  border-left: 4px solid transparent;
+  border-bottom: 3px solid transparent;
+  transition: border-bottom 0.2s, color 0.2s, filter 0.2s;
+}
+
+/* Section-specific underline colors */
+.section-panel-content .section-header.locations {
+  border-bottom-color: var(--origin-green);
+}
+
+.section-panel-content .section-header.factions {
+  border-bottom-color: var(--origin-orange);
+}
+
+.section-panel-content .section-header.characters {
+  border-bottom-color: var(--origin-red);
+}
+
+.section-panel-content .section-header.items {
+  border-bottom-color: var(--origin-brown);
+}
+
+/* Hover effect for all headers */
+.section-panel-content .section-header:hover {
+  filter: brightness(1.05);
+  border-left: 4px solid var(--origin-accent);
+}
+
+/* ===== List items under section headers ===== */
+.section-panel-content ul {
+  list-style: none;
+  padding-left: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.section-panel-content li {
+  margin-bottom: 0.5rem;
+}
+
+.section-panel-content li>div {
+  background: var(--card-light);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.35rem;
+  border: 1px solid var(--card-border);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+
+}
+
+.section-panel-content li ul li>div {
+  background: var(--card-lighter);
+  border-color: var(--card-border);
+  padding-left: 1rem;
+  color: var(--text-primary);
+}
+
+.section-panel-content li>div:hover {
+  background: var(--btn-hover);
+  transform: translateY(-1px);
+}

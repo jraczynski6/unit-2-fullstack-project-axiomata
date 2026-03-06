@@ -1,6 +1,7 @@
 import { useState } from "react";
 import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
+import './../assets/css/login-form.css';
 
 // RegisterForm receives onSuccess prop to handle post-register navigation
 export default function RegisterForm({ onSuccess }) {
@@ -41,7 +42,7 @@ export default function RegisterForm({ onSuccess }) {
       const { token } = response.data;
       login(token); // store token in AuthContext + localStorage
       if (onSuccess) {
-        onSuccess(); // trigger redirect to dashboard
+        onSuccess();
       }
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed");

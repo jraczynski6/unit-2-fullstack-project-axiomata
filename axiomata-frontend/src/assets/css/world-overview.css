@@ -1,0 +1,364 @@
+/* ----- Page Container ----- */
+.world-content-page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  color: var(--text-primary);
+  text-align: center;
+  background: var(--card-parchment);
+  overflow-y: auto;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
+}
+
+/* ----- Main Content Wrapper ----- */
+.world-main {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  box-sizing: border-box;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+}
+
+/* ----- World Header: Name / Description ----- */
+.world-header-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.world-name,
+.world-name-input {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0.5rem 0;
+  word-break: break-word;
+  text-align: center;
+  color: var(--text-primary);
+}
+
+.world-desc,
+.world-desc-input {
+  font-size: 1.1rem;
+  margin: 0.25rem 0;
+  text-align: center;
+  color: var(--text-primary);
+}
+
+.world-name-input,
+.world-desc-input {
+  width: 100%;
+  max-width: 600px;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--card-border);
+  background: var(--card-parchment);
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+.world-desc-input {
+  min-height: 5rem;
+  max-height: 8rem;
+  resize: none;
+}
+
+/* ----- Attributes Panel ----- */
+.attributes-panel {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background: var(--card-parchment);
+  border: 1px solid var(--card-border);
+}
+
+/* Toggle Button */
+.attribute-toggle-btn {
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  cursor: pointer;
+  font-weight: 600;
+  align-self: center;
+  margin-bottom: 0.5rem;
+}
+
+.attribute-toggle-btn:hover {
+  background: var(--btn-hover);
+}
+
+/* ----- Nested Readonly Panels ----- */
+.nested-readonly-panel {
+  background: #DCCCAA;
+  border: 1px solid var(--card-border);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  text-align: center;
+}
+
+.nested-readonly-panel .attribute-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.4rem;
+  font-weight: 700;
+  gap: 0.5rem;
+}
+
+.nested-readonly-panel .attribute-row:nth-child(odd) {
+  background: #E3D9B0;
+}
+
+.nested-readonly-panel .attribute-row:nth-child(even) {
+  background: #DCCCAA;
+}
+
+.nested-readonly-panel h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.attribute-key {
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.attribute-value {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ----- Editable Attribute Cards ----- */
+.editable-attribute-card {
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: center;
+  position: relative;
+  background: var(--card-parchment);
+  border: 1px solid var(--card-border);
+}
+
+.editable-attribute-card.editing {
+  border: 1px solid #223525;
+}
+
+.attribute-key-input,
+.attribute-value-input {
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.4rem;
+  border: 1px solid var(--card-border);
+  font-size: 0.95rem;
+  flex: 1;
+  font-weight: 700;
+  text-align: center;
+  background: var(--card-parchment);
+}
+
+.attribute-key-input:focus,
+.attribute-value-input:focus {
+  outline: 2px solid #2c8f32;
+  border-color: #2d9640;
+}
+
+.attribute-remove-btn {
+  background: #B00020;
+  color: #fff;
+  border: none;
+  border-radius: 0.4rem;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.attribute-remove-btn:hover {
+  opacity: 0.85;
+}
+
+.attribute-add-btn {
+  margin-top: 0.5rem;
+  align-self: center;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  cursor: pointer;
+}
+
+.attribute-add-btn:hover {
+  background: var(--btn-hover);
+}
+
+.error-text {
+  color: #B00020;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+/* ----- Entity Card Container ----- */
+.entity-card-container {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 0 auto 2rem auto;
+  overflow-y: auto;
+}
+
+.entity-card-container .entity-card {
+  width: 100%;
+  background: var(--card-parchment);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  box-sizing: border-box;
+  max-height: calc(100vh - 4rem);
+}
+
+/* ----- Floating Controls ----- */
+.floating-controls {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  background: var(--card-parchment);
+  padding: 0.5rem;
+  z-index: 1100;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.15);
+}
+
+.floating-controls .control-button {
+  flex: 1 1 45%;
+  margin: 0.25rem;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 0.4rem;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  cursor: pointer;
+  transition: filter 0.2s ease;
+}
+
+.floating-controls .control-button:hover {
+  filter: brightness(0.9);
+}
+
+.floating-controls .control-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===== Desktop Layout ===== */
+@media (min-width: 768px) {
+  .world-content-page {
+    flex-direction: row;
+    overflow-x: hidden;
+  }
+
+  .entity-card-container {
+    flex: 1 1 auto;
+    padding: 2rem;
+    max-width: calc(100% - 300px);
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .entity-card-container .entity-card {
+    max-height: 90vh;
+    height: auto;
+    overflow-y: auto;
+  }
+
+  .floating-controls {
+    position: static;
+    width: auto;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    padding: 0;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  .section-panel-toggle {
+    display: none;
+  }
+}
+
+/* ===== Mobile Adjustments ===== */
+@media (max-width: 767px) {
+  .world-name,
+  .world-name-input {
+    font-size: 1.2rem;
+  }
+
+  .world-desc,
+  .world-desc-input {
+    font-size: 0.9rem;
+  }
+
+  .world-name-input,
+  .world-desc-input {
+    padding: 0.4rem 0.8rem;
+  }
+
+  .attributes-panel {
+    padding: 0.75rem;
+  }
+
+  .nested-readonly-panel,
+  .editable-attribute-card {
+    width: 100%;
+  }
+
+  .attribute-row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .attribute-key,
+  .attribute-value,
+  .attribute-key-input,
+  .attribute-value-input {
+    width: 100%;
+  }
+
+  .attribute-remove-btn {
+    align-self: flex-end;
+    margin-top: 0.25rem;
+  }
+
+  .attribute-add-btn {
+    width: 100%;
+  }
+}

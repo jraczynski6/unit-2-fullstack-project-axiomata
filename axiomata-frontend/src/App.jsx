@@ -12,6 +12,8 @@ import Layout from "./components/Layout";
 import { ToastProvider } from "./context/ToastContext";
 import ToastContainer from "./components/ui/ToastContainer";
 import { useAuth } from "./context/AuthContext";
+import './assets/css/base.css';
+import './assets/css/variables.css';
 
 function AuthRedirect({ children }) {
   const { isAuthenticated, loading } = useAuth();
@@ -87,10 +89,3 @@ function App() {
 }
 
 export default App;
-
-// ----- App / Vite Setup -----
-// TODO: Verify Vite React app builds and runs
-// TODO: Test Auth context: login, logout, token storage
-// TODO: Confirm Protected routes redirect correctly when unauthenticated
-// TODO: Ensure Axios instance injects tokens for API calls
-// TODO: Confirm Register page redirects correctly after registration

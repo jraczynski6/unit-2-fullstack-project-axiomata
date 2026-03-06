@@ -1,13 +1,17 @@
 import { useState, useEffect, useRef } from "react";
+import '../assets/css/world-overview.css';
 
-// --------------------- Helper ---------------------
-// SCREAMING_SNAKE_CASE → Title Case with spaces
+// --------------------- Helpers ---------------------
 export const normalizeKey = (key) =>
   key
     .toLowerCase()
-    .replace(/_/g, " ") // underscores → spaces
-    .replace(/\b\w/g, (c) => c.toUpperCase()); // capitalize each word
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
 
+export const denormalizeKey = (str) =>
+  str.trim().replace(/\s+/g, "_").toUpperCase();
+
+// --------------------- WorldAttributesPanel ---------------------
 export default function WorldAttributesPanel({
   attributes,
   editable = false,
@@ -16,170 +20,181 @@ export default function WorldAttributesPanel({
 }) {
   const [localAttributes, setLocalAttributes] = useState({});
   const [collapsed, setCollapsed] = useState(false);
-  const idMapRef = useRef({}); // stable IDs for keys
+  const idMapRef = useRef({});
 
-  // --------------------- Sync with props ---------------------
+  // ----------------- Initialize -----------------
   useEffect(() => {
+    if (!attributes) return;
+
     const mapped = {};
-    Object.entries(attributes || {}).forEach(([k, v]) => {
-      let id = idMapRef.current[k];
-      if (!id) {
-        id = `attr_${Object.keys(idMapRef.current).length + 1}`;
-        idMapRef.current[k] = id;
-      }
-      mapped[id] = { key: k, value: v };
+    Object.entries(attributes).forEach(([category, categoryObj]) => {
+      Object.entries(categoryObj).forEach(([key, value]) => {
+        const id =
+          idMapRef.current[`${category}_${key}`] ||
+          `attr_${Object.keys(idMapRef.current).length + 1}`;
+        idMapRef.current[`${category}_${key}`] = id;
+        mapped[id] = { category, key, value };
+      });
     });
+
     setLocalAttributes(mapped);
     validateAttributes(mapped);
   }, [attributes]);
 
-  // --------------------- Validation -------------------------
+  // ----------------- Validation -----------------
   const validateAttributes = (attrs) => {
     const errors = {};
-
-    const checkValue = (value) => {
-      if (typeof value === "string") return !value.trim() ? "Key and Value required" : null;
-      if (typeof value === "object" && value !== null) {
-        const nestedErrors = {};
-        Object.entries(value).forEach(([k, v]) => {
-          const err = checkValue(v);
-          if (err) nestedErrors[k] = err;
-        });
-        return Object.keys(nestedErrors).length > 0 ? nestedErrors : null;
+    Object.values(attrs).forEach(({ key, value }) => {
+      if (!key?.trim() || (typeof value !== "object" && String(value)?.trim() === "")) {
+        errors[key] = "Key and Value required";
       }
-      return null;
-    };
-
-    Object.entries(attrs).forEach(([id, attr]) => {
-      const keyToCheck = attr.tempKey ?? attr.key;
-      errors[keyToCheck] = checkValue(attr.value);
     });
-
     onValidationChange?.(errors);
   };
 
-  // --------------------- Flatten for onChange ----------------
-  const flattenAttributes = (attrs) => {
-    const flat = {};
-    Object.values(attrs).forEach((attr) => {
-      flat[attr.key] = attr.value;
+  // ----------------- Trigger Change -----------------
+  const triggerChange = (updated) => {
+    setLocalAttributes(updated);
+    const structured = {};
+
+    Object.values(updated).forEach(({ category, key, value }) => {
+      if (!structured[category]) structured[category] = {};
+      structured[category][key] = value;
     });
-    return flat;
+
+    onChange?.(structured);
+    validateAttributes(updated);
   };
 
-  // --------------------- Update value -----------------------
-  const handleChangeValue = (id, value) => {
-    const updatedAttributes = { ...localAttributes, [id]: { ...localAttributes[id], value } };
-    setLocalAttributes(updatedAttributes);
-    onChange?.(flattenAttributes(updatedAttributes));
-    validateAttributes(updatedAttributes);
-  };
-
-  // --------------------- Update key -------------------------
-  const handleChangeKey = (id, tempKey) => {
-    const updatedAttributes = { ...localAttributes, [id]: { ...localAttributes[id], tempKey } };
-    setLocalAttributes(updatedAttributes);
-    validateAttributes(updatedAttributes);
+  // ----------------- Handlers -----------------
+  const handleChangeKey = (id, newTempKey) => {
+    setLocalAttributes((prev) => ({
+      ...prev,
+      [id]: { ...prev[id], tempKey: newTempKey },
+    }));
   };
 
   const handleKeyBlur = (id) => {
-    const attr = localAttributes[id];
-    const newKey = attr.tempKey?.trim();
-    if (!newKey || newKey === attr.key) {
-      setLocalAttributes((prev) => ({ ...prev, [id]: { ...prev[id], tempKey: undefined } }));
-      return;
-    }
-    const updatedAttributes = { ...localAttributes, [id]: { key: newKey, value: attr.value } };
-    idMapRef.current[newKey] = id;
-    setLocalAttributes(updatedAttributes);
-    onChange?.(flattenAttributes(updatedAttributes));
-    validateAttributes(updatedAttributes);
+    setLocalAttributes((prev) => {
+      const attr = prev[id];
+      if (!attr) return prev;
+      const newKey = attr.tempKey?.trim();
+      if (!newKey || newKey === attr.key)
+        return { ...prev, [id]: { ...attr, tempKey: undefined } };
+
+      const updated = { ...prev, [id]: { ...attr, key: denormalizeKey(newKey), tempKey: undefined } };
+      triggerChange(updated);
+      return updated;
+    });
   };
 
-  // --------------------- Add/Remove attribute ----------------
-  const handleAddAttribute = () => {
+  const updateValue = (id, newValue) => {
+    setLocalAttributes((prev) => {
+      const attr = prev[id];
+      if (!attr || typeof attr.value === "object") return prev;
+      const updated = { ...prev, [id]: { ...attr, value: newValue } };
+      triggerChange(updated);
+      return updated;
+    });
+  };
+
+  const addAttribute = () => {
     const id = `attr_${Date.now()}`;
-    const newKey = `attribute_${Object.keys(localAttributes).length + 1}`;
-    const updatedAttributes = { ...localAttributes, [id]: { key: newKey, value: "" } };
-    setLocalAttributes(updatedAttributes);
-    onChange?.(flattenAttributes(updatedAttributes));
-    validateAttributes(updatedAttributes);
+    const newKey = `ATTRIBUTE_${Object.keys(localAttributes).length + 1}`;
+    triggerChange({
+      ...localAttributes,
+      [id]: { category: "Misc", key: newKey, value: "" },
+    });
   };
 
-  const handleRemoveAttribute = (id) => {
-    const updatedAttributes = { ...localAttributes };
-    delete updatedAttributes[id];
-    setLocalAttributes(updatedAttributes);
-    onChange?.(flattenAttributes(updatedAttributes));
-    validateAttributes(updatedAttributes);
+  const removeAttribute = (id) => {
+    const updated = { ...localAttributes };
+    delete updated[id];
+    triggerChange(updated);
   };
 
-  // --------------------- Render nested attributes recursively ----------------
-  const renderAttribute = (attr, id) => {
-    if (typeof attr.value === "object" && attr.value !== null) {
-      return (
-        <div key={id} className="attribute-nested">
-          <span className="attribute-key">{normalizeKey(attr.tempKey ?? attr.key)}:</span>
-          <div className="nested-attributes">
-            {Object.entries(attr.value).map(([subKey, subValue]) =>
-              renderAttribute({ key: subKey, value: subValue }, `${id}_${subKey}`)
-            )}
-          </div>
+  // ----------------- Nested Readonly Panel -----------------
+  const renderNestedPanel = (title, obj) => (
+    <div className="nested-readonly-panel" key={title}>
+      <h4>{normalizeKey(title)}</h4>
+      {Object.entries(obj).map(([k, v]) => (
+        <div key={`${title}_${k}`} className="attribute-row">
+          <span className="attribute-key">{normalizeKey(k)}:</span>
+          <span className="attribute-value">
+            {typeof v === "string" ? v.charAt(0).toUpperCase() + v.slice(1) : "[Object]"}
+          </span>
         </div>
-      );
-    }
+      ))}
+    </div>
+  );
 
-    return (
-      <div key={id} className="attribute-row">
-        {editable ? (
-          <>
-            <input
-              className="attribute-key"
-              value={attr.tempKey ?? attr.key}
-              onChange={(e) => handleChangeKey(id, e.target.value)}
-              onBlur={() => handleKeyBlur(id)}
-            />
-            <input
-              className="attribute-value"
-              value={attr.value}
-              onChange={(e) => handleChangeValue(id, e.target.value)}
-              placeholder="Value"
-            />
-            <button onClick={() => handleRemoveAttribute(id)}>&times;</button>
-            {(!attr.key?.trim() || !String(attr.value)?.trim()) && (
-              <span className="error-text">Key and Value required</span>
-            )}
-          </>
-        ) : (
-          <>
-            <span className="attribute-key">{normalizeKey(attr.key)}:</span>
-            <span className="attribute-value">{attr.value}</span>
-          </>
-        )}
-      </div>
-    );
-  };
+  if (!attributes || Object.keys(localAttributes).length === 0)
+    return <p className="attributes-empty">No attributes yet.</p>;
 
-  // --------------------- Display -----------------------------
-  const toggleCollapse = () => setCollapsed(!collapsed);
-  const attributeEntries = Object.entries(localAttributes);
-
-  if (attributeEntries.length === 0)
-    return <p className="world-attributes-empty">No attributes yet.</p>;
+  // ----------------- Editable Cards -----------------
+  const editableAttrs = Object.entries(localAttributes)
+    .filter(([_, attr]) => !["RESOURCE_POOL", "SPECIES_POOL"].includes(attr.key));
 
   return (
-    <div className="world-attributes-panel">
-      <button className="attribute-toggle" onClick={toggleCollapse}>
+    <div className="attributes-panel">
+      <button className="attribute-toggle-btn" onClick={() => setCollapsed(!collapsed)}>
         {collapsed ? "Show Attributes" : "Hide Attributes"}
       </button>
 
-      {!collapsed &&
-        attributeEntries.map(([id, attr]) => renderAttribute(attr, id))}
+      {!collapsed && (
+        <>
+          {/* Editable attributes as individual cards first */}
+          {editableAttrs.map(([id, attr], idx) => (
+            <div
+              key={id}
+              className={`editable-attribute-card ${editable ? "editing" : "readonly"}`}
+              style={{ backgroundColor: idx % 2 === 0 ? "#FDF1D5" : "#F5E6C0" }}
+            >
+              {editable ? (
+                <>
+                  <div className="attribute-header">
+                    <button
+                      className="attribute-remove-btn"
+                      onClick={() => removeAttribute(id)}
+                    >
+                      &times;
+                    </button>
+                  </div>
+                  <input
+                    className="attribute-key-input"
+                    value={attr.tempKey ?? normalizeKey(attr.key)}
+                    onChange={(e) => handleChangeKey(id, e.target.value)}
+                    onBlur={() => handleKeyBlur(id)}
+                  />
+                  <input
+                    className="attribute-value-input"
+                    value={attr.value}
+                    onChange={(e) => updateValue(id, e.target.value)}
+                  />
+                  {(!attr.key?.trim() || String(attr.value)?.trim() === "") && (
+                    <span className="error-text">Key and Value required</span>
+                  )}
+                </>
+              ) : (
+                <>
+                  <div className="attribute-key">{normalizeKey(attr.key)}:</div>
+                  <div className="attribute-value">{attr.value}</div>
+                </>
+              )}
+            </div>
+          ))}
 
-      {editable && !collapsed && (
-        <button className="attribute-add" onClick={handleAddAttribute}>
-          + Add Attribute
-        </button>
+          {attributes.Geological?.RESOURCE_POOL &&
+            renderNestedPanel("Resource Pool", attributes.Geological.RESOURCE_POOL)}
+          {attributes.Biological?.SPECIES_POOL &&
+            renderNestedPanel("Species Pool", attributes.Biological.SPECIES_POOL)}
+
+          {editable && editableAttrs.length > 0 && (
+            <button className="attribute-add-btn" onClick={addAttribute}>
+              + Add Attribute
+            </button>
+          )}
+        </>
       )}
     </div>
   );

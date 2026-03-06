@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
+import './../assets/css/auth-page.css';
 
 export default function AuthPage() {
   const [mode, setMode] = useState("login");
@@ -13,16 +14,23 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="page-container">
-      {mode === "login" ? (
-        <LoginForm onSuccess={handleSuccess} />
-      ) : (
-        <RegisterForm onSuccess={handleSuccess} />
-      )}
+    <main className="auth-main">
+      <div className="page-container auth-page">
+        <div className="form-wrapper">
+          {mode === "login" ? (
+            <LoginForm onSuccess={handleSuccess} />
+          ) : (
+            <RegisterForm onSuccess={handleSuccess} />
+          )}
+        </div>
 
-      <button className="btn" onClick={() => setMode(mode === "login" ? "register" : "login")}>
-        {mode === "login" ? "Go to Register" : "Go to Login"}
-      </button>
-    </div>
+        <button
+          className="btn toggle-btn"
+          onClick={() => setMode(mode === "login" ? "register" : "login")}
+        >
+          {mode === "login" ? "Go to Register" : "Go to Login"}
+        </button>
+      </div>
+    </main>
   );
 }

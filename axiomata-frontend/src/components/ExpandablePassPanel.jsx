@@ -1,24 +1,27 @@
 import { useState } from "react";
+import "../assets/css/Create-World-Page.css";
 
 // --------------------- Helper ---------------------
 // SCREAMING_SNAKE_CASE → Title Case with spaces
 export const normalizeKey = (key) =>
   key
     .toLowerCase()
-    .replace(/_/g, " ")           // underscores → spaces
+    .replace(/_/g, " ") // underscores → spaces
     .replace(/\b\w/g, (c) => c.toUpperCase()); // capitalize first letter of each word
 
+// --------------------- ExpandablePassPanel ---------------------
 export default function ExpandablePassPanel({ title, attributes, editable = true, onChange }) {
   const [localAttributes, setLocalAttributes] = useState(attributes || {});
 
-  // Update attribute
+  // ---------------- Update attribute ----------------
   const handleChange = (key, value) => {
     const updated = { ...localAttributes, [key]: value };
     setLocalAttributes(updated);
     onChange?.(updated);
   };
 
-  // Render attribute (handles nested objects)
+  // ---------------- Render attribute ----------------
+  // Handles nested objects
   const renderAttribute = (key, value) => {
     if (value && typeof value === "object" && !Array.isArray(value)) {
       return (
@@ -49,6 +52,7 @@ export default function ExpandablePassPanel({ title, attributes, editable = true
     );
   };
 
+  // ---------------- Render Panel ----------------
   return (
     <div className="expandable-pass-panel">
       <h3>{title}</h3>

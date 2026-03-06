@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import './../assets/css/auth-footer.css';
 
 export default function AuthFooter() {
   return (

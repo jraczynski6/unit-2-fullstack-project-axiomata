@@ -1,0 +1,77 @@
+/* ===== Layout body ===== */
+.layout-body {
+  display: flex;      
+  flex-direction: row;
+  width: 100%;
+}
+
+/* ===== Main content ===== */
+.layout-main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem 1rem;
+}
+
+/* ===== Desktop SectionPanel ===== */
+@media (min-width: 768px) {
+  .section-panel-content {
+    position: sticky;
+    top: var(--header-height, 60px);
+    width: 280px;  
+    height: calc(100vh - var(--header-height, 60px) - var(--footer-height, 40px));
+    flex-shrink: 0;
+    z-index: 1;
+  }
+}
+
+  .section-panel-toggle {
+    display: none;
+  }
+
+
+/* ===== Mobile drawer ===== */
+@media (max-width: 767px) {
+  .layout-main {
+    margin-left: 0; 
+  }
+
+  .section-panel-content {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 80vw;
+    max-width: 300px;
+    height: 100vh;
+    transform: translateX(-100%);
+    z-index: 1000;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .section-panel-content.open {
+    transform: translateX(0);
+  }
+
+  .section-panel-toggle {
+    display: block;
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1100;
+    background: var(--btn-bg);
+    color: var(--btn-text);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+  }
+
+  .section-panel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.3);
+    z-index: 900;
+  }
+}

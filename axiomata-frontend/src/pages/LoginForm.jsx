@@ -1,6 +1,7 @@
 import { useState } from "react";
 import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
+import './../assets/css/login-form.css';
 
 // LoginForm receives onSuccess prop to handle post-login navigation
 export default function LoginForm({ onSuccess }) {

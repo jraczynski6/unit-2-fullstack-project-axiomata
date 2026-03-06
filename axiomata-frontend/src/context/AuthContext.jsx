@@ -66,10 +66,8 @@ export function useAuth() {
 
 // ----- Auth / App-level -----
 // TODO: Ensure component does not directly access localStorage
-// TODO: Remove console logs before production
 // TODO: Move token handling to internal implementation and expose user instead of token
 // TODO: Prevent logging full JWT tokens for security reasons
 // TODO: Eliminate utils/auth token management and use AuthContext as single source of truth
 // TODO: Replace window.location.href with React Router-based redirect
-// TODO: Call AuthContext logout() instead of directly clearing token
 // TODO: Avoid direct localStorage manipulation inside API layer
