@@ -2,8 +2,11 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import FloatingControls from "../components/FloatingControls";
 import WorldAttributesPanel from "../components/WorldAttributesPanel";
+import SectionPanel from "../components/SectionPanel";
 import { getWorldById, updateWorld } from "../services/worldService";
 import { useToast } from "../context/ToastContext";
+import '../assets/css/world-overview.css';
+import '../assets/css/section-panel.css';
 
 export default function WorldOverviewPage() {
   const { worldId } = useParams();
@@ -12,8 +15,11 @@ export default function WorldOverviewPage() {
 
   const [world, setWorld] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [editedName, setEditedName] = useState("");
+  const [editedDescription, setEditedDescription] = useState("");
   const [editedAttributes, setEditedAttributes] = useState({});
   const [hasErrors, setHasErrors] = useState(false);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
 
   // ---------------- Load World ----------------
   useEffect(() => {
@@ -22,6 +28,8 @@ export default function WorldOverviewPage() {
         const data = await getWorldById(worldId);
         setWorld(data);
         setEditedAttributes(data.attributes || {});
+        setEditedName(data.name || "");
+        setEditedDescription(data.description || "");
       } catch (err) {
         addToast({ message: "Failed to load world.", type: "error" });
         navigate("/dashboard");
@@ -30,65 +38,107 @@ export default function WorldOverviewPage() {
     fetchWorld();
   }, [worldId, addToast, navigate]);
 
-  // ---------------- Edit / Save Handlers ----------------
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
-
+  const handleEdit = () => setIsEditing(true);
   const handleCancelEdit = () => {
     setEditedAttributes(world.attributes || {});
+    setEditedName(world.name || "");
+    setEditedDescription(world.description || "");
     setIsEditing(false);
     setHasErrors(false);
   };
-
   const handleSave = async () => {
     if (hasErrors) return;
     try {
       const updated = await updateWorld(worldId, {
         ...world,
+        name: editedName,
+        description: editedDescription,
         attributes: editedAttributes,
       });
       setWorld(updated);
       setEditedAttributes(updated.attributes || {});
+      setEditedName(updated.name);
+      setEditedDescription(updated.description);
       setIsEditing(false);
       addToast({ message: "World updated successfully.", type: "success" });
-    } catch (err) {
+    } catch {
       addToast({ message: "Failed to save world.", type: "error" });
     }
   };
 
-  const handleAttributesChange = (attrs) => {
-    setEditedAttributes(attrs);
-  };
-
-  const handleValidationChange = (errors) => {
-    setHasErrors(Object.keys(errors).length > 0);
-  };
+  const handleAttributesChange = (attrs) => setEditedAttributes(attrs);
+  const handleValidationChange = (errors) => setHasErrors(Object.keys(errors).length > 0);
 
   if (!world) return <p>Loading world...</p>;
 
   return (
     <div className="world-overview-page">
-      <h1>{world.name || "Unnamed World"}</h1>
-      <p>{world.description || "No description available."}</p>
 
-      <WorldAttributesPanel
-        attributes={editedAttributes}
-        editable={isEditing}
-        onChange={handleAttributesChange}
-        onValidationChange={handleValidationChange}
-      />
-
-      <FloatingControls
-        pageType="worldOverview"
-        worldId={worldId}
+      {/* ===== Detached Section Panel ===== */}
+      <SectionPanel
         world={world}
-        isEditingProp={isEditing}
-        hasErrors={hasErrors}
-        onEdit={handleEdit}
-        onSave={handleSave}
-        onCancelEdit={handleCancelEdit}
+        className={`section-panel-content ${isPanelOpen ? "open" : ""} hidden-on-mobile`}
+        onSelectEntity={(entity) => {
+          setIsPanelOpen(false);
+          navigate(`/world-content/${worldId}`, { state: { selectedEntity: entity } });
+        }}
       />
+
+      {/* ===== Mobile Overlay ===== */}
+      {isPanelOpen && <div className="section-panel-overlay" onClick={() => setIsPanelOpen(false)} />}
+
+      {/* ===== Main Content ===== */}
+      <div className="world-main">
+        <div className="world-header-card">
+          {isEditing ? (
+            <>
+              <input
+                className="world-name-input"
+                value={editedName}
+                onChange={(e) => setEditedName(e.target.value)}
+                spellCheck={false}
+              />
+              <textarea
+                className="world-desc-input"
+                value={editedDescription}
+                onChange={(e) => setEditedDescription(e.target.value)}
+                spellCheck={false}
+              />
+            </>
+          ) : (
+            <>
+              <h1 className="world-name">{world.name || "Unnamed World"}</h1>
+              <p className="world-desc">{world.description || "No description available."}</p>
+            </>
+          )}
+        </div>
+
+        <WorldAttributesPanel
+          attributes={editedAttributes}
+          editable={isEditing}
+          onChange={handleAttributesChange}
+          onValidationChange={handleValidationChange}
+        />
+
+        <FloatingControls
+          pageType="worldOverview"
+          worldId={worldId}
+          world={world}
+          isEditingProp={isEditing}
+          hasErrors={hasErrors}
+          onEdit={handleEdit}
+          onSave={handleSave}
+          onCancelEdit={handleCancelEdit}
+        />
+      </div>
+
+      {/* ===== Mobile Toggle Button ===== */}
+      <button
+        className="section-panel-toggle"
+        onClick={() => setIsPanelOpen(!isPanelOpen)}
+      >
+        {isPanelOpen ? "Close" : "Sections"}
+      </button>
     </div>
   );
 }

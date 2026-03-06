@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import '../assets/css/world-overview.css';
 
 // --------------------- Helpers ---------------------
 export const normalizeKey = (key) =>
@@ -130,6 +131,10 @@ export default function WorldAttributesPanel({
   if (!attributes || Object.keys(localAttributes).length === 0)
     return <p className="attributes-empty">No attributes yet.</p>;
 
+  // ----------------- Editable Cards -----------------
+  const editableAttrs = Object.entries(localAttributes)
+    .filter(([_, attr]) => !["RESOURCE_POOL", "SPECIES_POOL"].includes(attr.key));
+
   return (
     <div className="attributes-panel">
       <button className="attribute-toggle-btn" onClick={() => setCollapsed(!collapsed)}>
@@ -144,44 +149,41 @@ export default function WorldAttributesPanel({
           {attributes.Biological?.SPECIES_POOL &&
             renderNestedPanel("Species Pool", attributes.Biological.SPECIES_POOL)}
 
-          {/* Editable primitives */}
-          {Object.entries(localAttributes)
-            .filter(([_, attr]) => !["RESOURCE_POOL", "SPECIES_POOL"].includes(attr.key))
-            .map(([id, attr]) => (
-              <div key={id} className="attribute-row">
-                {editable ? (
-                  <>
-                    <input
-                      className="attribute-key-input"
-                      value={attr.tempKey ?? normalizeKey(attr.key)}
-                      onChange={(e) => handleChangeKey(id, e.target.value)}
-                      onBlur={() => handleKeyBlur(id)}
-                    />
-                    <input
-                      className="attribute-value-input"
-                      value={attr.value}
-                      onChange={(e) => updateValue(id, e.target.value)}
-                    />
-                    <button
-                      className="attribute-remove-btn"
-                      onClick={() => removeAttribute(id)}
-                    >
-                      &times;
-                    </button>
-                    {(!attr.key?.trim() || String(attr.value)?.trim() === "") && (
-                      <span className="error-text">Key and Value required</span>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <span className="attribute-key">{normalizeKey(attr.key)}:</span>
-                    <span className="attribute-value">{attr.value}</span>
-                  </>
-                )}
-              </div>
-            ))}
+          {/* Editable attributes as individual cards */}
+          {editableAttrs.map(([id, attr], idx) => (
+            <div
+              key={id}
+              className={`editable-attribute-card ${editable ? "editing" : ""}`}
+              style={{ backgroundColor: idx % 2 === 0 ? "#FDF1D5" : "#F5E6C0" }}
+            >
+              {editable && (
+                <div className="attribute-header">
+                  <button
+                    className="attribute-remove-btn"
+                    onClick={() => removeAttribute(id)}
+                  >
+                    &times;
+                  </button>
+                </div>
+              )}
+              <input
+                className="attribute-key-input"
+                value={attr.tempKey ?? normalizeKey(attr.key)}
+                onChange={(e) => handleChangeKey(id, e.target.value)}
+                onBlur={() => handleKeyBlur(id)}
+              />
+              <input
+                className="attribute-value-input"
+                value={attr.value}
+                onChange={(e) => updateValue(id, e.target.value)}
+              />
+              {(!attr.key?.trim() || String(attr.value)?.trim() === "") && (
+                <span className="error-text">Key and Value required</span>
+              )}
+            </div>
+          ))}
 
-          {editable && (
+          {editable && editableAttrs.length > 0 && (
             <button className="attribute-add-btn" onClick={addAttribute}>
               + Add Attribute
             </button>

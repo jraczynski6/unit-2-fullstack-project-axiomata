@@ -17,6 +17,15 @@ html, body {
   line-height: 1.5;
 }
 
+main {
+  display: flex;
+  justify-content: center; /* horizontal centering */
+  align-items: center;     /* vertical centering */
+  min-height: 100vh;       /* full viewport height */
+  padding: 1rem;
+  background: var(--bg-main); /* optional */
+}
+
 a {
   color: inherit;
   text-decoration: none;

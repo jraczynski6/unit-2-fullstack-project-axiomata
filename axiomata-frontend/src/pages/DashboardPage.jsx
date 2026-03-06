@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getWorldsForUser } from "../services/worldService";
 import WorldCard from "../components/WorldCard";
+import './../assets/css/dashboard-page.css';
 
 export default function DashboardPage() {
   const [worlds, setWorlds] = useState([]);

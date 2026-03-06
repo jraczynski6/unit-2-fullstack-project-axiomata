@@ -3,6 +3,7 @@ import { getCurrentUser, updateUser, deleteUser } from "../services/userService"
 import ConfirmModal from "../components/ConfirmModal";
 import Toast from "../components/ui/Toast";
 import { useAuth } from "../context/AuthContext";
+import './../assets/css/account-page.css';
 
 export default function AccountPage() {
   const { logout } = useAuth();
