@@ -3,75 +3,102 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 60vh;
-  padding: 1rem;
-}
-
-/* Self-contained page container */
-.page-container.auth-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem 1rem;
-  max-width: 500px;
   width: 100%;
-  min-height: 60vh;
-
-
-  background: var(--card-parchment, #D4BC8C);
-  border: 1px solid var(--card-border, #483C32);
-  border-radius: 0.5rem;
-  color: var(--text-primary, #283618);
-  box-shadow: 0 6px 15px rgba(40, 54, 24, 0.1);
+  min-height: 100vh;       /* full viewport height */
+  margin: 0;
+  padding: 0;
   position: relative;
 }
 
-/* Wrapper around forms */
-.form-wrapper {
+/* Page container with full background image */
+.page-container.auth-page {
   width: 100%;
-  max-width: 400px;
+  height: 100vh;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  max-width: none;
+
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 400px;
-  transition: min-height 0.2s ease;
+  justify-content: center;
+
+  background-image: url('../images/beautiful-natural-environment-digital-painting.jpg');
+  background-size: cover;       /* cover entire viewport */
+  background-position: center;
+  background-repeat: no-repeat;
+
+  position: relative;
+}
+
+/* Optional overlay for readability */
+.page-container.auth-page::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.25);  /* subtle dark overlay */
+  z-index: 0;
+}
+
+/* Centered form card */
+.page-container.auth-page .form-wrapper {
+  position: relative;
+  z-index: 1;
+
+  background-color: rgba(255, 255, 255, 0.9); /* semi-transparent card */
+  padding: 3rem 3.5rem;
+  border-radius: 1.5rem;
+  width: 400px;
+  max-width: 90%;
+  text-align: center;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Buttons inside forms and toggle button */
 .page-container.auth-page .btn,
-.toggle-btn {
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
+.page-container.auth-page .toggle-btn {
+  padding: 0.9rem 2rem;
+  border-radius: 0.6rem;
   border: none;
-  font-size: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
   cursor: pointer;
 
-  /* Palette-based button colors */
-  background: var(--btn-bg, #A6531C);
-  color: var(--btn-text, #F8F5EF);
+  background: #D4BC8C;   /* parchment/gold style */
+  color: #1C1C1C;        /* dark text for contrast */
   align-self: center;
   margin-top: 1.5rem;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+  transition: all 0.25s ease-in-out;
 }
 
 .page-container.auth-page .btn:hover,
-.toggle-btn:hover {
-  background: var(--btn-hover, #8A4210);
+.page-container.auth-page .toggle-btn:hover {
+  transform: scale(1.05);
+  background: #E0C792;   /* lighter gold on hover */
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
 }
 
-/* ===== Mobile Media Query (max-width: 767px) ===== */
+/* ===== Mobile adjustments ===== */
 @media (max-width: 767px) {
   .auth-main {
     padding: 1rem;
   }
 
-  .page-container.auth-page {
-    padding: 1.5rem;
-    margin: 1rem;
+  .page-container.auth-page .form-wrapper {
+    padding: 2rem 1.5rem;
+    max-width: 90%;
   }
 
   .page-container.auth-page .btn,
-  .toggle-btn {
-    font-size: 0.95rem;
-    padding: 0.65rem 1.25rem;
+  .page-container.auth-page .toggle-btn {
+    font-size: 1rem;
+    padding: 0.7rem 1.5rem;
   }
 }
