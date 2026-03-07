@@ -115,30 +115,25 @@ export default function WorldContentPage() {
     setDraftEntity(itemWithCategory);
   };
 
-  const handleDeleteEntity = async () => {
-    if (!selectedItem) return;
+  const handleDeleteEntity = (entity) => {
+    if (!entity) return;
 
-    try {
-      const data = await getWorldById(worldId);
-      const refreshed = {
-        ...data,
-        locations: data.locations?.map((l) => ({ ...l, category: "Location" })) || [],
-        factions: data.factions?.map((f) => ({ ...f, category: "Faction" })) || [],
-        characters: data.characters?.map((c) => ({ ...c, category: "Character" })) || [],
-        items: data.items?.map((i) => ({ ...i, category: "Item" })) || [],
-      };
+    const { id, category } = entity;
+    if (!id || !category) return;
 
-      setWorld(refreshed);
-      setSelectedItem(null);
-      setSelectedCategory(null);
-      setDraftEntity(null);
-      setIsEditing(false);
+    const key = category.toLowerCase() + "s";
 
-      addToast({ message: `${selectedCategory} deleted successfully!`, type: "error" });
-    } catch (err) {
-      console.error(err);
-      addToast({ message: `Failed to delete ${selectedCategory}.`, type: "error" });
-    }
+    setWorld((prev) => ({
+      ...prev,
+      [key]: prev[key]?.filter((i) => i.id !== id) || [],
+    }));
+
+    setSelectedItem(null);
+    setSelectedCategory(null);
+    setDraftEntity(null);
+    setIsEditing(false);
+
+    addToast({ message: `${category} deleted successfully!`, type: "success" });
   };
 
   const handleEdit = () => setIsEditing(true);

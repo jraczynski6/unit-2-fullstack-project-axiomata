@@ -1,22 +1,26 @@
+/* ----- Floating Controls Container ----- */
 .floating-controls {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  padding: 0.5rem;
+  gap: 1rem;                  /* uniform gap between buttons */
+  padding: 1rem;              /* breathing room around buttons */
   justify-content: flex-start;
   align-items: center;
 }
 
-/* Individual buttons */
+/* ----- Individual Buttons ----- */
 .floating-controls .control-button {
   background: #b8a96e;
   color: #222;
   border: none;
   border-radius: 0.4rem;
-  padding: 0.5rem 0.75rem;
+  padding: 0.75rem 1rem;       /* uniform padding */
   cursor: pointer;
   font-weight: 600;
   transition: filter 0.2s;
+  min-width: 140px;            /* all buttons same width on desktop */
+  text-align: center;
+  flex: 0 0 140px;             /* prevent shrinking/growing */
 }
 
 .floating-controls .control-button:hover {
@@ -28,13 +32,13 @@
   cursor: not-allowed;
 }
 
-/* Delete world button highlight */
+/* ----- Delete world button highlight ----- */
 .floating-controls .delete-world-btn {
   background: #e07b7b;
   color: #fff;
 }
 
-/* Mobile first: stick bottom */
+/* ----- Mobile first: stick bottom ----- */
 @media (max-width: 767px) {
   .floating-controls {
     position: fixed;
@@ -47,20 +51,29 @@
     z-index: 1200;
     flex-wrap: nowrap;
     overflow-x: auto;
+    gap: 0.5rem;               /* slightly smaller gap for mobile */
   }
 
   .floating-controls .control-button {
     flex: 0 0 auto;
-    margin-right: 0.5rem;
+    min-width: 100px;          /* slightly smaller buttons for mobile */
+    padding: 0.5rem 0.75rem;
   }
 }
 
-/* Desktop: inline / docked */
+/* ----- Desktop: inline / docked ----- */
 @media (min-width: 768px) {
   .floating-controls {
     position: static;
     width: auto;
     background: transparent;
     box-shadow: none;
+    gap: 1rem;                 /* uniform gap desktop */
+  }
+
+  .floating-controls .control-button {
+    flex: 0 0 140px;           /* fixed width for uniformity */
+    min-width: 140px;           /* enforce same width */
+    padding: 0.75rem 1rem;     /* consistent padding */
   }
 }

@@ -54,6 +54,18 @@
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
+/* ---- World Description Field Fixed Size ---- */
+.world-description,
+.input-primary.world-description {
+  height: 6rem;              /* larger fixed height */
+  min-height: 6rem;          /* ensure it doesn’t shrink */
+  max-height: 6rem;          /* keep consistent */
+  font-size: 1rem;           /* slightly bigger text */
+  line-height: 1.4;          /* improve readability */
+  resize: none;              /* prevent manual resize */
+  padding: 0.75rem 1rem;     /* match larger input padding */
+}
+
 .input-primary:focus {
   border-color: var(--accent-color, #55b774);
   box-shadow: 0 0 0 2px rgba(255, 92, 161, 0.25);
