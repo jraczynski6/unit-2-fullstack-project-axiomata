@@ -13,7 +13,7 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
   const [parentRegionId, setParentRegionId] = useState(entityToEdit?.regionId ?? "");
 
   // ---------------- Options ----------------
-  const locationTypes = ["Region", "City", "Dungeon"];
+  const locationTypes = ["Region", "City", "Town", "Dungeon", "Misc"];
   const factionTypes = ["Faction", "Guild", "Clan", "Order"];
   const regions = world?.locations?.filter((loc) => loc.type === "Region") || [];
 
