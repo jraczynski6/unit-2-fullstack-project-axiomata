@@ -2,10 +2,11 @@
 .floating-controls {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;                  /* uniform gap between buttons */
-  padding: 1rem;              /* breathing room around buttons */
+  gap: 1rem;
+  padding: 1rem; 
   justify-content: flex-start;
   align-items: center;
+  z-index: 2000;
 }
 
 /* ----- Individual Buttons ----- */
@@ -14,13 +15,13 @@
   color: #222;
   border: none;
   border-radius: 0.4rem;
-  padding: 0.75rem 1rem;       /* uniform padding */
+  padding: 0.75rem 1rem;       
   cursor: pointer;
   font-weight: 600;
   transition: filter 0.2s;
-  min-width: 140px;            /* all buttons same width on desktop */
+  min-width: 140px;            
   text-align: center;
-  flex: 0 0 140px;             /* prevent shrinking/growing */
+  flex: 0 0 140px;             
 }
 
 .floating-controls .control-button:hover {
@@ -48,15 +49,15 @@
     padding: 0.5rem 1rem;
     background: rgba(255, 245, 210, 0.95);
     box-shadow: 0 -2px 8px rgba(0,0,0,0.15);
-    z-index: 1200;
+    z-index: 2000;
     flex-wrap: nowrap;
     overflow-x: auto;
-    gap: 0.5rem;               /* slightly smaller gap for mobile */
+    gap: 0.5rem;               
   }
 
   .floating-controls .control-button {
     flex: 0 0 auto;
-    min-width: 100px;          /* slightly smaller buttons for mobile */
+    min-width: 100px;          
     padding: 0.5rem 0.75rem;
   }
 }
@@ -68,12 +69,13 @@
     width: auto;
     background: transparent;
     box-shadow: none;
-    gap: 1rem;                 /* uniform gap desktop */
+    gap: 1rem;                 
+    z-index: 2000;
   }
 
   .floating-controls .control-button {
-    flex: 0 0 140px;           /* fixed width for uniformity */
-    min-width: 140px;           /* enforce same width */
-    padding: 0.75rem 1rem;     /* consistent padding */
+    flex: 0 0 140px;           
+    min-width: 140px;           
+    padding: 0.75rem 1rem;     
   }
 }

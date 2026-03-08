@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import '../assets/css/add-entity-modal.css';
 
 export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmit, world }) {
@@ -29,6 +30,9 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
       setParentRegionId("");
     }
   }, [entityToEdit, typeCategory]);
+
+  // ---------------- Console log for debug ----------------
+  console.log("AddEntityModal rendered", { typeCategory, name, description });
 
   // ---------------- Handlers ----------------
   const handleSubmit = () => {
@@ -64,16 +68,16 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
 
     // ---------------- Call parent submit ----------------
     onSubmit(typeCategory, data);
-
     onClose();
   };
 
-  return (
+  // ---------------- Modal JSX ----------------
+  const modalContent = (
     <div className="modal-overlay">
       <div className="modal-content">
         <h2>{entityToEdit ? `Edit ${typeCategory}` : `Add New ${typeCategory}`}</h2>
 
-        {/* ---------------- Type Selection ---------------- */}
+        {/* Type selection (only when adding) */}
         {!entityToEdit && (
           <div className="form-group">
             <label>Type:</label>
@@ -86,7 +90,7 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
           </div>
         )}
 
-        {/* ---------------- Name / Description ---------------- */}
+        {/* Name / Description */}
         <div className="form-group">
           <label>Name:</label>
           <input value={name} onChange={(e) => setName(e.target.value)} />
@@ -97,7 +101,7 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
           <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
         </div>
 
-        {/* ---------------- Location Fields ---------------- */}
+        {/* Location Fields */}
         {typeCategory === "Location" && (
           <>
             <div className="form-group">
@@ -125,7 +129,7 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
           </>
         )}
 
-        {/* ---------------- Faction Fields ---------------- */}
+        {/* Faction Fields */}
         {typeCategory === "Faction" && (
           <div className="form-group">
             <label>Faction Type:</label>
@@ -138,7 +142,7 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
           </div>
         )}
 
-        {/* ---------------- Actions ---------------- */}
+        {/* Actions */}
         <div className="modal-actions">
           <button onClick={handleSubmit}>{entityToEdit ? "Save" : "Add"}</button>
           <button onClick={onClose}>Cancel</button>
@@ -146,4 +150,7 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
       </div>
     </div>
   );
+
+  // ---------------- Render via portal ----------------
+  return createPortal(modalContent, document.body);
 }

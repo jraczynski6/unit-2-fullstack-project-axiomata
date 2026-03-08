@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import SectionPanel from "../components/SectionPanel";
 import EntityCard from "../components/EntityCard";
 import FloatingControls from "../components/FloatingControls";
+import AddEntityModal from "../components/AddEntityModal";
 import Spinner from "../components/ui/Spinner";
 import {
   getWorldById,
@@ -27,6 +28,7 @@ export default function WorldContentPage() {
   const [draftEntity, setDraftEntity] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   // ------------------- Entity selection -------------------
   const handleSelectEntity = (entity) => {
@@ -35,7 +37,6 @@ export default function WorldContentPage() {
     setSelectedCategory(entity.category);
     setIsEditing(false);
   };
-
 
   // ------------------- Fetch world -------------------
   useEffect(() => {
@@ -67,6 +68,14 @@ export default function WorldContentPage() {
           setSelectedItem(firstItem);
           setSelectedCategory(firstItem.category);
         }
+
+        // --------- Handle Add New modal on navigation ---------
+        if (location.state?.openAddModal) {
+          console.log("Opening modal due to location.state.openAddModal");
+          setModalOpen(true);
+          // clear the state
+          navigate(location.pathname, { replace: true, state: {} });
+        }
       } catch (err) {
         addToast({ message: "Failed to load world.", type: "error" });
         navigate("/dashboard");
@@ -74,7 +83,7 @@ export default function WorldContentPage() {
     };
 
     fetchWorld();
-  }, [worldId, location.state, addToast, navigate]);
+  }, [worldId, location.state, addToast, navigate, location.pathname]);
 
   // ------------------- Sync draft with selected item -------------------
   useEffect(() => {
@@ -82,7 +91,6 @@ export default function WorldContentPage() {
       setDraftEntity(selectedItem);
     }
   }, [selectedItem]);
-
 
   // ------------------- CRUD handlers -------------------
   const handleAddEntity = (newItem, category) => {
@@ -177,13 +185,13 @@ export default function WorldContentPage() {
 
   return (
     <div className="world-content-page">
-      {/* ===== SectionPanel via portal ===== */}
+      {/* ===== SectionPanel ===== */}
       {typeof document !== "undefined" && (
         <SectionPanel
           world={world}
           isOpen={isPanelOpen}
           setIsOpen={setIsPanelOpen}
-          onSelectEntity={(entity) => handleSelectEntity(entity)}
+          onSelectEntity={handleSelectEntity}
         />
       )}
 
@@ -203,28 +211,42 @@ export default function WorldContentPage() {
           )}
         </div>
 
-        <FloatingControls
-          pageType="worldContent"
-          worldId={worldId}
-          world={world}
-          selectedEntity={selectedItem}
-          isEditingProp={isEditing}
-          onAddEntity={handleAddEntity}
-          onUpdateEntity={handleUpdateEntity}
-          onDeleteEntity={handleDeleteEntity}
-          onEdit={handleEdit}
-          onSave={handleSave}
-          onCancelEdit={handleCancelEdit}
-        />
-      </div>
+        {/* Floating controls hidden when modal is open */}
+        <div className={`floating-controls-wrapper ${modalOpen ? "hidden" : ""}`}>
+          <FloatingControls
+            pageType="worldContent"
+            worldId={worldId}
+            world={world}
+            selectedEntity={selectedItem}
+            isEditingProp={isEditing}
+            onAddEntity={handleAddEntity}
+            onUpdateEntity={handleUpdateEntity}
+            onDeleteEntity={handleDeleteEntity}
+            onEdit={handleEdit}
+            onSave={handleSave}
+            onCancelEdit={handleCancelEdit}
+            onOpenModal={() => setModalOpen(true)}
+          />
+        </div>
 
-      {/* Mobile toggle button */}
-      <button
-        className="section-panel-toggle"
-        onClick={() => setIsPanelOpen(!isPanelOpen)}
-      >
-        {isPanelOpen ? "Close" : "Sections"}
-      </button>
+        {/* Mobile toggle button */}
+        <button
+          className="section-panel-toggle"
+          onClick={() => setIsPanelOpen(!isPanelOpen)}
+        >
+          {isPanelOpen ? "Close" : "Sections"}
+        </button>
+
+        {/* ===== AddEntityModal ===== */}
+        {modalOpen && (
+          <AddEntityModal
+            worldId={worldId}
+            world={world}
+            onClose={() => setModalOpen(false)}
+            onSubmit={handleAddEntity}
+          />
+        )}
+      </div>
     </div>
   );
 }

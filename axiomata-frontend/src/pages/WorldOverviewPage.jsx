@@ -112,13 +112,6 @@ export default function WorldOverviewPage() {
           )}
         </div>
 
-        <WorldAttributesPanel
-          attributes={editedAttributes}
-          editable={isEditing}
-          onChange={handleAttributesChange}
-          onValidationChange={handleValidationChange}
-        />
-
         <FloatingControls
           pageType="worldOverview"
           worldId={worldId}
@@ -129,6 +122,15 @@ export default function WorldOverviewPage() {
           onSave={handleSave}
           onCancelEdit={handleCancelEdit}
         />
+
+        <WorldAttributesPanel
+          attributes={editedAttributes}
+          editable={isEditing}
+          onChange={handleAttributesChange}
+          onValidationChange={handleValidationChange}
+        />
+
+        
       </div>
 
       {/* Mobile toggle button */}
