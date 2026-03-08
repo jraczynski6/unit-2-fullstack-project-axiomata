@@ -14,32 +14,31 @@
   box-sizing: border-box;
 }
 
-/* ----- Entity Card Wrapper ----- */
 .entity-card-wrapper {
   display: flex;
   justify-content: center;
   width: 100%;
-  padding: 1rem;          /* more space around the card */
+  padding: 1rem;
   box-sizing: border-box;
 }
 
-/* ----- Entity Card ----- */
-.entity-card-wrapper .entity-card {
+.entity-card-container {
+  flex: 1 1 auto;
+  padding: 2rem;
+  max-width: calc(100% - 300px);
+}
+
+.entity-card-wrapper .entity-card,
+.entity-card-container .entity-card {
   width: 100%;
   max-width: 900px;
-  min-height: 500px;      /* ensures tall enough for content */
+  min-height: 500px;
   height: auto;
-  max-height: 95vh;       /* almost full viewport without scroll */
-  margin-bottom: 2rem;    /* space below card before controls */
-
-  background: var(--card-parchment);
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 12px rgba(40, 54, 24, 0.15);
-
-  padding: 1.5rem;        /* more inner padding */
+  max-height: 95vh;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-
   overflow-y: auto;
   box-sizing: border-box;
 }

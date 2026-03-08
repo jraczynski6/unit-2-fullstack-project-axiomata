@@ -171,6 +171,13 @@
   border: 1px solid var(--card-border);
 }
 
+.editable-attribute-card .attribute-header {
+  display: flex;
+  justify-content: flex-end;
+  /* push remove button to right */
+  width: 100%;
+}
+
 .editable-attribute-card.editing {
   border: 1px solid #223525;
 }
@@ -324,6 +331,7 @@
   .section-panel-toggle {
     display: none;
   }
+
 }
 
 /* ===== Mobile Adjustments ===== */
