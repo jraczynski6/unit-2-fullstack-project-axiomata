@@ -32,43 +32,54 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin: 2.5rem 0 2rem 0;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2.5rem 3rem;
+  border-radius: 1.25rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
+.world-header-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+}
+
+/* World Name */
 .world-name,
 .world-name-input {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin: 0.5rem 0;
-  word-break: break-word;
+  font-size: 2.25rem;
+  font-weight: 900;
+  margin: 0.5rem 0 1rem 0;
   text-align: center;
-  color: var(--text-primary);
+  color: #2E4057;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.25);
+  line-height: 1.2;
 }
 
+/* Accent underline below name */
+.world-name::after {
+  content: "";
+  display: block;
+  width: 30%;
+  height: 4px;
+  margin: 0.5rem auto 0 auto;
+  background: #D4BC8C;
+  /* warm gold accent */
+  border-radius: 2px;
+}
+
+/* World Description */
 .world-desc,
 .world-desc-input {
-  font-size: 1.1rem;
-  margin: 0.25rem 0;
+  font-size: 1.3rem;
+  font-weight: 600;
   text-align: center;
-  color: var(--text-primary);
-}
-
-.world-name-input,
-.world-desc-input {
-  width: 100%;
+  color: #333333;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.4);
   max-width: 600px;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--card-border);
-  background: var(--card-parchment);
-  box-sizing: border-box;
-  overflow: auto;
-}
-
-.world-desc-input {
-  min-height: 5rem;
-  max-height: 8rem;
-  resize: none;
+  margin: 0;
+  line-height: 1.5;
 }
 
 /* ----- Attributes Panel ----- */
@@ -233,7 +244,7 @@
   width: 100%;
   background: var(--card-parchment);
   border-radius: 0.5rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   padding: 1rem;
   display: flex;
   flex-direction: column;
@@ -254,7 +265,7 @@
   background: var(--card-parchment);
   padding: 0.5rem;
   z-index: 1100;
-  box-shadow: 0 -2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .floating-controls .control-button {
@@ -317,14 +328,19 @@
 
 /* ===== Mobile Adjustments ===== */
 @media (max-width: 767px) {
+
+  .world-header-card {
+    padding: 1.5rem 1.5rem;
+  }
+
   .world-name,
   .world-name-input {
-    font-size: 1.2rem;
+    font-size: 1.75rem;
   }
 
   .world-desc,
   .world-desc-input {
-    font-size: 0.9rem;
+    font-size: 1.1rem;
   }
 
   .world-name-input,

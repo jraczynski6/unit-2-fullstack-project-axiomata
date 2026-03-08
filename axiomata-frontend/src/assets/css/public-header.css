@@ -1,22 +1,38 @@
-/* ===== Public Header ===== */
+/* =================================
+   Public Header
+   ================================= */
+
 .app-header {
   width: 100%;
-  padding: 1rem;
-  background: #E6D7B2; 
+  padding: 1rem 1.25rem;
+
+  background: linear-gradient(180deg, #E3D2A6 0%, #D4BC8C 100%);
   display: flex;
   justify-content: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+  border-bottom: 1px solid rgba(0,0,0,0.15);
+
+  box-shadow:
+    0 3px 6px rgba(0,0,0,0.15),
+    0 10px 24px rgba(0,0,0,0.08);
 }
+
+/* =================================
+   Header Layout
+   ================================= */
 
 .header-inner {
   width: 100%;
   max-width: 1200px;
+
   display: flex;
-  flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
 }
+
+/* =================================
+   Logo
+   ================================= */
 
 .header-left {
   display: flex;
@@ -24,50 +40,133 @@
 }
 
 .logo {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #222222;
+  position: relative;
+
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+
+  color: #1a1a1a;
+  text-decoration: none;
+
+  text-shadow:
+    0 1px 0 rgba(255,255,255,0.6),
+    0 2px 4px rgba(0,0,0,0.15);
+
+  transition: transform 0.15s ease, text-shadow 0.15s ease;
 }
+
+.logo:hover {
+  transform: translateY(-1px);
+
+  text-shadow:
+    0 1px 0 rgba(255,255,255,0.7),
+    0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* =================================
+   Navigation
+   ================================= */
 
 .header-nav ul {
   list-style: none;
+
   display: flex;
-  gap: 1rem;
+  align-items: center;
+  gap: 1.5rem;
+
   padding: 0;
   margin: 0;
 }
 
 .header-nav li a {
-  color: #222222;
+  position: relative;
+
+  color: #222;
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
+
+  padding: 0.35rem 0.55rem;
+
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.header-nav li a::after {
+  content: "";
+  position: absolute;
+
+  left: 0;
+  bottom: -4px;
+
+  width: 0%;
+  height: 2px;
+
+  background: #2E4057;
+
+  transition: width 0.18s ease;
 }
 
 .header-nav li a:hover {
-  color: #444444;
+  color: #111;
+  transform: translateY(-1px);
 }
 
-/* ===== Mobile Media Query (max-width: 767px) ===== */
+.header-nav li a:hover::after {
+  width: 100%;
+}
+
+/* =================================
+   CTA Button
+   ================================= */
+
+.header-nav li:last-child a {
+
+  background: #2E4057;
+  color: white;
+
+  padding: 0.45rem 1rem;
+
+  border-radius: 6px;
+
+  font-weight: 600;
+
+  box-shadow:
+    0 2px 6px rgba(0,0,0,0.25);
+
+  transition: background 0.18s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.header-nav li:last-child a::after {
+  display: none;
+}
+
+.header-nav li:last-child a:hover {
+  background: #243344;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 5px 14px rgba(0,0,0,0.3);
+}
+
+/* =================================
+   Mobile Layout
+   ================================= */
+
 @media (max-width: 767px) {
+
   .header-inner {
     flex-direction: column;
-    align-items: center;
     gap: 0.75rem;
   }
 
   .header-nav ul {
     flex-direction: column;
-    gap: 0.5rem;
-    align-items: center;
+    gap: 0.6rem;
   }
 
   .logo {
-    font-size: 1.25rem;
-    text-align: center;
+    font-size: 1.45rem;
   }
 
-  .header-nav li a {
-    font-size: 1rem;
-    padding: 0.25rem 0.5rem;
-  }
 }
