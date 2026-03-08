@@ -34,20 +34,25 @@ export default function SectionPanel({ world, isOpen, setIsOpen, onSelectEntity 
   const panelUI = (
     <>
       <div className={`section-panel-content ${isOpen ? "open" : ""}`}>
+        {/* ===== Panel header ===== */}
+        <div className="section-panel-header">
+          <h2>World Explorer</h2>
+        </div>
+
         {Object.entries(sections).map(([section, list]) => (
           <div key={section}>
-            {/* Section header with specific classes for styling */}
             <div
-              className={`section-header ${section === "Locations"
+              className={`section-header ${
+                section === "Locations"
                   ? "locations"
                   : section === "Factions"
-                    ? "factions"
-                    : section === "Characters"
-                      ? "characters"
-                      : section === "Items"
-                        ? "items"
-                        : ""
-                }`}
+                  ? "factions"
+                  : section === "Characters"
+                  ? "characters"
+                  : section === "Items"
+                  ? "items"
+                  : ""
+              }`}
               onClick={() => toggleSection(section)}
             >
               {section} {openSections[section] ? "▼" : "►"}

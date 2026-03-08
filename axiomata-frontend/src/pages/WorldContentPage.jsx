@@ -94,20 +94,37 @@ export default function WorldContentPage() {
 
   // ------------------- CRUD handlers -------------------
   const handleAddEntity = (newItem, category) => {
-    if (!category) return;
+    console.log("handleAddEntity fired");
+    console.log("Raw newItem:", newItem, "Category:", category);
 
-    const key = category.toLowerCase() + "s";
-    const itemWithCategory = { ...newItem, category };
+    if (!category) {
+      console.error("No category provided for handleAddEntity");
+      return;
+    }
 
-    setWorld((prev) => ({
-      ...prev,
-      [key]: [...(prev[key] || []), itemWithCategory],
-    }));
+    // Ensure category is a string
+    const categoryStr = typeof category === "string" ? category : category?.name || "Entity";
+    const key = categoryStr.toLowerCase() + "s";
 
+    // Build item with category
+    const itemWithCategory = { ...newItem, category: categoryStr };
+
+    setWorld((prev) => {
+      console.log("Previous world state:", prev);
+
+      // Ensure array exists
+      const updatedList = [...(prev[key] || []), itemWithCategory];
+
+      const newState = { ...prev, [key]: updatedList };
+      console.log(`New world state after adding ${categoryStr}:`, newState);
+      return newState;
+    });
+
+    // Set selection immediately
     setSelectedItem(itemWithCategory);
-    setSelectedCategory(category);
+    setSelectedCategory(categoryStr);
 
-    addToast({ message: `${category} created successfully!`, type: "success" });
+    console.log(`Added ${categoryStr}:`, itemWithCategory);
   };
 
   const handleUpdateEntity = (updatedItem, category) => {
@@ -236,16 +253,6 @@ export default function WorldContentPage() {
         >
           {isPanelOpen ? "Close" : "Sections"}
         </button>
-
-        {/* ===== AddEntityModal ===== */}
-        {modalOpen && (
-          <AddEntityModal
-            worldId={worldId}
-            world={world}
-            onClose={() => setModalOpen(false)}
-            onSubmit={handleAddEntity}
-          />
-        )}
       </div>
     </div>
   );

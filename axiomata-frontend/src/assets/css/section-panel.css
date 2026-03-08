@@ -1,61 +1,83 @@
-/* ===== Base panel visuals ===== */
+/* ==============================
+   Section Panel: Base Visuals
+   ============================== */
 .section-panel-content {
-  background: var(--card-parchment);
-  padding: 1rem;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  background: #f3e8d0; /* warmer parchment-contrast tone */
+  padding: 0;
   overflow-y: auto;
   flex-shrink: 0;
   color: var(--text-primary);
   font-family: 'Georgia', serif;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.08); /* soft edge for contrast */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* subtle depth */
 }
 
-/* ===== Section headers with underline flair ===== */
+/* ==============================
+   Panel Header
+   ============================== */
+.section-panel-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  background: #e9d8b0; /* slightly darker warm tone for contrast */
+  border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.section-panel-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+/* ==============================
+   Section Headers
+   ============================== */
 .section-panel-content .section-header {
   font-weight: 700;
-  margin-top: 1rem;
+  margin: 0;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 0.75rem;
-  border-top-left-radius: 0.4rem;
-  border-top-right-radius: 0.4rem;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
+  border-radius: 0.3rem;
   color: var(--text-primary);
   border-left: 4px solid transparent;
-  border-bottom: 3px solid transparent;
-  transition: border-bottom 0.2s, color 0.2s, filter 0.2s;
+  border-bottom: 2px solid transparent;
+  transition: border-bottom 0.2s, color 0.2s, background 0.2s;
+  background: rgba(255, 255, 255, 0.2); /* soft highlight for contrast */
 }
 
 /* Section-specific underline colors */
 .section-panel-content .section-header.locations {
-  border-bottom-color: var(--origin-green);
+  border-bottom-color: rgba(var(--origin-green-rgb), 0.7);
 }
-
 .section-panel-content .section-header.factions {
-  border-bottom-color: var(--origin-orange);
+  border-bottom-color: rgba(var(--origin-orange-rgb), 0.7);
 }
-
 .section-panel-content .section-header.characters {
-  border-bottom-color: var(--origin-red);
+  border-bottom-color: rgba(var(--origin-red-rgb), 0.7);
 }
-
 .section-panel-content .section-header.items {
-  border-bottom-color: var(--origin-brown);
+  border-bottom-color: rgba(var(--origin-brown-rgb), 0.7);
 }
 
-/* Hover effect for all headers */
+/* Hover effect */
 .section-panel-content .section-header:hover {
-  filter: brightness(1.05);
+  background: rgba(255, 255, 255, 0.35); /* gentle glow */
   border-left: 4px solid var(--origin-accent);
 }
 
-/* ===== List items under section headers ===== */
+/* ==============================
+   List Items
+   ============================== */
 .section-panel-content ul {
   list-style: none;
   padding-left: 0.5rem;
-  margin-top: 0.5rem;
+  margin: 0.25rem 0 0.5rem 0;
 }
 
 .section-panel-content li {
@@ -63,26 +85,36 @@
 }
 
 .section-panel-content li>div {
-  background: var(--card-light);
+  background: rgba(255, 255, 255, 0.15); /* subtle contrast block */
   padding: 0.5rem 0.75rem;
   border-radius: 0.35rem;
-  border: 1px solid var(--card-border);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.05);
   cursor: pointer;
   transition: background 0.2s, transform 0.1s;
   font-size: 0.95rem;
   color: var(--text-primary);
-
 }
 
 .section-panel-content li ul li>div {
-  background: var(--card-lighter);
-  border-color: var(--card-border);
+  background: rgba(255, 255, 255, 0.1); /* softer for nested items */
+  border-color: rgba(0, 0, 0, 0.03);
   padding-left: 1rem;
-  color: var(--text-primary);
 }
 
 .section-panel-content li>div:hover {
-  background: var(--btn-hover);
+  background: rgba(255, 255, 255, 0.3);
   transform: translateY(-1px);
+}
+
+/* ==============================
+   Mobile overlay
+   ============================== */
+.section-panel-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(20, 20, 20, 0.6);
+  z-index: 999;
 }
