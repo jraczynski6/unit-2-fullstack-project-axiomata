@@ -27,12 +27,12 @@ export default function FloatingControls({
   onEdit,
   onSave,
   onCancelEdit,
+  onOpenModal,
 }) {
   const navigate = useNavigate();
   const { addToast } = useToast();
 
   // Modal state only relevant for worldContent
-  const [modalOpen, setModalOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmDeleteWorld, setConfirmDeleteWorld] = useState(false);
 
@@ -42,10 +42,8 @@ export default function FloatingControls({
 
     if (pageType === "worldOverview") {
       navigate(`/world-content/${worldId}`, { state: { openAddModal: true } });
-      console.log("FloatingControls: navigating to worldContent with openAddModal=true");
     } else {
-      setModalOpen(true);
-      console.log("FloatingControls: modalOpen set to true directly");
+      onOpenModal?.();
     }
   };
 
@@ -182,21 +180,12 @@ export default function FloatingControls({
       </div>
 
       {/* ---------- Modals (only for worldContent) ---------- */}
-      {pageType === "worldContent" && modalOpen && (
-        <AddEntityModal
-          worldId={worldId}
-          world={world}
-          onClose={() => setModalOpen(false)}
-          onSubmit={handleModalSubmit}
-        />
-      )}
-
       {selectedEntity && confirmOpen && (
         <ConfirmModal
           open={confirmOpen}
           message={`Deleting this ${selectedEntity?.category}${selectedEntity?.children?.length
-              ? ` and its ${selectedEntity.children.length} child entities`
-              : ""
+            ? ` and its ${selectedEntity.children.length} child entities`
+            : ""
             } will remove everything. Are you sure?`}
           onConfirm={handleConfirmDeleteEntity}
           onCancel={handleCancelDelete}

@@ -7,6 +7,10 @@ import AddEntityModal from "../components/AddEntityModal";
 import Spinner from "../components/ui/Spinner";
 import {
   getWorldById,
+  createLocation,
+  createFaction,
+  createCharacter,
+  createItem,
   updateLocation,
   updateFaction,
   updateCharacter,
@@ -127,6 +131,45 @@ export default function WorldContentPage() {
     console.log(`Added ${categoryStr}:`, itemWithCategory);
   };
 
+  const handleModalSubmit = async (entityType, data) => {
+    try {
+      let result;
+
+      switch (entityType) {
+        case "Location":
+          result = await createLocation(data);
+          break;
+        case "Faction":
+          result = await createFaction(data);
+          break;
+        case "Character":
+          result = await createCharacter(data);
+          break;
+        case "Item":
+          result = await createItem(data);
+          break;
+        default:
+          throw new Error(`Unknown entity type: ${entityType}`);
+      }
+
+      handleAddEntity({ ...result, category: entityType }, entityType);
+
+      addToast({
+        message: `${entityType} created successfully!`,
+        type: "success",
+      });
+
+    } catch (err) {
+      console.error(err);
+      addToast({
+        message: `Failed to create ${entityType}.`,
+        type: "error",
+      });
+    } finally {
+      setModalOpen(false);
+    }
+  };
+
   const handleUpdateEntity = (updatedItem, category) => {
     const key = category.toLowerCase() + "s";
     const itemWithCategory = { ...updatedItem, category };
@@ -245,6 +288,15 @@ export default function WorldContentPage() {
             onOpenModal={() => setModalOpen(true)}
           />
         </div>
+
+        {modalOpen && (
+          <AddEntityModal
+            worldId={worldId}
+            world={world}
+            onClose={() => setModalOpen(false)}
+            onSubmit={handleModalSubmit}
+          />
+        )}
 
         {/* Mobile toggle button */}
         <button
