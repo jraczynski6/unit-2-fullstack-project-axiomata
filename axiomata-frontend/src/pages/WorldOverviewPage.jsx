@@ -139,18 +139,20 @@ export default function WorldOverviewPage() {
         </div>
       </div>
 
-      <div className="floating-controls-wrapper">
-        <FloatingControls
-          pageType="worldOverview"
-          worldId={worldId}
-          world={world}
-          isEditingProp={isEditing}
-          hasErrors={hasErrors}
-          onEdit={handleEdit}
-          onSave={handleSave}
-          onCancelEdit={handleCancelEdit}
-        />
-      </div>
+      {!isPanelOpen && (
+        <div className="floating-controls-wrapper">
+          <FloatingControls
+            pageType="worldOverview"
+            worldId={worldId}
+            world={world}
+            isEditingProp={isEditing}
+            hasErrors={hasErrors}
+            onEdit={handleEdit}
+            onSave={handleSave}
+            onCancelEdit={handleCancelEdit}
+          />
+        </div>
+      )}
 
       <WorldAttributesPanel
         attributes={editedAttributes}
