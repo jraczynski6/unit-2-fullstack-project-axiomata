@@ -26,6 +26,35 @@
   overflow-y: auto;
 }
 
+/* ----- Textarea Wrapper for Counter ----- */
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 1.5rem;
+}
+
+.input-wrapper input,
+.input-wrapper textarea {
+  width: 100%;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.input-wrapper .input-counter {
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  color: #666;
+  text-align: center;
+}
+
+.input-wrapper .input-counter.error {
+  color: #B00020;
+  font-weight: 700;
+}
+
 /* ----- World Header: Name / Description ----- */
 .world-header-card {
   width: 100%;
@@ -57,7 +86,7 @@
   line-height: 1.2;
 }
 
-/* Accent underline below name */
+/* Accent underline */
 .world-name::after {
   content: "";
   display: block;
@@ -65,7 +94,6 @@
   height: 4px;
   margin: 0.5rem auto 0 auto;
   background: #D4BC8C;
-  /* warm gold accent */
   border-radius: 2px;
 }
 
@@ -174,7 +202,6 @@
 .editable-attribute-card .attribute-header {
   display: flex;
   justify-content: flex-end;
-  /* push remove button to right */
   width: 100%;
 }
 

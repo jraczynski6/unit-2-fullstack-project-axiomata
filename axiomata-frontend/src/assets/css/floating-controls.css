@@ -9,6 +9,12 @@
   z-index: 2000;
 }
 
+.floating-controls-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
 /* ----- Individual Buttons ----- */
 .floating-controls .control-button {
   background: #b8a96e;
@@ -52,7 +58,8 @@
     z-index: 2000;
     flex-wrap: nowrap;
     overflow-x: auto;
-    gap: 0.5rem;               
+    gap: 0.5rem;
+    justify-content: flex-start;
   }
 
   .floating-controls .control-button {
@@ -62,15 +69,16 @@
   }
 }
 
-/* ----- Desktop: inline / docked ----- */
+/* ----- Desktop: center horizontally ----- */
 @media (min-width: 768px) {
   .floating-controls {
     position: static;
     width: auto;
     background: transparent;
     box-shadow: none;
-    gap: 1rem;                 
+    gap: 1rem;
     z-index: 2000;
+    justify-content: center;
   }
 
   .floating-controls .control-button {
