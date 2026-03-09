@@ -139,3 +139,5 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
 
   return createPortal(modalContent, document.body);
 }
+
+// TODO: Add custom error messages for modal
