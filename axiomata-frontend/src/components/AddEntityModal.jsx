@@ -19,10 +19,15 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
   // ---------------- Reset subtype/parent when modal opens ----------------
   useEffect(() => {
     if (!entityToEdit) {
-      setSubType((prev) => prev || (typeCategory === "Location" ? "Region" : ""));
-      setParentRegionId((prev) => prev ?? null);
+      if (typeCategory === "Location") {
+        setSubType("Region");
+        setParentRegionId(null);
+      } else {
+        setSubType("");
+      }
     }
-  }, []);
+    // only run on mount 
+  }, [entityToEdit]);
 
   // ---------------- Console log for debug ----------------
   console.log("AddEntityModal rendered", { typeCategory, name, description, subType, parentRegionId });
@@ -110,21 +115,32 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
               setErrors((prev) => ({ ...prev, name: null }));
             }}
           />
-          {errors.name && <div className="form-error">{error.name}</div>}
+          {errors.name && <div className="form-error">{errors.name}</div>}
         </div>
 
         <div className="form-group">
           <label>Description:</label>
-          <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)} />
         </div>
 
         {typeCategory === "Location" && (
           <>
             <div className="form-group">
               <label>Location Type:</label>
-              <select value={subType} onChange={(e) => setSubType(e.target.value)}>
-                {locationTypes.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
+              <select
+                value={subType}
+                onChange={(e) => {
+                  setSubType(e.target.value);
+                  setErrors((prev) => ({ ...prev, subType: null }));
+                }}
+              >
+                {locationTypes.map((opt) => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
               </select>
+              {errors.subType && <div className="form-error">{errors.subType}</div>}
             </div>
 
             <div className="form-group">
@@ -144,10 +160,19 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
         {typeCategory === "Faction" && (
           <div className="form-group">
             <label>Faction Type:</label>
-            <select value={subType} onChange={(e) => setSubType(e.target.value)}>
+            <select
+              value={subType}
+              onChange={(e) => {
+                setSubType(e.target.value);
+                setErrors((prev) => ({ ...prev, subType: null }));
+              }}
+            >
               <option value="">-- Select Type --</option>
-              {factionTypes.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
+              {factionTypes.map((opt) => (
+                <option key={opt} value={opt}>{opt}</option>
+              ))}
             </select>
+            {errors.subType && <div className="form-error">{errors.subType}</div>}
           </div>
         )}
 
@@ -156,7 +181,7 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
           <button onClick={onClose}>Cancel</button>
         </div>
       </div>
-    </div>
+    </div >
   );
 
   return createPortal(modalContent, document.body);
