@@ -97,7 +97,28 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
         {!entityToEdit && (
           <div className="form-group">
             <label>Type:</label>
-            <select value={typeCategory} onChange={(e) => setTypeCategory(e.target.value)}>
+            <select
+              value={typeCategory}
+              onChange={(e) => {
+                const newType = e.target.value;
+                setTypeCategory(newType);
+
+                // reset subtype for new entity
+                if (!entityToEdit) {
+                  if (newType === "Location") {
+                    setSubType("Region");
+                    setParentRegionId(null);
+                  } else if (newType === "Faction") {
+                    setSubType("");
+                    setParentRegionId(null);
+                  } else {
+                    setSubType("");
+                    setParentRegionId(null);
+                  }
+                }
+                setErrors(prev => ({ ...prev, subType: null }));
+              }}
+            >
               <option value="Location">Location</option>
               <option value="Faction">Faction</option>
               <option value="Character">Character</option>
