@@ -9,6 +9,7 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
   const [description, setDescription] = useState(entityToEdit?.description || "");
   const [subType, setSubType] = useState(entityToEdit?.type || "");
   const [parentRegionId, setParentRegionId] = useState(entityToEdit?.regionId ?? null);
+  const [errors, setErrors] = useState({});
 
   // ---------------- Options ----------------
   const locationTypes = ["Region", "City", "Town", "Dungeon", "Misc"];
@@ -28,10 +29,27 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
 
   // ---------------- Handlers ----------------
   const handleSubmit = () => {
+    const newErrors = {};
+
     if (!name?.trim()) {
-      alert("Name is required.");
+      newErrors.name = "Name is required.";
+    }
+
+    if (typeCategory === "Location" && !subType?.trim()) {
+      newErrors.subType = "Location type is required.";
+    }
+
+    if (typeCategory === "Faction" && !subType?.trim()) {
+      newErrors.subType = "Faction type is required.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
+
+    // Clear old errors
+    setErrors({});
 
     const entityData = {
       name: name.trim(),
@@ -40,12 +58,9 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
     };
 
     if (typeCategory === "Location") {
-      if (!subType?.trim()) {
-        alert("Location type is required.");
-        return;
-      }
       entityData.type = subType.trim();
       const parentId = parentRegionId && !isNaN(Number(parentRegionId)) ? Number(parentRegionId) : null;
+      
       entityData.regionId = subType === "Region" ? null : parentId;
     }
 
