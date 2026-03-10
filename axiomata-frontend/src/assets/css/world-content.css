@@ -8,7 +8,13 @@
   padding: 1rem;
   color: var(--text-primary);
   text-align: center;
-  background: var(--card-parchment);
+
+  /* Background image */
+  background-image: url('../assets/images/people-white-clothes-stand-rock-by-sea-dusk-looking-into-distance-illustration.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  
   overflow-x: hidden;
   overflow-y: auto;
   box-sizing: border-box;

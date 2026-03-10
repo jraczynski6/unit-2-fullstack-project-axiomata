@@ -32,7 +32,7 @@ export default function DashboardPage() {
   if (loading) return <div className="page-container"><p className="text-secondary">Loading Worlds...</p></div>;
 
   return (
-    <div className="page-container">
+    <div className="page-container dashboard-page">
       <div className="dashboard-header">
         <button className="btn btn-confirm" onClick={handleCreateWorld}>
           Create New World

@@ -19,6 +19,7 @@ import {
 import { useToast } from "../context/ToastContext";
 import "../assets/css/world-content.css";
 import "../assets/css/section-panel.css";
+import peopleImage from '../assets/images/people-white-clothes-stand-rock-by-sea-dusk-looking-into-distance-illustration.jpg';
 
 export default function WorldContentPage() {
   const { worldId } = useParams();
@@ -244,7 +245,7 @@ export default function WorldContentPage() {
   if (!world) return <Spinner />;
 
   return (
-    <div className="world-content-page">
+    <div className="world-content-page"style={{ backgroundImage: `url(${peopleImage})` }}>
       {/* ===== SectionPanel ===== */}
       {typeof document !== "undefined" && (
         <SectionPanel
