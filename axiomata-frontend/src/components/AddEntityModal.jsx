@@ -29,6 +29,8 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
 
   // ---------------- Handlers ----------------
   const handleSubmit = () => {
+
+    //validation
     const newErrors = {};
 
     if (!name?.trim()) {
@@ -43,6 +45,7 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
       newErrors.subType = "Faction type is required.";
     }
 
+    // if errors, return
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
@@ -59,16 +62,13 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
 
     if (typeCategory === "Location") {
       entityData.type = subType.trim();
-      const parentId = parentRegionId && !isNaN(Number(parentRegionId)) ? Number(parentRegionId) : null;
-      
+      const parentId = parentRegionId && !isNaN(Number(parentRegionId))
+        ? Number(parentRegionId) : null;
+
       entityData.regionId = subType === "Region" ? null : parentId;
     }
 
     if (typeCategory === "Faction") {
-      if (!subType?.trim()) {
-        alert("Faction type is required.");
-        return;
-      }
       entityData.type = subType.trim();
     }
 
@@ -103,7 +103,14 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
 
         <div className="form-group">
           <label>Name:</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} />
+          <input
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+              setErrors((prev) => ({ ...prev, name: null }));
+            }}
+          />
+          {errors.name && <div className="form-error">{error.name}</div>}
         </div>
 
         <div className="form-group">
