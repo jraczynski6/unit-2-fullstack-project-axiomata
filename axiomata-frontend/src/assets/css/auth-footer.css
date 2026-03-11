@@ -1,35 +1,27 @@
-/* =================================
-   Auth Footer
-   ================================= */
+/* ===== Auth Footer ===== */
 
 .footer-container {
   width: 100%;
   padding: 1.2rem 1rem;
-
   background: linear-gradient(
     180deg,
     var(--card-parchment) 0%,
     #e7d9b3 100%
   );
-
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.6rem;
-
   font-size: 0.9rem;
   color: var(--text-primary);
-
   border-top: 1px solid var(--card-border);
-
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.6),
     0 -4px 10px rgba(0,0,0,0.05);
 }
 
-/* =================================
-   Footer Links
-   ================================= */
+
+/* ===== Footer Links ===== */
 
 .footer-links {
   display: flex;
@@ -49,8 +41,6 @@
 
   transition: color 0.15s ease, transform 0.15s ease;
 }
-
-/* subtle animated underline */
 
 .footer-links a::after {
   content: "";
@@ -76,21 +66,29 @@
   width: 100%;
 }
 
-/* =================================
-   Footer Info
-   ================================= */
+
+/* ===== Footer Info ===== */
 
 .footer-info {
   text-align: center;
   font-size: 0.8rem;
-
   opacity: 0.85;
 }
 
-/* =================================
-   Mobile Layout
-   ================================= */
 
+/* ===== Media Queries ===== */
+
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1199px) {
+
+  .footer-links {
+    gap: 1rem;
+  }
+}
+
+
+/* Mobile */
 @media (max-width: 767px) {
 
   .footer-links {
@@ -102,5 +100,4 @@
   .footer-info {
     font-size: 0.75rem;
   }
-
 }

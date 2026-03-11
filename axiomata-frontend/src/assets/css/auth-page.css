@@ -1,16 +1,17 @@
 /* ===== Auth Page ===== */
+
 .auth-main {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
-  min-height: 100vh;       /* full viewport height */
+  min-height: 100vh;
   margin: 0;
   padding: 0;
   position: relative;
 }
 
-/* Page container with full background image */
+/* Page container */
 .page-container.auth-page {
   width: 100%;
   height: 100vh;
@@ -18,49 +19,44 @@
   margin: 0;
   padding: 0;
   max-width: none;
-
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
   background-image: url('../images/beautiful-natural-environment-digital-painting.jpg');
-  background-size: cover;       /* cover entire viewport */
+  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-
   position: relative;
 }
 
-/* Optional overlay for readability */
+/* overlay */
 .page-container.auth-page::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.25);  /* subtle dark overlay */
+  background: rgba(0,0,0,0.25);
   z-index: 0;
 }
 
-/* Centered form card */
+/* form card */
 .page-container.auth-page .form-wrapper {
   position: relative;
   z-index: 1;
-
-  background-color: rgba(255, 255, 255, 0.9); /* semi-transparent card */
+  background-color: rgba(255, 255, 255, 0.9);
   padding: 3rem 3.5rem;
   border-radius: 1.5rem;
   width: 400px;
   max-width: 90%;
   text-align: center;
   box-shadow: 0 15px 40px rgba(0,0,0,0.25);
-
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-/* Buttons inside forms and toggle button */
+/* Buttons in forms/toggle button */
 .page-container.auth-page .btn,
 .page-container.auth-page .toggle-btn {
   padding: 0.9rem 2rem;
@@ -69,9 +65,8 @@
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
-
-  background: #D4BC8C;   /* parchment/gold style */
-  color: #1C1C1C;        /* dark text for contrast */
+  background: #D4BC8C;
+  color: #1C1C1C;
   align-self: center;
   margin-top: 1.5rem;
   box-shadow: 0 6px 15px rgba(0,0,0,0.25);
@@ -81,11 +76,25 @@
 .page-container.auth-page .btn:hover,
 .page-container.auth-page .toggle-btn:hover {
   transform: scale(1.05);
-  background: #E0C792;   /* lighter gold on hover */
+  background: #E0C792;
   box-shadow: 0 8px 20px rgba(0,0,0,0.3);
 }
 
-/* ===== Mobile adjustments ===== */
+
+
+/* ===== Media Queries ===== */
+
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1199px) {
+
+  .page-container.auth-page .form-wrapper {
+    width: 420px;
+  }
+
+}
+
+/* Mobile */
 @media (max-width: 767px) {
   .auth-main {
     padding: 1rem;
