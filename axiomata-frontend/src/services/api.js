@@ -41,10 +41,7 @@ api.interceptors.response.use(
 
 export default api;
 
-// non-essential / post-MVP API.js todos
-// TODO: Prevent logging full JWT tokens for security reasons
-// TODO: Eliminate utils/auth token management and use AuthContext as single source of truth
-// TODO: Replace window.location.href with React Router-based redirect
+// Non-MVP API.js todos
 // TODO: Avoid direct localStorage manipulation inside API layer
 // TODO: Centralize auth route detection using a constant or startsWith("/auth")
 // TODO: Add support for token refresh flow before forcing logout

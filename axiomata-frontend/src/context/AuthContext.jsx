@@ -64,10 +64,7 @@ export function useAuth() {
   return context;
 }
 
-// ----- Auth / App-level -----
-// TODO: Ensure component does not directly access localStorage
+// ----- Auth / (Non-MVP) -----
 // TODO: Move token handling to internal implementation and expose user instead of token
 // TODO: Prevent logging full JWT tokens for security reasons
-// TODO: Eliminate utils/auth token management and use AuthContext as single source of truth
-// TODO: Replace window.location.href with React Router-based redirect
 // TODO: Avoid direct localStorage manipulation inside API layer
