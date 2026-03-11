@@ -15,12 +15,7 @@ api.interceptors.request.use((config) => {
     config.url?.includes("/auth/register");
 
   if (token && !isAuthRoute) {
-    console.log("API request with token:", token);
     config.headers.Authorization = `Bearer ${token}`;
-  } else if (isAuthRoute) {
-    console.log("Auth route detected. No token attached:", config.url);
-  } else {
-    console.log("No token available for request:", config.url);
   }
 
   return config;

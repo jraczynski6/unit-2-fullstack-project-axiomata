@@ -38,8 +38,6 @@ export default function FloatingControls({
 
   // ---------- Add New ----------
   const handleAddClick = () => {
-    console.log("FloatingControls: handleAddClick fired", { pageType });
-
     if (pageType === "worldOverview") {
       navigate(`/world-content/${worldId}`, { state: { openAddModal: true } });
     } else {

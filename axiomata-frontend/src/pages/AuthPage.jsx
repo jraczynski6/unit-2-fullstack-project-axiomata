@@ -10,7 +10,6 @@ export default function AuthPage() {
 
   const handleSuccess = () => {
     navigate("/dashboard");
-    console.log("handleSuccess called, navigating to /dashboard");
   };
 
   return (

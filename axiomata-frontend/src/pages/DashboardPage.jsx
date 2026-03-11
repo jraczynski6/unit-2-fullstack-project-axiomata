@@ -13,10 +13,9 @@ export default function DashboardPage() {
     const fetchWorlds = async () => {
       try {
         const data = await getWorldsForUser();
-        console.log("Worlds fetched:", data);
         setWorlds(data);
       } catch (error) {
-        console.log("Failed to fetch worlds:", error);
+        setWorlds([]);
       } finally {
         setLoading(false);
       }

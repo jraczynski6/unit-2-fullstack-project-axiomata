@@ -76,7 +76,6 @@ export default function WorldContentPage() {
 
         // --------- Handle Add New modal on navigation ---------
         if (location.state?.openAddModal) {
-          console.log("Opening modal due to location.state.openAddModal");
           setModalOpen(true);
           // clear the state
           navigate(location.pathname, { replace: true, state: {} });
@@ -99,9 +98,6 @@ export default function WorldContentPage() {
 
   // ------------------- CRUD handlers -------------------
   const handleAddEntity = (newItem, category) => {
-    console.log("handleAddEntity fired");
-    console.log("Raw newItem:", newItem, "Category:", category);
-
     if (!category) {
       console.error("No category provided for handleAddEntity");
       return;
@@ -115,21 +111,15 @@ export default function WorldContentPage() {
     const itemWithCategory = { ...newItem, category: categoryStr };
 
     setWorld((prev) => {
-      console.log("Previous world state:", prev);
-
       // Ensure array exists
       const updatedList = [...(prev[key] || []), itemWithCategory];
-
       const newState = { ...prev, [key]: updatedList };
-      console.log(`New world state after adding ${categoryStr}:`, newState);
       return newState;
     });
 
     // Set selection immediately
     setSelectedItem(itemWithCategory);
     setSelectedCategory(categoryStr);
-
-    console.log(`Added ${categoryStr}:`, itemWithCategory);
   };
 
   const handleModalSubmit = async (entityType, data) => {
