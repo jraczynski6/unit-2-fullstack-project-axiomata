@@ -96,10 +96,6 @@
 
 /* Mobile */
 @media (max-width: 767px) {
-  .auth-main {
-    padding: 1rem;
-  }
-
   .page-container.auth-page .form-wrapper {
     padding: 2rem 1.5rem;
     max-width: 90%;
