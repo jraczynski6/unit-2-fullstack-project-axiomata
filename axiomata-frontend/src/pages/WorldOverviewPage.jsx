@@ -21,6 +21,19 @@ export default function WorldOverviewPage() {
   const [hasErrors, setHasErrors] = useState(false);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
 
+  // name/description limits 
+  const NAME_LIMIT = 255;
+  const DESC_LIMIT = 500;
+
+  // name/description limit warning
+  useEffect(() => {
+    const errors = {};
+    if (editedName.length > NAME_LIMIT) errors.name = `Name must be ≤ ${NAME_LIMIT} characters.`;
+    if (editedDescription.length > DESC_LIMIT)
+      errors.description = `Description must be ≤ ${DESC_LIMIT} characters.`;
+    setHasErrors(Object.keys(errors).length > 0);
+  }, [editedName, editedDescription]);
+
   useEffect(() => {
     const fetchWorld = async () => {
       try {
@@ -91,18 +104,31 @@ export default function WorldOverviewPage() {
         <div className="world-header-card">
           {isEditing ? (
             <>
-              <input
-                className="world-name-input"
-                value={editedName}
-                onChange={(e) => setEditedName(e.target.value)}
-                spellCheck={false}
-              />
-              <textarea
-                className="world-desc-input"
-                value={editedDescription}
-                onChange={(e) => setEditedDescription(e.target.value)}
-                spellCheck={false}
-              />
+              <div className="input-wrapper">
+                <input
+                  className="world-name-input"
+                  value={editedName}
+                  onChange={(e) => setEditedName(e.target.value)}
+                  spellCheck={false}
+                  maxLength={255}
+                />
+                <span className={`input-counter ${editedName.length > 255 ? "error" : ""}`}>
+                  {editedName.length}/255
+                </span>
+              </div>
+
+              <div className="input-wrapper">
+                <textarea
+                  className="world-desc-input"
+                  value={editedDescription}
+                  onChange={(e) => setEditedDescription(e.target.value)}
+                  spellCheck={false}
+                  maxLength={500}
+                />
+                <span className={`input-counter ${editedDescription.length > 500 ? "error" : ""}`}>
+                  {editedDescription.length}/500
+                </span>
+              </div>
             </>
           ) : (
             <>
@@ -111,25 +137,29 @@ export default function WorldOverviewPage() {
             </>
           )}
         </div>
-
-        <WorldAttributesPanel
-          attributes={editedAttributes}
-          editable={isEditing}
-          onChange={handleAttributesChange}
-          onValidationChange={handleValidationChange}
-        />
-
-        <FloatingControls
-          pageType="worldOverview"
-          worldId={worldId}
-          world={world}
-          isEditingProp={isEditing}
-          hasErrors={hasErrors}
-          onEdit={handleEdit}
-          onSave={handleSave}
-          onCancelEdit={handleCancelEdit}
-        />
       </div>
+
+      {!isPanelOpen && (
+        <div className="floating-controls-wrapper">
+          <FloatingControls
+            pageType="worldOverview"
+            worldId={worldId}
+            world={world}
+            isEditingProp={isEditing}
+            hasErrors={hasErrors}
+            onEdit={handleEdit}
+            onSave={handleSave}
+            onCancelEdit={handleCancelEdit}
+          />
+        </div>
+      )}
+
+      <WorldAttributesPanel
+        attributes={editedAttributes}
+        editable={isEditing}
+        onChange={handleAttributesChange}
+        onValidationChange={handleValidationChange}
+      />
 
       {/* Mobile toggle button */}
       <button

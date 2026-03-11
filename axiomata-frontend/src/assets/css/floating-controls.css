@@ -1,22 +1,33 @@
+/* ----- Floating Controls Container ----- */
 .floating-controls {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  padding: 0.5rem;
+  gap: 1rem;
+  padding: 1rem; 
   justify-content: flex-start;
   align-items: center;
+  z-index: 2000;
 }
 
-/* Individual buttons */
+.floating-controls-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+/* ----- Individual Buttons ----- */
 .floating-controls .control-button {
   background: #b8a96e;
   color: #222;
   border: none;
   border-radius: 0.4rem;
-  padding: 0.5rem 0.75rem;
+  padding: 0.75rem 1rem;       
   cursor: pointer;
   font-weight: 600;
   transition: filter 0.2s;
+  min-width: 140px;            
+  text-align: center;
+  flex: 0 0 140px;             
 }
 
 .floating-controls .control-button:hover {
@@ -28,13 +39,15 @@
   cursor: not-allowed;
 }
 
-/* Delete world button highlight */
+/* ----- Delete world button highlight ----- */
 .floating-controls .delete-world-btn {
   background: #e07b7b;
   color: #fff;
 }
 
-/* Mobile first: stick bottom */
+/* ======== Media Queries ======== */
+
+/* ----- Mobile: stick bottom ----- */
 @media (max-width: 767px) {
   .floating-controls {
     position: fixed;
@@ -44,23 +57,34 @@
     padding: 0.5rem 1rem;
     background: rgba(255, 245, 210, 0.95);
     box-shadow: 0 -2px 8px rgba(0,0,0,0.15);
-    z-index: 1200;
     flex-wrap: nowrap;
     overflow-x: auto;
+    gap: 0.5rem;
+    justify-content: flex-start;
   }
 
   .floating-controls .control-button {
     flex: 0 0 auto;
-    margin-right: 0.5rem;
+    min-width: 100px;          
+    padding: 0.5rem 0.75rem;
   }
 }
 
-/* Desktop: inline / docked */
+/* ----- Tablet & Desktop: inline / centered ----- */
 @media (min-width: 768px) {
   .floating-controls {
     position: static;
     width: auto;
     background: transparent;
     box-shadow: none;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .floating-controls .control-button {
+    flex: 0 0 140px;           
+    min-width: 140px;           
+    padding: 0.75rem 1rem;     
   }
 }

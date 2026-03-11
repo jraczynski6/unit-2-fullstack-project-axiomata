@@ -3,9 +3,14 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import SectionPanel from "../components/SectionPanel";
 import EntityCard from "../components/EntityCard";
 import FloatingControls from "../components/FloatingControls";
+import AddEntityModal from "../components/AddEntityModal";
 import Spinner from "../components/ui/Spinner";
 import {
   getWorldById,
+  createLocation,
+  createFaction,
+  createCharacter,
+  createItem,
   updateLocation,
   updateFaction,
   updateCharacter,
@@ -14,6 +19,7 @@ import {
 import { useToast } from "../context/ToastContext";
 import "../assets/css/world-content.css";
 import "../assets/css/section-panel.css";
+import peopleImage from '../assets/images/people-white-clothes-stand-rock-by-sea-dusk-looking-into-distance-illustration.jpg';
 
 export default function WorldContentPage() {
   const { worldId } = useParams();
@@ -27,6 +33,15 @@ export default function WorldContentPage() {
   const [draftEntity, setDraftEntity] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  // ------------------- Entity selection -------------------
+  const handleSelectEntity = (entity) => {
+    setIsPanelOpen(false);
+    setSelectedItem(entity);
+    setSelectedCategory(entity.category);
+    setIsEditing(false);
+  };
 
   // ------------------- Fetch world -------------------
   useEffect(() => {
@@ -58,6 +73,14 @@ export default function WorldContentPage() {
           setSelectedItem(firstItem);
           setSelectedCategory(firstItem.category);
         }
+
+        // --------- Handle Add New modal on navigation ---------
+        if (location.state?.openAddModal) {
+          console.log("Opening modal due to location.state.openAddModal");
+          setModalOpen(true);
+          // clear the state
+          navigate(location.pathname, { replace: true, state: {} });
+        }
       } catch (err) {
         addToast({ message: "Failed to load world.", type: "error" });
         navigate("/dashboard");
@@ -65,24 +88,87 @@ export default function WorldContentPage() {
     };
 
     fetchWorld();
-  }, [worldId, location.state, addToast, navigate]);
+  }, [worldId, location.state, addToast, navigate, location.pathname]);
+
+  // ------------------- Sync draft with selected item -------------------
+  useEffect(() => {
+    if (selectedItem) {
+      setDraftEntity(selectedItem);
+    }
+  }, [selectedItem]);
 
   // ------------------- CRUD handlers -------------------
   const handleAddEntity = (newItem, category) => {
-    if (!category) return;
+    console.log("handleAddEntity fired");
+    console.log("Raw newItem:", newItem, "Category:", category);
 
-    const key = category.toLowerCase() + "s";
-    const itemWithCategory = { ...newItem, category };
+    if (!category) {
+      console.error("No category provided for handleAddEntity");
+      return;
+    }
 
-    setWorld((prev) => ({
-      ...prev,
-      [key]: [...(prev[key] || []), itemWithCategory],
-    }));
+    // Ensure category is a string
+    const categoryStr = typeof category === "string" ? category : category?.name || "Entity";
+    const key = categoryStr.toLowerCase() + "s";
 
+    // Build item with category
+    const itemWithCategory = { ...newItem, category: categoryStr };
+
+    setWorld((prev) => {
+      console.log("Previous world state:", prev);
+
+      // Ensure array exists
+      const updatedList = [...(prev[key] || []), itemWithCategory];
+
+      const newState = { ...prev, [key]: updatedList };
+      console.log(`New world state after adding ${categoryStr}:`, newState);
+      return newState;
+    });
+
+    // Set selection immediately
     setSelectedItem(itemWithCategory);
-    setSelectedCategory(category);
+    setSelectedCategory(categoryStr);
 
-    addToast({ message: `${category} created successfully!`, type: "success" });
+    console.log(`Added ${categoryStr}:`, itemWithCategory);
+  };
+
+  const handleModalSubmit = async (entityType, data) => {
+    try {
+      let result;
+
+      switch (entityType) {
+        case "Location":
+          result = await createLocation(data);
+          break;
+        case "Faction":
+          result = await createFaction(data);
+          break;
+        case "Character":
+          result = await createCharacter(data);
+          break;
+        case "Item":
+          result = await createItem(data);
+          break;
+        default:
+          throw new Error(`Unknown entity type: ${entityType}`);
+      }
+
+      handleAddEntity({ ...result, category: entityType }, entityType);
+
+      addToast({
+        message: `${entityType} created successfully!`,
+        type: "success",
+      });
+
+    } catch (err) {
+      console.error(err);
+      addToast({
+        message: `Failed to create ${entityType}.`,
+        type: "error",
+      });
+    } finally {
+      setModalOpen(false);
+    }
   };
 
   const handleUpdateEntity = (updatedItem, category) => {
@@ -98,30 +184,25 @@ export default function WorldContentPage() {
     setDraftEntity(itemWithCategory);
   };
 
-  const handleDeleteEntity = async () => {
-    if (!selectedItem) return;
+  const handleDeleteEntity = (entity) => {
+    if (!entity) return;
 
-    try {
-      const data = await getWorldById(worldId);
-      const refreshed = {
-        ...data,
-        locations: data.locations?.map((l) => ({ ...l, category: "Location" })) || [],
-        factions: data.factions?.map((f) => ({ ...f, category: "Faction" })) || [],
-        characters: data.characters?.map((c) => ({ ...c, category: "Character" })) || [],
-        items: data.items?.map((i) => ({ ...i, category: "Item" })) || [],
-      };
+    const { id, category } = entity;
+    if (!id || !category) return;
 
-      setWorld(refreshed);
-      setSelectedItem(null);
-      setSelectedCategory(null);
-      setDraftEntity(null);
-      setIsEditing(false);
+    const key = category.toLowerCase() + "s";
 
-      addToast({ message: `${selectedCategory} deleted successfully!`, type: "error" });
-    } catch (err) {
-      console.error(err);
-      addToast({ message: `Failed to delete ${selectedCategory}.`, type: "error" });
-    }
+    setWorld((prev) => ({
+      ...prev,
+      [key]: prev[key]?.filter((i) => i.id !== id) || [],
+    }));
+
+    setSelectedItem(null);
+    setSelectedCategory(null);
+    setDraftEntity(null);
+    setIsEditing(false);
+
+    addToast({ message: `${category} deleted successfully!`, type: "success" });
   };
 
   const handleEdit = () => setIsEditing(true);
@@ -164,14 +245,14 @@ export default function WorldContentPage() {
   if (!world) return <Spinner />;
 
   return (
-    <div className="world-content-page">
-      {/* ===== SectionPanel via portal ===== */}
+    <div className="world-content-page"style={{ backgroundImage: `url(${peopleImage})` }}>
+      {/* ===== SectionPanel ===== */}
       {typeof document !== "undefined" && (
         <SectionPanel
           world={world}
           isOpen={isPanelOpen}
           setIsOpen={setIsPanelOpen}
-          onSelectEntity={(entity) => handleSelectEntity(entity)}
+          onSelectEntity={handleSelectEntity}
         />
       )}
 
@@ -191,28 +272,41 @@ export default function WorldContentPage() {
           )}
         </div>
 
-        <FloatingControls
-          pageType="worldContent"
-          worldId={worldId}
-          world={world}
-          selectedEntity={selectedItem}
-          isEditingProp={isEditing}
-          onAddEntity={handleAddEntity}
-          onUpdateEntity={handleUpdateEntity}
-          onDeleteEntity={handleDeleteEntity}
-          onEdit={handleEdit}
-          onSave={handleSave}
-          onCancelEdit={handleCancelEdit}
-        />
-      </div>
+        {/* Floating controls hidden when modal is open */}
+        <div className={`floating-controls-wrapper ${modalOpen ? "hidden" : ""}`}>
+          <FloatingControls
+            pageType="worldContent"
+            worldId={worldId}
+            world={world}
+            selectedEntity={selectedItem}
+            isEditingProp={isEditing}
+            onAddEntity={handleAddEntity}
+            onUpdateEntity={handleUpdateEntity}
+            onDeleteEntity={handleDeleteEntity}
+            onEdit={handleEdit}
+            onSave={handleSave}
+            onCancelEdit={handleCancelEdit}
+            onOpenModal={() => setModalOpen(true)}
+          />
+        </div>
 
-      {/* Mobile toggle button */}
-      <button
-        className="section-panel-toggle"
-        onClick={() => setIsPanelOpen(!isPanelOpen)}
-      >
-        {isPanelOpen ? "Close" : "Sections"}
-      </button>
+        {modalOpen && (
+          <AddEntityModal
+            worldId={worldId}
+            world={world}
+            onClose={() => setModalOpen(false)}
+            onSubmit={handleModalSubmit}
+          />
+        )}
+
+        {/* Mobile toggle button */}
+        <button
+          className="section-panel-toggle"
+          onClick={() => setIsPanelOpen(!isPanelOpen)}
+        >
+          {isPanelOpen ? "Close" : "Sections"}
+        </button>
+      </div>
     </div>
   );
 }

@@ -6,11 +6,16 @@ export default function LandingPage() {
 
   return (
     <div className="page-container landing-page">
-      <h1 className="page-title">Welcome to Axiomata</h1>
-      <p className="text-body">Your world-building adventure starts here</p>
-      <button className="btn btn-confirm" onClick={() => navigate("/auth")}>
-        Start Today
-      </button>
+      <div className="hero-box">
+        <h1 className="page-title">Axiomata</h1>
+        <h2 className="hero-tagline">Chaos yields to design</h2>
+        <p className="text-body">
+          Lost in the tangle of rules and notes? Bring order and make it whole.
+        </p>
+        <button className="btn btn-confirm" onClick={() => navigate("/auth")}>
+          Start Today
+        </button>
+      </div>
     </div>
   );
 }

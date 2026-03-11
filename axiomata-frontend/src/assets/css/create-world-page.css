@@ -12,6 +12,14 @@
   background: #ac9b79;
   color: var(--text-primary);
   font-family: var(--font-sans);
+
+  background-image: url('../images/natural-wonders-paradise-illustration.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  /* optional: stays fixed on scroll */
+  position: relative;
 }
 
 .page-title {
@@ -52,6 +60,25 @@
   background: #fff;
   color: var(--text-primary);
   transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* ---- World Description Field Fixed Size ---- */
+.world-description,
+.input-primary.world-description {
+  height: 6rem;
+  /* larger fixed height */
+  min-height: 6rem;
+  /* ensure it doesn’t shrink */
+  max-height: 6rem;
+  /* keep consistent */
+  font-size: 1rem;
+  /* slightly bigger text */
+  line-height: 1.4;
+  /* improve readability */
+  resize: none;
+  /* prevent manual resize */
+  padding: 0.75rem 1rem;
+  /* match larger input padding */
 }
 
 .input-primary:focus {
@@ -256,7 +283,10 @@ input:focus {
   margin-top: 0.25rem;
 }
 
-@media (min-width: 768px) {
+/* ==== Media Querties ==== */
+
+/*  Desktop  */
+@media (min-width: 1200px) {
   .expandable-pass-panel {
     padding: 1.25rem 1.5rem;
   }
@@ -268,4 +298,94 @@ input:focus {
   .expandable-pass-panel h3 {
     font-size: 1.35rem;
   }
+}
+
+/*  Tablet  */
+@media (min-width: 768px) and (max-width: 1199px) {
+
+  .create-world-page {
+    padding: 2rem 3rem;
+  }
+
+  .page-title {
+    font-size: 2rem;
+  }
+
+  .world-form {
+    gap: 1.5rem;
+  }
+
+  .input-primary {
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .btn {
+    font-size: 1.1rem;
+  }
+
+  .pass-panels {
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .expandable-pass-panel {
+    padding: 1rem 1.25rem;
+    flex: 1 1 calc(50% - 0.5rem);
+    min-width: 280px;
+  }
+
+  .attribute-row {
+    padding: 0.55rem 0.7rem;
+  }
+
+  .expandable-pass-panel h3 {
+    font-size: 1.3rem;
+  }
+
+}
+
+/*  Mobile */
+@media (max-width: 767px) {
+
+  .create-world-page {
+    padding: 1rem;
+  }
+
+  .page-title {
+    font-size: 1.75rem;
+  }
+
+  .world-form {
+    gap: 1rem;
+  }
+
+  .input-primary {
+    font-size: 0.95rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .btn {
+    font-size: 1rem;
+    padding: 0.6rem 1rem;
+  }
+
+  .pass-panels {
+    flex-direction: column;
+  }
+
+  .expandable-pass-panel {
+    padding: 1rem;
+  }
+
+  .expandable-pass-panel h3 {
+    font-size: 1.2rem;
+  }
+
+  .attribute-row {
+    padding: 0.5rem 0.75rem;
+  }
+
 }

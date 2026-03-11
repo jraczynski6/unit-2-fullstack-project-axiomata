@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import '../assets/css/add-entity-modal.css';
 
 export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmit, world }) {
@@ -6,78 +7,118 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
   const [typeCategory, setTypeCategory] = useState(entityToEdit?.entityType || "Location");
   const [name, setName] = useState(entityToEdit?.name || "");
   const [description, setDescription] = useState(entityToEdit?.description || "");
-  const [subType, setSubType] = useState(
-    entityToEdit?.type || (entityToEdit?.entityType === "Location" ? "Region" : "")
-  );
-  const [parentRegionId, setParentRegionId] = useState(entityToEdit?.regionId ?? "");
+  const [subType, setSubType] = useState(entityToEdit?.type || "");
+  const [parentRegionId, setParentRegionId] = useState(entityToEdit?.regionId ?? null);
+  const [errors, setErrors] = useState({});
 
   // ---------------- Options ----------------
-  const locationTypes = ["Region", "City", "Dungeon"];
+  const locationTypes = ["Region", "City", "Town", "Dungeon", "Misc"];
   const factionTypes = ["Faction", "Guild", "Clan", "Order"];
   const regions = world?.locations?.filter((loc) => loc.type === "Region") || [];
 
-  // ---------------- Initialize when editing ----------------
+  // ---------------- Reset subtype/parent when modal opens ----------------
   useEffect(() => {
-    if (entityToEdit) {
-      setTypeCategory(entityToEdit.entityType || "Location");
-      setName(entityToEdit.name || "");
-      setDescription(entityToEdit.description || "");
-      setSubType(entityToEdit.type || (entityToEdit.entityType === "Location" ? "Region" : ""));
-      setParentRegionId(entityToEdit.regionId ?? "");
-    } else if (typeCategory === "Location") {
-      setSubType("Region");
-      setParentRegionId("");
+    if (!entityToEdit) {
+      if (typeCategory === "Location") {
+        setSubType("Region");
+        setParentRegionId(null);
+      } else {
+        setSubType("");
+      }
     }
-  }, [entityToEdit, typeCategory]);
+    // only run on mount 
+  }, [entityToEdit]);
+
+  // ---------------- Console log for debug ----------------
+  console.log("AddEntityModal rendered", { typeCategory, name, description, subType, parentRegionId });
 
   // ---------------- Handlers ----------------
   const handleSubmit = () => {
-    if (!name || !name.trim()) {
-      alert("Name is required.");
+
+    //validation
+    const newErrors = {};
+
+    if (!name?.trim()) {
+      newErrors.name = "Name is required.";
+    }
+
+    if (typeCategory === "Location" && !subType?.trim()) {
+      newErrors.subType = "Location type is required.";
+    }
+
+    if (typeCategory === "Faction" && !subType?.trim()) {
+      newErrors.subType = "Faction type is required.";
+    }
+
+    // if errors, return
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
-    const data = {
+    // Clear old errors
+    setErrors({});
+
+    const entityData = {
       name: name.trim(),
       description: description.trim(),
       worldId,
     };
 
-    // ---------------- Location ----------------
     if (typeCategory === "Location") {
-      if (!subType || !subType.trim()) {
-        alert("Location type is required.");
-        return;
-      }
-      data.type = subType.trim();
-      data.regionId = subType === "City" ? parentRegionId || null : null;
+      entityData.type = subType.trim();
+      const parentId = parentRegionId && !isNaN(Number(parentRegionId))
+        ? Number(parentRegionId) : null;
+
+      entityData.regionId = subType === "Region" ? null : parentId;
     }
 
-    // ---------------- Faction ----------------
     if (typeCategory === "Faction") {
-      if (!subType || !subType.trim()) {
-        alert("Faction type is required.");
-        return;
-      }
-      data.type = subType.trim();
+      entityData.type = subType.trim();
     }
 
-    // ---------------- Call parent submit ----------------
-    onSubmit(typeCategory, data);
+    console.log("Calling onSubmit with:", typeCategory, entityData);
+
+    try {
+      onSubmit(typeCategory, entityData);
+    } catch (err) {
+      console.error("Error calling onSubmit:", err);
+    }
 
     onClose();
   };
 
-  return (
+  // ---------------- Modal JSX ----------------
+  const modalContent = (
     <div className="modal-overlay">
       <div className="modal-content">
         <h2>{entityToEdit ? `Edit ${typeCategory}` : `Add New ${typeCategory}`}</h2>
 
-        {/* ---------------- Type Selection ---------------- */}
         {!entityToEdit && (
           <div className="form-group">
             <label>Type:</label>
-            <select value={typeCategory} onChange={(e) => setTypeCategory(e.target.value)}>
+            <select
+              value={typeCategory}
+              onChange={(e) => {
+                const newType = e.target.value;
+                setTypeCategory(newType);
+
+                // reset subtype for new entity
+                if (!entityToEdit) {
+                  if (newType === "Location") {
+                    setSubType("Region");
+                    setParentRegionId(null);
+                  } else if (newType === "Faction") {
+                    setSubType("");
+                    setParentRegionId(null);
+                  } else {
+                    setSubType("");
+                    setParentRegionId(null);
+                  }
+                }
+                setErrors(prev => ({ ...prev, subType: null }));
+              }}
+            >
               <option value="Location">Location</option>
               <option value="Faction">Faction</option>
               <option value="Character">Character</option>
@@ -86,64 +127,85 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
           </div>
         )}
 
-        {/* ---------------- Name / Description ---------------- */}
         <div className="form-group">
           <label>Name:</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} />
+          <input
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+              setErrors((prev) => ({ ...prev, name: null }));
+            }}
+          />
+          {errors.name && <div className="form-error">{errors.name}</div>}
         </div>
 
         <div className="form-group">
           <label>Description:</label>
-          <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)} />
         </div>
 
-        {/* ---------------- Location Fields ---------------- */}
         {typeCategory === "Location" && (
           <>
             <div className="form-group">
               <label>Location Type:</label>
-              <select value={subType} onChange={(e) => setSubType(e.target.value)}>
+              <select
+                value={subType}
+                onChange={(e) => {
+                  setSubType(e.target.value);
+                  setErrors((prev) => ({ ...prev, subType: null }));
+                }}
+              >
                 {locationTypes.map((opt) => (
                   <option key={opt} value={opt}>{opt}</option>
                 ))}
               </select>
+              {errors.subType && <div className="form-error">{errors.subType}</div>}
             </div>
 
             <div className="form-group">
               <label>Parent Region:</label>
               <select
-                value={parentRegionId}
-                onChange={(e) => setParentRegionId(e.target.value ? Number(e.target.value) : "")}
+                value={parentRegionId || ""}
+                onChange={(e) => setParentRegionId(Number(e.target.value) || null)}
                 disabled={subType === "Region"}
               >
                 <option value="">-- None --</option>
-                {regions.map((r) => (
-                  <option key={r.id} value={r.id}>{r.name}</option>
-                ))}
+                {regions.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
               </select>
             </div>
           </>
         )}
 
-        {/* ---------------- Faction Fields ---------------- */}
         {typeCategory === "Faction" && (
           <div className="form-group">
             <label>Faction Type:</label>
-            <select value={subType} onChange={(e) => setSubType(e.target.value)}>
+            <select
+              value={subType}
+              onChange={(e) => {
+                setSubType(e.target.value);
+                setErrors((prev) => ({ ...prev, subType: null }));
+              }}
+            >
               <option value="">-- Select Type --</option>
               {factionTypes.map((opt) => (
                 <option key={opt} value={opt}>{opt}</option>
               ))}
             </select>
+            {errors.subType && <div className="form-error">{errors.subType}</div>}
           </div>
         )}
 
-        {/* ---------------- Actions ---------------- */}
         <div className="modal-actions">
           <button onClick={handleSubmit}>{entityToEdit ? "Save" : "Add"}</button>
           <button onClick={onClose}>Cancel</button>
         </div>
       </div>
-    </div>
+    </div >
   );
+
+  return createPortal(modalContent, document.body);
 }
+
+// TODO: Add custom error messages for modal

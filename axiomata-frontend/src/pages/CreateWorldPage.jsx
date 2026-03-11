@@ -121,11 +121,12 @@ export default function CreateWorldPage() {
         <div className="form-field">
           <label className="form-label">Description (optional):</label>
           <textarea
-            className="input-primary"
+            className="input-primary world-description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Enter description"
             disabled={generating}
+            spellCheck={false}
           />
         </div>
 

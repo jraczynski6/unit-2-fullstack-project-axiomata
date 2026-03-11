@@ -22,14 +22,13 @@ export default function AuthPage() {
           ) : (
             <RegisterForm onSuccess={handleSuccess} />
           )}
+          <button
+            className="btn toggle-btn"
+            onClick={() => setMode(mode === "login" ? "register" : "login")}
+          >
+            {mode === "login" ? "Go to Register" : "Go to Login"}
+          </button>
         </div>
-
-        <button
-          className="btn toggle-btn"
-          onClick={() => setMode(mode === "login" ? "register" : "login")}
-        >
-          {mode === "login" ? "Go to Register" : "Go to Login"}
-        </button>
       </div>
     </main>
   );

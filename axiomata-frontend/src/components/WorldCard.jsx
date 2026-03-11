@@ -12,7 +12,6 @@ export default function WorldCard({ world }) {
         <div className="world-card">
             <h3>{world?.name || "Unnamed World"}</h3>
             <p>{world?.description || "No description provided."}</p>
-
             <button className="world-card-button" onClick={handleClick}>
                 Open World
             </button>
