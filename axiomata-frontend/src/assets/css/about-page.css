@@ -1,32 +1,29 @@
 /* ===== About Page ===== */
+
 .page-container.about-page {
   width: 100%;
-  height: 100vh;          /* full viewport height */
+  height: 100vh;
   min-height: 100vh;
   margin: 0;
   padding: 0;
   max-width: none;
-
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
-  /* Background image (same as landing page) */
   background-image: url('../images/people-white-clothes-stand-rock-by-sea-dusk-looking-into-distance-illustration.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-
   position: relative;
 }
 
-/* Optional overlay for readability */
+/* overlay */
 .page-container.about-page::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.25);
+  background: rgba(0, 0, 0, 0.25);
   z-index: 0;
 }
 
@@ -35,12 +32,12 @@
   position: relative;
   z-index: 1;
 
-  background-color: rgba(255, 255, 255, 0.9); /* semi-transparent */
+  background-color: rgba(255, 255, 255, 0.9);
   padding: 2.5rem 3rem;
   border-radius: 1.25rem;
   max-width: 600px;
   text-align: center;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
   color: #222;
 
   display: flex;
@@ -55,7 +52,7 @@
   font-weight: 900;
   margin-bottom: 1.25rem;
   color: var(--origin-accent);
-  text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Body text */
@@ -66,7 +63,27 @@
   margin-bottom: 1rem;
 }
 
-/* Mobile adjustments */
+/* ===== Media Queries ===== */
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1199px) {
+
+  .page-container.about-page .content-box {
+    max-width: 650px;
+    padding: 2.75rem 3rem;
+  }
+
+  .heading-primary {
+    font-size: 2.3rem;
+  }
+
+  .text-body {
+    font-size: 1.08rem;
+  }
+
+}
+
+/* Mobile */
 @media (max-width: 767px) {
   .page-container.about-page .content-box {
     padding: 2rem 1.5rem;
