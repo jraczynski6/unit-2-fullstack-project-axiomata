@@ -58,8 +58,3 @@ export function useAuth() {
   }
   return context;
 }
-
-// ----- Auth / (Non-MVP) -----
-// TODO: Move token handling to internal implementation and expose user instead of token
-// TODO: Prevent logging full JWT tokens for security reasons
-// TODO: Avoid direct localStorage manipulation inside API layer

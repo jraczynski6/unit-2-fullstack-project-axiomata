@@ -11,7 +11,3 @@ export default function ProtectedRoute({ children }) {
 
   return children;
 }
-
-// ----- ProtectedRoute.jsx (non-MVP) -----
-// TODO: Handle the case where children is undefined or not a valid React element
-// TODO: Support optional requiredRole prop for role-based route protection
