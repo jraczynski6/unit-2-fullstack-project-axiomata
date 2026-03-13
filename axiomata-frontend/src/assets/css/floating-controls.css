@@ -1,18 +1,19 @@
 /* ----- Floating Controls Container ----- */
 .floating-controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  padding: 1rem; 
-  justify-content: flex-start;
-  align-items: center;
-  z-index: 2000;
-}
-
-.floating-controls-wrapper {
-  display: flex;
-  justify-content: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
   width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 245, 210, 0.95);
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 2000;
+  overflow-x: auto;
 }
 
 /* ----- Individual Buttons ----- */
@@ -27,7 +28,7 @@
   transition: filter 0.2s;
   min-width: 140px;            
   text-align: center;
-  flex: 0 0 140px;             
+  flex: 0 0 auto;            
 }
 
 .floating-controls .control-button:hover {
@@ -45,46 +46,61 @@
   color: #fff;
 }
 
-/* ======== Media Queries ======== */
-
-/* ----- Mobile: stick bottom ----- */
-@media (max-width: 767px) {
+/* ===== Desktop / Tablet Adjustments ===== */
+@media (min-width: 768px) {
   .floating-controls {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 0.5rem 1rem;
-    background: rgba(255, 245, 210, 0.95);
-    box-shadow: 0 -2px 8px rgba(0,0,0,0.15);
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    gap: 0.5rem;
-    justify-content: flex-start;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0.5rem 2rem;
   }
 
   .floating-controls .control-button {
-    flex: 0 0 auto;
-    min-width: 100px;          
-    padding: 0.5rem 0.75rem;
+    min-width: 140px;
   }
 }
 
-/* ----- Tablet & Desktop: inline / centered ----- */
-@media (min-width: 768px) {
-  .floating-controls {
-    position: static;
-    width: auto;
-    background: transparent;
-    box-shadow: none;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
+/* ----- Mobile ----- */
+/* ----- Floating Controls Container ----- */
+.floating-controls {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 245, 210, 0.95);
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.15);
+  z-index: 1100;
+  --floating-controls-height: auto;
+}
 
-  .floating-controls .control-button {
-    flex: 0 0 140px;           
-    min-width: 140px;           
-    padding: 0.75rem 1rem;     
-  }
+/* Push content above floating controls */
+.world-main::after {
+  content: "";
+  display: block;
+  height: calc(var(--floating-controls-height) + 0.5rem);
+}
+
+/* ----- Individual Buttons ----- */
+.floating-controls .control-button {
+  flex: 1 0 120px;
+  min-width: 120px;
+  max-width: 140px;
+  margin: 2px;
+  padding: 0.6rem 1rem;
+  text-align: center;
+}
+
+/* ----- Add bottom padding to page to see footer ----- */
+.world-content-page {
+  padding-bottom: 5rem;
+}
+
+/* ----- Footer clearance ----- */
+body, .world-content-page {
+  padding-bottom: 6rem;
 }

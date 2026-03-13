@@ -1,4 +1,4 @@
-/* ----- Page Container ----- */
+/* ===== Page Container ===== */
 .world-content-page {
   display: flex;
   flex-direction: column;
@@ -12,7 +12,7 @@
   box-sizing: border-box;
 }
 
-/* ----- Main Content Wrapper ----- */
+/* ===== Main Content Wrapper ===== */
 .world-main {
   width: 100%;
   max-width: 1200px;
@@ -26,7 +26,7 @@
   overflow-y: auto;
 }
 
-/* ----- Textarea Wrapper for Counter ----- */
+/* ===== Textarea Wrapper for Counter ===== */
 .input-wrapper {
   display: flex;
   flex-direction: column;
@@ -55,7 +55,7 @@
   font-weight: 700;
 }
 
-/* ----- World Header: Name / Description ----- */
+/* ===== World Header: Name / Description ===== */
 .world-header-card {
   width: 100%;
   display: flex;
@@ -74,7 +74,6 @@
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
 }
 
-/* World Name */
 .world-name,
 .world-name-input {
   font-size: 2.25rem;
@@ -86,7 +85,6 @@
   line-height: 1.2;
 }
 
-/* Accent underline */
 .world-name::after {
   content: "";
   display: block;
@@ -97,7 +95,6 @@
   border-radius: 2px;
 }
 
-/* World Description */
 .world-desc,
 .world-desc-input {
   font-size: 1.3rem;
@@ -110,7 +107,7 @@
   line-height: 1.5;
 }
 
-/* ----- Attributes Panel ----- */
+/* ===== Attributes Panel ===== */
 .attributes-panel {
   width: 100%;
   display: flex;
@@ -123,7 +120,6 @@
   border: 1px solid var(--card-border);
 }
 
-/* Toggle Button */
 .attribute-toggle-btn {
   background: var(--btn-bg);
   color: var(--btn-text);
@@ -140,7 +136,7 @@
   background: var(--btn-hover);
 }
 
-/* ----- Nested Readonly Panels ----- */
+/* ===== Nested Readonly Panels ===== */
 .nested-readonly-panel {
   background: #DCCCAA;
   border: 1px solid var(--card-border);
@@ -186,7 +182,7 @@
   color: var(--text-primary);
 }
 
-/* ----- Editable Attribute Cards ----- */
+/* ===== Editable Attribute Cards ===== */
 .editable-attribute-card {
   border-radius: 0.5rem;
   padding: 0.75rem 1rem;
@@ -262,7 +258,7 @@
   margin-top: 0.25rem;
 }
 
-/* ----- Entity Card Container ----- */
+/* ===== Entity Card Container ===== */
 .entity-card-container {
   width: 100%;
   max-width: 600px;
@@ -287,43 +283,6 @@
   max-height: calc(100vh - 4rem);
 }
 
-/* ----- Floating Controls ----- */
-.floating-controls {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  background: var(--card-parchment);
-  padding: 0.5rem;
-  z-index: 1100;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15);
-}
-
-.floating-controls .control-button {
-  flex: 1 1 45%;
-  margin: 0.25rem;
-  padding: 0.75rem 1rem;
-  font-size: 1rem;
-  border: none;
-  border-radius: 0.4rem;
-  background: var(--btn-bg);
-  color: var(--btn-text);
-  cursor: pointer;
-  transition: filter 0.2s ease;
-}
-
-.floating-controls .control-button:hover {
-  filter: brightness(0.9);
-}
-
-.floating-controls .control-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 /* ===== Desktop Layout ===== */
 @media (min-width: 768px) {
   .world-content-page {
@@ -345,25 +304,13 @@
     overflow-y: auto;
   }
 
-  .floating-controls {
-    position: static;
-    width: auto;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    padding: 0;
-    box-shadow: none;
-    background: transparent;
-  }
-
   .section-panel-toggle {
     display: none;
   }
-
 }
 
 /* ===== Mobile Adjustments ===== */
 @media (max-width: 767px) {
-
   .world-header-card {
     padding: 1.5rem 1.5rem;
   }
