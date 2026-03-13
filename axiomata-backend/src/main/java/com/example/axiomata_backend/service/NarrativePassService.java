@@ -217,7 +217,27 @@ public class NarrativePassService {
                 "The Verdant Lands of %s",
                 "The Twilight Realm of %s",
                 "The Eternal Domain of %s",
-                "The Hidden World of %s"
+                "The Hidden World of %s",
+                "The Forgotten Kingdom of %s",
+                "The Celestial Lands of %s",
+                "The Forbidden Realm of %s",
+                "The Crimson Domain of %s",
+                "The Lost Territories of %s",
+                "The Whispering Lands of %s",
+                "The Shadowed Realm of %s",
+                "The Eternal Kingdom of %s",
+                "The Ancient Territories of %s",
+                "The Radiant Lands of %s",
+                "Echoes of %s",
+                "Chronicles of %s",
+                "The Veil Beyond %s",
+                "Secrets of %s",
+                "The Labyrinth of %s",
+                "Legends of %s",
+                "The Horizon of %s",
+                "The Bastion of %s",
+                "Songs of %s",
+                "The Shrouded Expanse of %s"
         };
 
         int patternIndex = Math.abs((worldSize + dominantCulture + baseName).hashCode()) % patterns.length;

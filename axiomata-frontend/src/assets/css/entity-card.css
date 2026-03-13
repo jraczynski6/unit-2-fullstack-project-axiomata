@@ -132,31 +132,10 @@
     font-size: 1.05rem;
     padding: 1rem;
   }
-
-  .floating-controls {
-    position: static;
-    width: auto;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    padding: 0;
-    box-shadow: none;
-    background: transparent;
-  }
 }
 
 /*  Desktop  */
 @media (min-width: 1200px) {
-
-  .floating-controls {
-    position: static;
-    width: auto;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    padding: 0;
-    box-shadow: none;
-    background: transparent;
-  }
-  
 
   .entity-card {
     padding: 2rem;

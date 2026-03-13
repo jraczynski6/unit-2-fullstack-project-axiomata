@@ -129,6 +129,14 @@
   text-align: center;
 }
 
+.modal-content input:focus,
+.modal-content textarea:focus,
+.modal-content select:focus,
+.modal-actions button:focus {
+  outline: 2px solid #1a73e8;
+  outline-offset: 2px;
+}
+
 
 /* ===== Responsive Adjustments ===== */
 @media (max-width: 768px) {

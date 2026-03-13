@@ -106,6 +106,14 @@
   transform: translateY(-1px);
 }
 
+/* ===== Focus styles ===== */
+.section-panel-content .section-header:focus,
+.section-panel-content li>div:focus {
+  outline: 2px solid #1a73e8;
+  outline-offset: 2px;
+  background: rgba(255, 255, 255, 0.35);
+}
+
 /* ==============================
    Mobile overlay
    ============================== */

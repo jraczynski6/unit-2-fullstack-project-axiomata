@@ -1,7 +1,7 @@
-/* Container positions all toasts */
+/* Container */
 .toast-container {
   position: fixed;
-  top: 1rem;
+  bottom: 1rem;
   right: 1rem;
   display: flex;
   flex-direction: column;
@@ -9,7 +9,7 @@
   z-index: 9999;
 }
 
-/* Base toast styling */
+/* Base toast */
 .toast {
   display: flex;
   justify-content: space-between;

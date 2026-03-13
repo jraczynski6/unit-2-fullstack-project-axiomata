@@ -3,7 +3,6 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: auto;
   min-height: 100vh;
   padding: 1rem;
   color: var(--text-primary);
@@ -60,49 +59,23 @@
   box-sizing: border-box;
 }
 
-/* ===== Floating Controls  ===== */
-.floating-controls {
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  background: rgba(245, 230, 180, 0.75);
-  padding: 0.5rem;
-  z-index: 1100;
-  box-shadow: 0 -2px 8px rgba(40, 54, 24, 0.15);
-}
-
+/* ===== Floating Controls Wrapper Visibility ===== */
 .floating-controls-wrapper.hidden {
   display: none !important;
 }
 
-.floating-controls .control-button {
-  flex: 1 1 45%;
-  margin: 0.25rem;
-  padding: 0.75rem 1rem;
-  font-size: 1rem;
-  border: none;
-  border-radius: 0.4rem;
-  background: var(--btn-bg);
-  color: var(--btn-text);
-  cursor: pointer;
-  transition: filter 0.2s ease;
+/* ===== Focus Styles ===== */
+.world-content-page button:focus,
+.world-content-page input:focus,
+.world-content-page select:focus,
+.world-content-page textarea:focus {
+  outline: 2px solid #1a73e8;
+  outline-offset: 2px;
 }
 
-.floating-controls .control-button:hover {
-  filter: brightness(0.9);
-}
+/* ==== Media Queries ==== */
 
-.floating-controls .control-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* ==== Media Querties ==== */
-
-/*  Tablet  */
+/*  Tablet Layout */
 @media (min-width: 768px) and (max-width: 1199px) {
   .world-content-page {
     flex-direction: row;
@@ -119,44 +92,22 @@
   .entity-card-container .entity-card {
     max-height: 85vh;
   }
-
-  .floating-controls {
-    position: static;
-    width: auto;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    padding: 0;
-    box-shadow: none;
-    background: transparent;
-    margin-top: 1rem;
-  }
 }
 
-/*  Mobile */
+/*  Mobile Layout */
 @media (max-width: 767px) {
   .world-content-page {
     flex-direction: column;
+    padding-bottom: 6rem;
   }
 
   .entity-card-container {
     flex: 1 1 auto;
     padding: 2rem;
-    max-width: calc(100% - 0px);
+    max-width: 100%;
   }
 
   .entity-card-container .entity-card {
     max-height: 95vh;
-  }
-
-  .floating-controls {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    padding: 0.5rem;
-    box-shadow: 0 -2px 8px rgba(40, 54, 24, 0.15);
-    background: var(--card-parchment);
   }
 }

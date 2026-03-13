@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AddEntityModal from "./AddEntityModal";
 import ConfirmModal from "./ConfirmModal";
 import { useToast } from "../context/ToastContext";
 import {
@@ -19,7 +18,6 @@ import "../assets/css/floating-controls.css";
 export default function FloatingControls({
   pageType,
   worldId,
-  world,
   selectedEntity,
   isEditingProp,
   onAddEntity,
@@ -38,41 +36,10 @@ export default function FloatingControls({
 
   // ---------- Add New ----------
   const handleAddClick = () => {
-    console.log("FloatingControls: handleAddClick fired", { pageType });
-
     if (pageType === "worldOverview") {
       navigate(`/world-content/${worldId}`, { state: { openAddModal: true } });
     } else {
       onOpenModal?.();
-    }
-  };
-
-  const handleModalSubmit = async (entityType, data) => {
-    try {
-      let result;
-      switch (entityType) {
-        case "Location":
-          result = await createLocation(data);
-          break;
-        case "Faction":
-          result = await createFaction(data);
-          break;
-        case "Character":
-          result = await createCharacter(data);
-          break;
-        case "Item":
-          result = await createItem(data);
-          break;
-        default:
-          throw new Error(`Unknown entity type: ${entityType}`);
-      }
-
-      onAddEntity?.({ ...result, category: entityType }, entityType);
-      addToast({ message: `${entityType} created successfully!`, type: "success" });
-    } catch {
-      addToast({ message: `Failed to create ${entityType}.`, type: "error" });
-    } finally {
-      setModalOpen(false);
     }
   };
 

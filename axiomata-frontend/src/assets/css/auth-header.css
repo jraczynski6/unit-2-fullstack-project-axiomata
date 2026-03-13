@@ -126,9 +126,17 @@
     0 5px 14px rgba(0,0,0,0.3);
 }
 
+/* ===== Header Focus Outlines ===== */
+.nav-link:focus,
+.nav-button:focus,
+.logo:focus {
+  outline: 2px solid #1a73e8;
+  outline-offset: 2px;
+  box-shadow: 0 0 4px rgba(26,115,232,0.6);
+}
+
 
 /* ===== Media Queries ===== */
-
 
 /* Tablet */
 @media (min-width: 768px) and (max-width: 1199px) {

@@ -29,9 +29,6 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
     // only run on mount 
   }, [entityToEdit]);
 
-  // ---------------- Console log for debug ----------------
-  console.log("AddEntityModal rendered", { typeCategory, name, description, subType, parentRegionId });
-
   // ---------------- Handlers ----------------
   const handleSubmit = () => {
 
@@ -76,8 +73,6 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
     if (typeCategory === "Faction") {
       entityData.type = subType.trim();
     }
-
-    console.log("Calling onSubmit with:", typeCategory, entityData);
 
     try {
       onSubmit(typeCategory, entityData);
@@ -207,5 +202,3 @@ export default function AddEntityModal({ worldId, entityToEdit, onClose, onSubmi
 
   return createPortal(modalContent, document.body);
 }
-
-// TODO: Add custom error messages for modal

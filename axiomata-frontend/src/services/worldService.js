@@ -32,7 +32,7 @@ export const updateWorld = async (worldId, worldData) => {
   const body = {
     name: worldData.name,
     description: worldData.description,
-    attributes: worldData.attributes || {} // <-- no stringify
+    attributes: worldData.attributes || {}
   };
 
   const response = await api.put(`/worlds/${worldId}`, body);

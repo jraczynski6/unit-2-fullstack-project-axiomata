@@ -15,12 +15,7 @@ api.interceptors.request.use((config) => {
     config.url?.includes("/auth/register");
 
   if (token && !isAuthRoute) {
-    console.log("API request with token:", token);
     config.headers.Authorization = `Bearer ${token}`;
-  } else if (isAuthRoute) {
-    console.log("Auth route detected. No token attached:", config.url);
-  } else {
-    console.log("No token available for request:", config.url);
   }
 
   return config;
@@ -40,15 +35,3 @@ api.interceptors.response.use(
 );
 
 export default api;
-
-// non-essential / post-MVP API.js todos
-// TODO: Prevent logging full JWT tokens for security reasons
-// TODO: Eliminate utils/auth token management and use AuthContext as single source of truth
-// TODO: Replace window.location.href with React Router-based redirect
-// TODO: Avoid direct localStorage manipulation inside API layer
-// TODO: Centralize auth route detection using a constant or startsWith("/auth")
-// TODO: Add support for token refresh flow before forcing logout
-// TODO: Gracefully handle network errors separate from 401 responses
-// TODO: Move baseURL to environment variable for production deployment
-// TODO: Ensure interceptor cleanup if API instance is ever recreated
-// TODO: Add retry prevention to avoid infinite 401 redirect loops

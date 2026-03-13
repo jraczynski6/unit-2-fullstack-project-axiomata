@@ -17,7 +17,6 @@ export function AuthProvider({ children }) {
 
     if (storedToken) {
       setToken(storedToken);
-      console.log("Token restored from localStorage:", storedToken);
     }
 
     setLoading(false);
@@ -27,22 +26,18 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     if (token) {
       localStorage.setItem("token", token);
-      console.log("Token stored in AuthContext and localStorage:", token);
     } else {
       localStorage.removeItem("token");
-      console.log("Token removed from AuthContext and localStorage");
     }
   }, [token]);
 
   // login function stores the JWT token
   const login = (newToken) => {
-    console.log("AuthContext login called with token:", newToken);
     setToken(newToken); // store token in state
   };
 
   // logout clears token
   const logout = () => {
-    console.log("AuthContext logout called");
     setToken(null);
   };
 
@@ -63,11 +58,3 @@ export function useAuth() {
   }
   return context;
 }
-
-// ----- Auth / App-level -----
-// TODO: Ensure component does not directly access localStorage
-// TODO: Move token handling to internal implementation and expose user instead of token
-// TODO: Prevent logging full JWT tokens for security reasons
-// TODO: Eliminate utils/auth token management and use AuthContext as single source of truth
-// TODO: Replace window.location.href with React Router-based redirect
-// TODO: Avoid direct localStorage manipulation inside API layer
