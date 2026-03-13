@@ -62,23 +62,16 @@
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-/* ---- World Description Field Fixed Size ---- */
+/* ---- World Description Field ---- */
 .world-description,
 .input-primary.world-description {
   height: 6rem;
-  /* larger fixed height */
   min-height: 6rem;
-  /* ensure it doesn’t shrink */
   max-height: 6rem;
-  /* keep consistent */
   font-size: 1rem;
-  /* slightly bigger text */
   line-height: 1.4;
-  /* improve readability */
   resize: none;
-  /* prevent manual resize */
   padding: 0.75rem 1rem;
-  /* match larger input padding */
 }
 
 .input-primary:focus {
@@ -224,6 +217,15 @@ input {
   flex: 1;
 }
 
+.attribute-key,
+.attribute-value,
+input {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 input {
   padding: 0.35rem 0.5rem;
   border-radius: 0.4rem;
@@ -259,13 +261,13 @@ input:focus {
 }
 
 .attribute-add-btn {
-  background: var(--btn-bg, #FF5CA1);
+  background: var(--btn-bg, #5cffa5);
   color: var(--btn-text, #fff);
   align-self: center;
 }
 
 .attribute-add-btn:hover {
-  background: #e14a91;
+  background: #4ae16b;
 }
 
 .attribute-remove-btn {
@@ -282,6 +284,14 @@ input:focus {
   font-size: 0.85rem;
   margin-top: 0.25rem;
 }
+
+.btn:focus,
+.attribute-add-btn:focus,
+.attribute-remove-btn:focus {
+  outline: 2px solid var(--accent-color, #67ff5c);
+  outline-offset: 2px;
+}
+
 
 /* ==== Media Querties ==== */
 

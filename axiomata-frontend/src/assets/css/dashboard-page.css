@@ -112,6 +112,12 @@
   background: #1F2A38;
 }
 
+/* focus ring appears  */
+.world-card-button:focus,
+.dashboard-header .btn-confirm:focus {
+  outline: auto;
+}
+
 /* ===== Media Queries ===== */
 
 /* Tablet */

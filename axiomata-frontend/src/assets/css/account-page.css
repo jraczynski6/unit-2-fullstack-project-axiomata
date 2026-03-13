@@ -131,6 +131,16 @@
   gap: 0.5rem;
 }
 
+/* ===== focus outlines ===== */
+.account-page .input-field:focus,
+.account-page .action-button:focus,
+.account-page .cancel-button:focus,
+.account-page .advanced-toggle:focus,
+.account-page .delete-button:focus {
+  outline: 2px solid #1a73e8;
+  outline-offset: 2px;
+}
+
 /* ===== Mobile Media Query (max-width: 767px) ===== */
 @media (max-width: 767px) {
   .account-page {

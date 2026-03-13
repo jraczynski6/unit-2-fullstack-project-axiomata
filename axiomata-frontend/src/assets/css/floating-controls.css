@@ -59,6 +59,13 @@
   }
 }
 
+
+/* ===== Floating Controls Focus Outline ===== */
+.floating-controls .control-button:focus {
+  outline: 2px solid #1a73e8;
+  outline-offset: 2px;
+}
+
 /* ----- Mobile ----- */
 /* ----- Floating Controls Container ----- */
 .floating-controls {
