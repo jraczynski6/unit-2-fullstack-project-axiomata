@@ -12,7 +12,11 @@ export default function Layout({ children }) {
         {/* Portal mount point for SectionPanel */}
         <div id="section-panel-root"></div>
 
-        <main className="layout-main">
+        <main
+          className="layout-main"
+          role="img"
+          aria-label="Two travelers discovering ruins of an ancient city in a dense forest"
+        >
           {children}
         </main>
       </div>

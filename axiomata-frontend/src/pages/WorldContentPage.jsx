@@ -234,7 +234,12 @@ export default function WorldContentPage() {
   if (!world) return <Spinner />;
 
   return (
-    <div className="world-content-page"style={{ backgroundImage: `url(${peopleImage})` }}>
+    <div
+      className="world-content-page"
+      style={{ backgroundImage: `url(${peopleImage})` }}
+      role="img"
+      aria-label="mysterious person in white clothes standing on rocks by the sea at dusk, looking into the distance"
+    >
       {/* ===== SectionPanel ===== */}
       {typeof document !== "undefined" && (
         <SectionPanel

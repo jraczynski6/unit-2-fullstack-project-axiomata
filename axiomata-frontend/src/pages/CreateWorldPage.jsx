@@ -101,7 +101,12 @@ export default function CreateWorldPage() {
   };
 
   return (
-    <div className="create-world-page">
+    <div
+      className="create-world-page"
+      role="img"
+      aria-label="A fantasy illustration of a natural wonders paradise"
+      style={{ backgroundImage: `url('../images/natural-wonders-paradise-illustration.jpg')` }}
+    >
       <h1 className="page-title">Create World</h1>
 
       <form onSubmit={handleSaveWorld} className="world-form">

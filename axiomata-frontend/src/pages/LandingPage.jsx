@@ -5,7 +5,11 @@ export default function LandingPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="page-container landing-page">
+    <div
+      className="page-container landing-page"
+      role="img"
+      aria-label="Medieval castle with knights standing in front, sunset light casts long shadows"
+    >
       <div className="hero-box">
         <h1 className="page-title">Axiomata</h1>
         <h2 className="hero-tagline">Chaos yields to design</h2>
