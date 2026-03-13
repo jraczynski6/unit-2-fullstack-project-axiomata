@@ -26,7 +26,6 @@ export default function WorldContentPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { addToast } = useToast();
-
   const [world, setWorld] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
