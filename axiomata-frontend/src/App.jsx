@@ -29,7 +29,7 @@ function App() {
         <ToastContainer />
 
         <Routes>
-          {/* Public Pages */}
+          {/* Public Page */}
           <Route path="/" element={<Layout><LandingPage /></Layout>} />
           <Route
             path="/auth"
