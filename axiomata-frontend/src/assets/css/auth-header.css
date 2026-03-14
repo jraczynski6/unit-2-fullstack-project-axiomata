@@ -1,5 +1,4 @@
 /* ===== Auth Header ===== */
-
 .app-header {
   width: 100%;
   padding: 1rem 1.25rem;
@@ -16,9 +15,7 @@
     0 8px 20px rgba(0,0,0,0.08);
 }
 
-
 /* ===== Header Layout ===== */
-
 .header-inner {
   width: 100%;
   max-width: 1200px;
@@ -30,7 +27,6 @@
 
 
 /* ===== Logo ===== */
-
 .header-left {
   display: flex;
   align-items: center;
@@ -63,7 +59,6 @@
 
 
 /* ===== Navigation ===== */
-
 .header-nav {
   display: flex;
   align-items: center;
@@ -102,7 +97,6 @@
 
 
 /* ===== Navigation Button ===== */
-
 .nav-button {
   padding: 0.45rem 1rem;
   border-radius: 6px;

@@ -71,7 +71,7 @@
   box-shadow: 0 12px 28px rgba(0,0,0,0.25);
 }
 
-/* ===== World Card Header (title + button inline) ===== */
+/* ===== World Card Header ===== */
 .world-card-header {
   display: flex;
   align-items: center;
