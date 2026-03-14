@@ -6,6 +6,7 @@ import ExpandablePassPanel from "../components/ExpandablePassPanel";
 import Spinner from "../components/ui/Spinner";
 import { useToast } from "../context/ToastContext";
 import "../assets/css/Create-World-Page.css";
+import paradiseImage from "../assets/images/natural-wonders-paradise-illustration.jpg";
 
 // ------------------ Helper: Normalize Attributes ------------------
 const normalizeAttributes = (attrs) => {
@@ -105,7 +106,12 @@ export default function CreateWorldPage() {
       className="create-world-page"
       role="img"
       aria-label="A fantasy illustration of a natural wonders paradise"
-      style={{ backgroundImage: `url('../images/natural-wonders-paradise-illustration.jpg')` }}
+      style={{
+        backgroundImage: `url(${paradiseImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
     >
       <h1 className="page-title">Create World</h1>
 
