@@ -66,7 +66,6 @@
   outline-offset: 2px;
 }
 
-/* ----- Mobile ----- */
 /* ----- Floating Controls Container ----- */
 .floating-controls {
   position: fixed;
@@ -85,7 +84,6 @@
   --floating-controls-height: auto;
 }
 
-/* Push content above floating controls */
 .world-main::after {
   content: "";
   display: block;
@@ -102,7 +100,6 @@
   text-align: center;
 }
 
-/* ----- Add bottom padding to page to see footer ----- */
 .world-content-page {
   padding-bottom: 5rem;
 }

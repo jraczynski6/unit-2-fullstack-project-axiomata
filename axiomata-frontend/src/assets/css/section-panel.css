@@ -1,21 +1,17 @@
-/* ==============================
-   Section Panel: Base Visuals
-   ============================== */
+/* Section Panel: Base Visuals */
 .section-panel-content {
-  background: #f3e8d0; /* warmer parchment-contrast tone */
+  background: #f3e8d0;
   padding: 0;
   overflow-y: auto;
   flex-shrink: 0;
   color: var(--text-primary);
   font-family: 'Georgia', serif;
   border-radius: 0.5rem;
-  border: 1px solid rgba(0, 0, 0, 0.08); /* soft edge for contrast */
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* subtle depth */
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
-/* ==============================
-   Panel Header
-   ============================== */
+/* Panel Header */
 .section-panel-header {
   padding: 0.75rem 1rem;
   border-bottom: 2px solid rgba(0, 0, 0, 0.1);
@@ -23,7 +19,7 @@
   justify-content: space-between;
   align-items: center;
   font-weight: 700;
-  background: #e9d8b0; /* slightly darker warm tone for contrast */
+  background: #e9d8b0;
   border-radius: 0.5rem 0.5rem 0 0;
 }
 
@@ -32,9 +28,7 @@
   font-size: 1.1rem;
 }
 
-/* ==============================
-   Section Headers
-   ============================== */
+/* Section Headers */
 .section-panel-content .section-header {
   font-weight: 700;
   margin: 0;
@@ -48,7 +42,7 @@
   border-left: 4px solid transparent;
   border-bottom: 2px solid transparent;
   transition: border-bottom 0.2s, color 0.2s, background 0.2s;
-  background: rgba(255, 255, 255, 0.2); /* soft highlight for contrast */
+  background: rgba(255, 255, 255, 0.2);
 }
 
 /* Section-specific underline colors */
@@ -67,13 +61,11 @@
 
 /* Hover effect */
 .section-panel-content .section-header:hover {
-  background: rgba(255, 255, 255, 0.35); /* gentle glow */
+  background: rgba(255, 255, 255, 0.35);
   border-left: 4px solid var(--origin-accent);
 }
 
-/* ==============================
-   List Items
-   ============================== */
+/* List Items */
 .section-panel-content ul {
   list-style: none;
   padding-left: 0.5rem;
@@ -85,7 +77,7 @@
 }
 
 .section-panel-content li>div {
-  background: rgba(255, 255, 255, 0.15); /* subtle contrast block */
+  background: rgba(255, 255, 255, 0.15);
   padding: 0.5rem 0.75rem;
   border-radius: 0.35rem;
   border: 1px solid rgba(0, 0, 0, 0.05);
@@ -96,7 +88,7 @@
 }
 
 .section-panel-content li ul li>div {
-  background: rgba(255, 255, 255, 0.1); /* softer for nested items */
+  background: rgba(255, 255, 255, 0.1);
   border-color: rgba(0, 0, 0, 0.03);
   padding-left: 1rem;
 }
@@ -114,9 +106,7 @@
   background: rgba(255, 255, 255, 0.35);
 }
 
-/* ==============================
-   Mobile overlay
-   ============================== */
+/* Mobile overlay */
 .section-panel-overlay {
   position: fixed;
   top: 0;

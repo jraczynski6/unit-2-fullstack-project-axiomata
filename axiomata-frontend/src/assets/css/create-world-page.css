@@ -1,8 +1,4 @@
-/* =========================
-   CreateWorldPage.css
-   Mobile-first styling
-   ========================= */
-
+/* CreateWorldPage.css */
 .create-world-page {
   display: flex;
   flex-direction: column;

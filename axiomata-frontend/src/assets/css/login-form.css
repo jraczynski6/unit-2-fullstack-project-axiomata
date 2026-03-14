@@ -1,6 +1,4 @@
-/* =================================
-   Login / Register Form
-   ================================= */
+/* Login / Register Form */
 
 .form-container.login-form,
 .form-container.register-form {
@@ -34,9 +32,7 @@
   box-shadow: 0 20px 50px rgba(0,0,0,0.3);
 }
 
-/* =================================
-   Form Fields
-   ================================= */
+/* Form Fields */
 
 .form-field {
   display: flex;
@@ -51,9 +47,7 @@
   text-align: left;
 }
 
-/* =================================
-   Inputs
-   ================================= */
+/* Inputs */
 
 .input-primary {
   padding: 0.75rem 1rem;
@@ -80,9 +74,7 @@
   box-shadow: 0 0 0 2px rgba(46,64,87,0.15);
 }
 
-/* =================================
-   Confirm Button
-   ================================= */
+/* Confirm Button */
 
 .btn-confirm {
   margin-top: 0.5rem;
@@ -109,9 +101,7 @@
   box-shadow: 0 8px 20px rgba(0,0,0,0.35);
 }
 
-/* =================================
-   Error Text
-   ================================= */
+/* Error Text */
 
 .error-text {
   color: var(--highlight-error);
@@ -120,9 +110,7 @@
   text-align: left;
 }
 
-/* =================================
-   Mobile Adjustments
-   ================================= */
+/* Mobile Adjustments */
 
 @media (max-width: 767px) {
 

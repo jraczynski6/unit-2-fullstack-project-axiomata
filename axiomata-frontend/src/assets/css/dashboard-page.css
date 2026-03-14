@@ -71,7 +71,7 @@
   box-shadow: 0 12px 28px rgba(0,0,0,0.25);
 }
 
-/* ===== World Card Header (title + button inline) ===== */
+/* ===== World Card Header ===== */
 .world-card-header {
   display: flex;
   align-items: center;
@@ -112,7 +112,7 @@
   background: #1F2A38;
 }
 
-/* focus ring appears  */
+/* focus ring */
 .world-card-button:focus-visible,
 .dashboard-header .btn-confirm:focus-visible {
   outline: auto;
