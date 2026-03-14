@@ -95,12 +95,3 @@ export default function EntityCard({ item, category, world, isEditingProp, onCha
     </div>
   );
 }
-
-// ==========================
-// EntityCard.jsx / non-MVP
-// ==========================
-// - Detect and warn when creating a new entity with duplicate name within same parent
-// - Optionally merge duplicates
-// - Extend edit fields for Character/Item location/faction (future enhancements)
-// - Handle edge cases when changing types on entities with children
-// - Lazy-load children for large worlds (optional optimization)

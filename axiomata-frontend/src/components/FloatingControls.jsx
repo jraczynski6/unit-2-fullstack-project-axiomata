@@ -146,7 +146,7 @@ export default function FloatingControls({
         )}
       </div>
 
-      {/* ---------- Modals (only for worldContent) ---------- */}
+    {/* ---------- Modals for worldContent ---------- */}
       {selectedEntity && confirmOpen && (
         <ConfirmModal
           open={confirmOpen}

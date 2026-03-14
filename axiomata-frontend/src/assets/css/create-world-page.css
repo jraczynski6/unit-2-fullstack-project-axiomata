@@ -1,8 +1,4 @@
-/* =========================
-   CreateWorldPage.css
-   Mobile-first styling
-   ========================= */
-
+/* ===== Create World Page ===== */
 .create-world-page {
   display: flex;
   flex-direction: column;
@@ -21,6 +17,7 @@
   position: relative;
 }
 
+/* Page Title */
 .page-title {
   font-size: 1.75rem;
   font-weight: 700;
@@ -29,7 +26,7 @@
   color: var(--text-primary);
 }
 
-/* ---- Form Styling ---- */
+/* ===== Form Styling ===== */
 .world-form {
   display: flex;
   flex-direction: column;
@@ -51,6 +48,7 @@
   color: var(--text-secondary);
 }
 
+/* Input fields */
 .input-primary {
   padding: 0.5rem 0.75rem;
   border: 2px solid var(--accent-border, #ccc);
@@ -61,7 +59,7 @@
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-/* ---- World Description Field ---- */
+/* World Description Field */
 .world-description,
 .input-primary.world-description {
   height: 6rem;
@@ -73,13 +71,14 @@
   padding: 0.75rem 1rem;
 }
 
+/* Focus styling */
 .input-primary:focus {
   border-color: var(--accent-color, #55b774);
   box-shadow: 0 0 0 2px rgba(255, 92, 161, 0.25);
   outline: none;
 }
 
-/* ---- Buttons ---- */
+/* ===== Buttons ===== */
 .btn {
   padding: 0.6rem 1rem;
   font-size: 1rem;
@@ -109,7 +108,7 @@
   background: #45a049;
 }
 
-/* ---- Generator Loading ---- */
+/* ===== Generator Loading ===== */
 .generator-loading {
   display: flex;
   flex-direction: column;
@@ -123,7 +122,7 @@
   color: var(--text-secondary);
 }
 
-/* ---- Pass Panels ---- */
+/* ===== Pass Panels ===== */
 .pass-panels {
   display: flex;
   flex-direction: column;
@@ -131,36 +130,7 @@
   margin-top: 2rem;
 }
 
-/* ---- Responsive adjustments ---- */
-@media (min-width: 768px) {
-  .create-world-page {
-    padding: 2rem 3rem;
-  }
-
-  .page-title {
-    font-size: 2rem;
-  }
-
-  .world-form {
-    gap: 1.5rem;
-  }
-
-  .input-primary {
-    font-size: 1rem;
-    padding: 0.75rem 1rem;
-  }
-
-  .btn {
-    font-size: 1.1rem;
-  }
-
-  .pass-panels {
-    flex-direction: row;
-    justify-content: space-between;
-  }
-}
-
-/* ----- Expandable Pass Panels ----- */
+/* Expandable Pass Panel */
 .expandable-pass-panel {
   width: 100%;
   display: flex;
@@ -181,6 +151,7 @@
   color: var(--text-primary);
 }
 
+/* Attributes List */
 .attributes-list {
   display: flex;
   flex-direction: column;
@@ -250,6 +221,7 @@ input:focus {
   background: #EAE0B7;
 }
 
+/* Attribute Buttons */
 .attribute-add-btn,
 .attribute-remove-btn {
   padding: 0.4rem 0.8rem;
@@ -278,12 +250,14 @@ input:focus {
   opacity: 0.85;
 }
 
+/* Error Text */
 .error-text {
   color: #B00020;
   font-size: 0.85rem;
   margin-top: 0.25rem;
 }
 
+/* Focus Styling */
 .btn:focus,
 .attribute-add-btn:focus,
 .attribute-remove-btn:focus {
@@ -291,10 +265,9 @@ input:focus {
   outline-offset: 2px;
 }
 
+/* ===== Media Queries ===== */
 
-/* ==== Media Querties ==== */
-
-/*  Desktop  */
+/* Desktop */
 @media (min-width: 1200px) {
   .expandable-pass-panel {
     padding: 1.25rem 1.5rem;
@@ -309,9 +282,8 @@ input:focus {
   }
 }
 
-/*  Tablet  */
+/* Tablet */
 @media (min-width: 768px) and (max-width: 1199px) {
-
   .create-world-page {
     padding: 2rem 3rem;
   }
@@ -353,12 +325,10 @@ input:focus {
   .expandable-pass-panel h3 {
     font-size: 1.3rem;
   }
-
 }
 
-/*  Mobile */
+/* Mobile */
 @media (max-width: 767px) {
-
   .create-world-page {
     padding: 1rem;
   }
@@ -396,5 +366,4 @@ input:focus {
   .attribute-row {
     padding: 0.5rem 0.75rem;
   }
-
 }

@@ -1,34 +1,39 @@
-/* ----- Floating Controls Container ----- */
+/* ===== Floating Controls ===== */
 .floating-controls {
   position: fixed;
   bottom: 0;
-  left: 0;
+  left: 50%;
+  transform: translateX(-50%);
   width: 100%;
   display: flex;
-  flex-wrap: nowrap;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
+  gap: 0.5rem 0.75rem;
+  padding: 0.5rem 1rem;
   background: rgba(255, 245, 210, 0.95);
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15);
-  z-index: 2000;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.15);
+  z-index: 1100;
+  --floating-controls-height: auto;
   overflow-x: auto;
 }
 
-/* ----- Individual Buttons ----- */
+/* ==== Individual Buttons ==== */
 .floating-controls .control-button {
+  flex: 1 0 120px;
+  min-width: 120px;
+  max-width: 140px;
+  margin: 2px;
+  padding: 0.6rem 1rem;
+  text-align: center;
   background: #b8a96e;
   color: #222;
   border: none;
   border-radius: 0.4rem;
-  padding: 0.75rem 1rem;       
   cursor: pointer;
   font-weight: 600;
   transition: filter 0.2s;
-  min-width: 140px;            
-  text-align: center;
-  flex: 0 0 auto;            
+  flex-shrink: 0;
 }
 
 .floating-controls .control-button:hover {
@@ -40,74 +45,54 @@
   cursor: not-allowed;
 }
 
-/* ----- Delete world button highlight ----- */
+/* Delete World Button Highlight */
 .floating-controls .delete-world-btn {
   background: #e07b7b;
   color: #fff;
 }
 
-/* ===== Desktop / Tablet Adjustments ===== */
-@media (min-width: 768px) {
-  .floating-controls {
-    justify-content: center;
-    gap: 1rem;
-    padding: 0.5rem 2rem;
-  }
-
-  .floating-controls .control-button {
-    min-width: 140px;
-  }
-}
-
-
-/* ===== Floating Controls Focus Outline ===== */
+/* Focus Styling */
 .floating-controls .control-button:focus {
   outline: 2px solid #1a73e8;
   outline-offset: 2px;
 }
 
-/* ----- Mobile ----- */
-/* ----- Floating Controls Container ----- */
-.floating-controls {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5rem 0.75rem;
-  padding: 0.5rem 1rem;
-  background: rgba(255, 245, 210, 0.95);
-  box-shadow: 0 -2px 8px rgba(0,0,0,0.15);
-  z-index: 1100;
-  --floating-controls-height: auto;
-}
-
-/* Push content above floating controls */
+/* ===== Floating Controls ===== */
 .world-main::after {
   content: "";
   display: block;
   height: calc(var(--floating-controls-height) + 0.5rem);
 }
 
-/* ----- Individual Buttons ----- */
-.floating-controls .control-button {
-  flex: 1 0 120px;
-  min-width: 120px;
-  max-width: 140px;
-  margin: 2px;
-  padding: 0.6rem 1rem;
-  text-align: center;
-}
-
-/* ----- Add bottom padding to page to see footer ----- */
 .world-content-page {
-  padding-bottom: 5rem;
+  padding-bottom: 6rem;
 }
 
-/* ----- Footer clearance ----- */
-body, .world-content-page {
-  padding-bottom: 6rem;
+/* ===== Media Queries ===== */
+
+/* Tablet & Desktop */
+@media (min-width: 768px) {
+  .floating-controls {
+    justify-content: center;
+    gap: 1rem;
+    padding: 0.5rem 2rem;
+    flex-wrap: nowrap;
+  }
+
+  .floating-controls .control-button {
+    min-width: 140px;
+    flex: 0 0 auto;
+  }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .floating-controls {
+    width: auto;
+  }
+
+  .floating-controls .control-button {
+    flex: 1 0 120px;
+    max-width: 140px;
+  }
 }
