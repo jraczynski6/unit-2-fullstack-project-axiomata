@@ -1,9 +1,4 @@
-/* ===== base.css ===== */
-/* Axiomata Base / Global Styles */
-
-/* ---------------------------
-   Reset & Box-sizing
----------------------------- */
+/* ===== Reset & Box-sizing ===== */
 *,
 *::before,
 *::after {
@@ -12,9 +7,7 @@
   padding: 0;
 }
 
-/* ---------------------------
-   HTML & Body
----------------------------- */
+/* ===== HTML & Body ===== */
 html, body {
   width: 100%;
   min-height: 100%;
@@ -24,9 +17,7 @@ html, body {
   line-height: 1.5;
 }
 
-/* ---------------------------
-   Main
----------------------------- */
+/* ===== Main Layout ===== */
 main {
   display: flex;
   justify-content: center;
@@ -35,17 +26,13 @@ main {
   padding: 1rem;
 }
 
-/* ---------------------------
-   Links
----------------------------- */
+/* ===== Links ===== */
 a {
   color: inherit;
   text-decoration: none;
 }
 
-/* ---------------------------
-   Buttons
----------------------------- */
+/* ===== Buttons ===== */
 button {
   font-family: inherit;
   cursor: pointer;
@@ -54,9 +41,7 @@ button {
   transition: background 0.2s ease, color 0.2s ease;
 }
 
-/* ---------------------------
-   Layout Containers
----------------------------- */
+/* ===== Layout Containers ===== */
 .page-container {
   width: 100%;
   max-width: 800px;
@@ -74,15 +59,14 @@ button {
   box-shadow: 0 8px 20px rgba(40, 54, 24, 0.15);
   position: relative;
 }
+
 .container {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-/* ---------------------------
-   Cards
----------------------------- */
+/* ===== Cards ===== */
 .card {
   background: var(--card-parchment);
   border: 1px solid var(--card-border);
@@ -91,9 +75,7 @@ button {
   margin-bottom: 1rem;
 }
 
-/* ---------------------------
-   Buttons
----------------------------- */
+/* ===== Buttons: Variants ===== */
 .btn {
   background: var(--btn-bg);
   color: var(--btn-text);
@@ -123,9 +105,7 @@ button {
   background: var(--btn-danger-hover);
 }
 
-/* ---------------------------
-   Forms
----------------------------- */
+/* ===== Forms ===== */
 input, textarea, select {
   background: var(--card-parchment);
   border: 1px solid var(--card-border);
@@ -139,9 +119,7 @@ input:focus, textarea:focus, select:focus {
   outline: 2px solid var(--btn-hover);
 }
 
-/* ---------------------------
-   Modals / Overlays
----------------------------- */
+/* ===== Modals & Overlays ===== */
 .modal-overlay,
 .modal-backdrop {
   position: fixed;
@@ -164,9 +142,7 @@ input:focus, textarea:focus, select:focus {
   max-width: 90%;
 }
 
-/* ---------------------------
-   Toasts
----------------------------- */
+/* ===== Toasts ===== */
 /* Base toast styling */
 .toast {
   padding: 0.75rem 1rem;
@@ -199,9 +175,7 @@ input:focus, textarea:focus, select:focus {
   color: #1A2C4D !important;
 }
 
-/* ---------------------------
-   Headers & Footers
----------------------------- */
+/* ===== Headers & Footers ===== */
 header, .footer-container {
   width: 100%;
   padding: 1rem;
@@ -216,9 +190,7 @@ footer {
   color: var(--text-secondary);
 }
 
-/* ---------------------------
-   Typography
----------------------------- */
+/* ===== Typography ===== */
 h1, h2, h3, h4, h5, h6 {
   color: var(--text-primary);
   margin-bottom: 0.5rem;
@@ -228,9 +200,7 @@ p, span, li {
   color: var(--text-secondary);
 }
 
-/* ---------------------------
-   Grid / List Helpers
----------------------------- */
+/* ===== Grid & Flex Helpers ===== */
 .grid {
   display: grid;
   gap: 1rem;
@@ -242,9 +212,7 @@ p, span, li {
   align-items: center;
 }
 
-/* ---------------------------
-   Empty States
----------------------------- */
+/* ===== Empty States ===== */
 .empty-state {
   background: var(--card-parchment);
   color: var(--text-secondary);
