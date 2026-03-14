@@ -37,13 +37,14 @@ The backend includes procedural generation with cascading logic to construct exp
 - **Styling & Tools:** ![CSS](https://img.icons8.com/color/16/css3.png) CSS
 
 ## Repository Structure
-
+```
 unit-2-fullstack-project-axiomata/
 ├─ README.md
 ├─ LICENSE
 ├─ .gitignore
 ├─ axiomata-backend/ # Spring Boot backend
 └─ react-front-end-app/ # React frontend
+```
 
 ## Backend
 
@@ -74,7 +75,7 @@ setx AXIOMATA_DB_PASSWORD "your_password"
 
 ## Frontend
 
-- Fully functional React application  
+- React application  
 - Node.js and npm required  
 
 ### Running Frontend
