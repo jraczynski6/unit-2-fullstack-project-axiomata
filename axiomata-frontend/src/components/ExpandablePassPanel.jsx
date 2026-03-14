@@ -2,11 +2,11 @@ import { useState } from "react";
 import "../assets/css/Create-World-Page.css";
 
 // --------------------- Helper ---------------------
-// SCREAMING_SNAKE_CASE → Title Case with spaces
+// SCREAMING_SNAKE_CASE -> Title Case with spaces
 export const normalizeKey = (key) =>
   key
     .toLowerCase()
-    .replace(/_/g, " ") // underscores → spaces
+    .replace(/_/g, " ") // underscores -> spaces
     .replace(/\b\w/g, (c) => c.toUpperCase()); // capitalize first letter of each word
 
 // --------------------- ExpandablePassPanel ---------------------
