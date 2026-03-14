@@ -11,13 +11,17 @@
 
 A full-stack worldbuilding management tool for writers to create, manage, and explore fictional worlds.
 
-**Axiomata** is a LaunchCode Unit 2 Capstone Project. It is a worldbuilding management tool designed to help writers organize the complex structures within their fictional worlds. The project features a hierarchical world system that allows users to create and manage locations, factions, characters, and items.
+**Axiomata** is a LaunchCode Unit 2 Capstone Project. It is a worldbuilding management tool designed to help writers organize the complex structures within their fictional worlds. The project features a hierarchical system that allows users to create and manage locations, factions, characters, and items within a fictional world.
 
 The backend includes procedural generation with cascading logic to construct expansive, interconnected world structures. Users can dynamically create, modify, and organize world elements through an intuitive interface. A structured content explorer displays nested world data and enables navigation between locations, factions, and characters.
 
 ## Table of Contents
 - [Full Project Tech Stack](#full-project-tech-stack)
 - [Repository Structure](#repository-structure)
+- [Database Setup](#database-setup)
+  - [Create the database](#1-create-the-database)
+  - [Configure database connection](#2-configure-database-connection)
+  - [Set the database password](#3-set-the-database-password)
 - [Backend](#backend)
   - [Running Backend](#running-backend)
 - [Frontend](#frontend)
@@ -42,8 +46,50 @@ unit-2-fullstack-project-axiomata/
 ├─ README.md
 ├─ LICENSE
 ├─ .gitignore
+├─ docs/
 ├─ axiomata-backend/ # Spring Boot backend
-└─ react-front-end-app/ # React frontend
+└─ axiomata-frontend/ # React frontend
+```
+
+## Database Setup
+
+Axiomata uses a MySQL database to store world data and user accounts.
+
+Database setup and reset scripts are available in the repository:  
+[Database Scripts](https://github.com/jraczynski6/unit-2-fullstack-project-axiomata/tree/main/axiomata-backend/db)
+
+### 1. Create the database
+
+Create a new MySQL database named `axiomata`:
+
+```sql
+CREATE DATABASE axiomata;
+```
+
+### 2. Configure database connection
+
+Ensure your Spring Boot `application.properties` file contains the correct database configuration:
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/axiomata
+spring.datasource.username=root
+spring.datasource.password=${AXIOMATA_DB_PASSWORD}
+
+spring.jpa.hibernate.ddl-auto=update
+```
+
+Spring Boot will automatically create the required tables when the application starts.
+
+### 3. Set the database password
+
+Set your database password as an environment variable before running the backend.
+
+```bash
+## Linux/macOS
+export AXIOMATA_DB_PASSWORD=your_password
+
+## Windows PowerShell
+setx AXIOMATA_DB_PASSWORD "your_password"
 ```
 
 ## Backend
@@ -55,22 +101,12 @@ unit-2-fullstack-project-axiomata/
 
 ### Running Backend
 
-Run the backend server from the backend folder:
+Run the backend server from the `axiomata-backend` folder:
 
 ```bash
 ./mvnw spring-boot:run
 # or
 mvn spring-boot:run
-```
-
-# Set your database password:
-
-```bash
-## Linux/macOS
-export AXIOMATA_DB_PASSWORD=your_password
-
-## Windows PowerShell
-setx AXIOMATA_DB_PASSWORD "your_password"
 ```
 
 ## Frontend
@@ -80,7 +116,7 @@ setx AXIOMATA_DB_PASSWORD "your_password"
 
 ### Running Frontend
 
-From the frontend folder, run:
+From the frontend folder, `axiomata-frontend` run:
 
 ```bash
 npm install
@@ -90,7 +126,12 @@ The app runs at: http://localhost:5173
 
 ## Wireframes & Screenshots
 
-- Digital wireframes: [View Presentation](https://docs.google.com/presentation/d/1VlIVu9gaA-GfLtI4HIXOQwvwizw8AF32IHh8fqylYe0/edit?slide=id.p#slide=id.p)
+### World Explorer
+
+![Axiomata World Explorer](docs/images/world-explorer.png)
+
+## Digital wireframes: 
+- Wireframes: [View Presentation](https://docs.google.com/presentation/d/1VlIVu9gaA-GfLtI4HIXOQwvwizw8AF32IHh8fqylYe0/edit?slide=id.p#slide=id.p)
 
 ## Entity Relationship Diagram (ERD)
 
@@ -104,14 +145,13 @@ The app runs at: http://localhost:5173
 - Character generator
 - Map generation and visualization
 - Editable resource pools and custom entity attributes
-- JWT authentication and Context API for state management
 
 ## Getting Started
 
 1. Clone the repository:
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/jraczynski6/unit-2-fullstack-project-axiomata.git
 ```
 
 2. Set environment variable for the database password (see Backend section above).
