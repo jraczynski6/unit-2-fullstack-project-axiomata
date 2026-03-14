@@ -74,7 +74,7 @@
 }
 
 
-.input-primary:focus {
+.input-primary:focus-visible {
   outline: none;
   border-color: #2E4057;
   box-shadow: 0 0 0 2px rgba(46,64,87,0.15);

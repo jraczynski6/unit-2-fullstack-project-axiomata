@@ -107,8 +107,8 @@
 }
 
 /* ===== Focus styles ===== */
-.section-panel-content .section-header:focus,
-.section-panel-content li>div:focus {
+.section-panel-content .section-header:focus-visible,
+.section-panel-content li>div:focus-visible {
   outline: 2px solid #1a73e8;
   outline-offset: 2px;
   background: rgba(255, 255, 255, 0.35);

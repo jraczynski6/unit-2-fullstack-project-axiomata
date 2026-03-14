@@ -132,11 +132,11 @@
 }
 
 /* ===== focus outlines ===== */
-.account-page .input-field:focus,
-.account-page .action-button:focus,
-.account-page .cancel-button:focus,
-.account-page .advanced-toggle:focus,
-.account-page .delete-button:focus {
+.account-page .input-field:focus-visible,
+.account-page .action-button:focus-visible,
+.account-page .cancel-button:focus-visible,
+.account-page .advanced-toggle:focus-visible,
+.account-page .delete-button:focus-visible {
   outline: 2px solid #1a73e8;
   outline-offset: 2px;
 }

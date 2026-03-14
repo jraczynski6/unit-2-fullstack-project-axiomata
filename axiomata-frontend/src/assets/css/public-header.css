@@ -101,8 +101,8 @@
 }
 
 /* ===== Header Focus Styles ===== */
-.header-nav li a:focus,
-.logo:focus {
+.header-nav li a:focus-visible,
+.logo:focus-visible {
   outline: 2px solid #2E4057;
   outline-offset: 2px;
   box-shadow: 0 0 4px rgba(46,64,87,0.6);

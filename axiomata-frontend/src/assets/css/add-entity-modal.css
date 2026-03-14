@@ -70,9 +70,9 @@
 }
 
 /* Focus highlight */
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
+.form-group input:focus-visible,
+.form-group textarea:focus-visible,
+.form-group select:focus-visible {
   outline: none;
   border-color: var(--origin-accent);
   box-shadow: 0 0 6px var(--origin-accent);
@@ -129,10 +129,10 @@
   text-align: center;
 }
 
-.modal-content input:focus,
-.modal-content textarea:focus,
-.modal-content select:focus,
-.modal-actions button:focus {
+.modal-content input:focus-visible,
+.modal-content textarea:focus-visible,
+.modal-content select:focus-visible,
+.modal-actions button:focus-visible {
   outline: 2px solid #1a73e8;
   outline-offset: 2px;
 }

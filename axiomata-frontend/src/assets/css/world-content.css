@@ -65,10 +65,10 @@
 }
 
 /* ===== Focus Styles ===== */
-.world-content-page button:focus,
-.world-content-page input:focus,
-.world-content-page select:focus,
-.world-content-page textarea:focus {
+.world-content-page button:focus-visible,
+.world-content-page input:focus-visible,
+.world-content-page select:focus-visible,
+.world-content-page textarea:focus-visible {
   outline: 2px solid #1a73e8;
   outline-offset: 2px;
 }

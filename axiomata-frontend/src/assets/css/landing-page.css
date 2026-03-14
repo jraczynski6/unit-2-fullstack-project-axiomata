@@ -100,7 +100,7 @@
 }
 
 /* focus ring */
-.page-container.landing-page button:focus {
+.page-container.landing-page button:focus-visible {
   outline: auto;
 }
 

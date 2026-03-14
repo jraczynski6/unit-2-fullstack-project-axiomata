@@ -217,8 +217,8 @@
   background: var(--card-parchment);
 }
 
-.attribute-key-input:focus,
-.attribute-value-input:focus {
+.attribute-key-input:focus-visible,
+.attribute-value-input:focus-visible {
   outline: 2px solid #2c8f32;
   border-color: #2d9640;
 }
@@ -284,12 +284,12 @@
 }
 
 /* ===== Focus outline for accessibility ===== */
-.world-content-page button:focus,
-.world-content-page .attribute-key-input:focus,
-.world-content-page .attribute-value-input:focus,
-.world-content-page .attribute-toggle-btn:focus,
-.world-content-page .attribute-remove-btn:focus,
-.world-content-page .attribute-add-btn:focus {
+.world-content-page button:focus-visible,
+.world-content-page .attribute-key-input:focus-visible,
+.world-content-page .attribute-value-input:focus-visible,
+.world-content-page .attribute-toggle-btn:focus-visible,
+.world-content-page .attribute-remove-btn:focus-visible,
+.world-content-page .attribute-add-btn:focus-visible {
   outline: 2px solid #1a73e8;
   outline-offset: 2px;
 }

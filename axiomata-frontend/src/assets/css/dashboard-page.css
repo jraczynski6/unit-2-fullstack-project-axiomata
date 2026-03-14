@@ -113,8 +113,8 @@
 }
 
 /* focus ring appears  */
-.world-card-button:focus,
-.dashboard-header .btn-confirm:focus {
+.world-card-button:focus-visible,
+.dashboard-header .btn-confirm:focus-visible {
   outline: auto;
 }
 

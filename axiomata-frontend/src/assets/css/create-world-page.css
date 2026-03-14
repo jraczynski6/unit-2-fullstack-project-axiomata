@@ -73,7 +73,7 @@
   padding: 0.75rem 1rem;
 }
 
-.input-primary:focus {
+.input-primary:focus-visible {
   border-color: var(--accent-color, #55b774);
   box-shadow: 0 0 0 2px rgba(255, 92, 161, 0.25);
   outline: none;
@@ -233,7 +233,7 @@ input {
   font-weight: 700;
 }
 
-input:focus {
+input:focus-visible {
   outline: 2px solid #14a259;
   border-color: #213a25;
 }
@@ -284,9 +284,9 @@ input:focus {
   margin-top: 0.25rem;
 }
 
-.btn:focus,
-.attribute-add-btn:focus,
-.attribute-remove-btn:focus {
+.btn:focus-visible,
+.attribute-add-btn:focus-visible,
+.attribute-remove-btn:focus-visible {
   outline: 2px solid var(--accent-color, #67ff5c);
   outline-offset: 2px;
 }

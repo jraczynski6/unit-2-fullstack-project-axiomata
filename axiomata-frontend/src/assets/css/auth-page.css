@@ -81,8 +81,8 @@
 }
 
 /* focus ring auth page buttons */
-.page-container.auth-page .btn:focus,
-.page-container.auth-page .toggle-btn:focus {
+.page-container.auth-page .btn:focus-visible,
+.page-container.auth-page .toggle-btn:focus-visible {
   outline: auto;
 }
 

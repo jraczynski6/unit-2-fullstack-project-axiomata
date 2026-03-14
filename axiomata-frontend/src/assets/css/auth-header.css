@@ -127,9 +127,9 @@
 }
 
 /* ===== Header Focus Outlines ===== */
-.nav-link:focus,
-.nav-button:focus,
-.logo:focus {
+.nav-link:focus-visible,
+.nav-button:focus-visible,
+.logo:focus-visible {
   outline: 2px solid #1a73e8;
   outline-offset: 2px;
   box-shadow: 0 0 4px rgba(26,115,232,0.6);
