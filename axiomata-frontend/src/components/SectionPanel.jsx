@@ -41,19 +41,23 @@ export default function SectionPanel({ world, isOpen, setIsOpen, onSelectEntity 
 
         {Object.entries(sections).map(([section, list]) => (
           <div key={section}>
+            {/* Section header */}
             <div
-              className={`section-header ${
-                section === "Locations"
+              className={`section-header ${section === "Locations"
                   ? "locations"
                   : section === "Factions"
-                  ? "factions"
-                  : section === "Characters"
-                  ? "characters"
-                  : section === "Items"
-                  ? "items"
-                  : ""
-              }`}
+                    ? "factions"
+                    : section === "Characters"
+                      ? "characters"
+                      : section === "Items"
+                        ? "items"
+                        : ""
+                }`}
               onClick={() => toggleSection(section)}
+              tabIndex={0} // Make tabbable
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") toggleSection(section);
+              }}
             >
               {section} {openSections[section] ? "▼" : "►"}
             </div>
@@ -67,14 +71,26 @@ export default function SectionPanel({ world, isOpen, setIsOpen, onSelectEntity 
                       <li key={region.id}>
                         <div
                           style={{ fontWeight: "bold" }}
+                          tabIndex={0} // tabbable
                           onClick={() => handleSelect(region, section)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") handleSelect(region, section);
+                          }}
                         >
                           {region.name}
                         </div>
                         <ul>
                           {nonRegions.filter(loc => loc.regionId === region.id).map(loc => (
                             <li key={loc.id}>
-                              <div onClick={() => handleSelect(loc, section)}>{loc.name}</div>
+                              <div
+                                tabIndex={0}
+                                onClick={() => handleSelect(loc, section)}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter" || e.key === " ") handleSelect(loc, section);
+                                }}
+                              >
+                                {loc.name}
+                              </div>
                             </li>
                           ))}
                         </ul>
@@ -82,14 +98,30 @@ export default function SectionPanel({ world, isOpen, setIsOpen, onSelectEntity 
                     ))}
                     {nonRegions.filter(loc => !loc.regionId).map(loc => (
                       <li key={loc.id}>
-                        <div onClick={() => handleSelect(loc, section)}>{loc.name}</div>
+                        <div
+                          tabIndex={0}
+                          onClick={() => handleSelect(loc, section)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") handleSelect(loc, section);
+                          }}
+                        >
+                          {loc.name}
+                        </div>
                       </li>
                     ))}
                   </>
                 ) : list.length > 0 ? (
                   list.map(entity => (
                     <li key={entity.id}>
-                      <div onClick={() => handleSelect(entity, section)}>{entity.name}</div>
+                      <div
+                        tabIndex={0}
+                        onClick={() => handleSelect(entity, section)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") handleSelect(entity, section);
+                        }}
+                      >
+                        {entity.name}
+                      </div>
                     </li>
                   ))
                 ) : (

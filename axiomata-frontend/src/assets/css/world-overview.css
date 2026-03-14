@@ -136,6 +136,17 @@
   background: var(--btn-hover);
 }
 
+.attribute-toggle-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.6);
+}
+
+.world-content-page button:focus,
+.world-content-page .attribute-toggle-btn:focus {
+  outline: 2px solid #1a73e8;
+  outline-offset: 2px;
+}
+
 /* ===== Nested Readonly Panels ===== */
 .nested-readonly-panel {
   background: #DCCCAA;
