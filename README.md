@@ -3,9 +3,9 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Java-blue" />
   <img src="https://img.shields.io/badge/JavaScript-yellow" />
+  <img src="https://img.shields.io/badge/SQL-orange" />
   <img src="https://img.shields.io/badge/React-blue" />
   <img src="https://img.shields.io/badge/Spring_Boot-brightgreen" />
-  <img src="https://img.shields.io/badge/SQL-orange" />
   <img src="https://img.shields.io/badge/License-MIT-lightgrey" />
 </p>
 
@@ -31,10 +31,10 @@ The backend includes procedural generation with cascading logic to construct exp
 
 ## Full Project Tech Stack
 
-- **Backend:** Java, Spring Boot, MySQL, JPA/Hibernate  
-- **Frontend:** JavaScript, React (Vite), Axios  
+- **Backend:** ![Java](https://img.icons8.com/color/16/java-coffee-cup-logo.png) Java, ![Spring](https://img.icons8.com/color/16/spring-logo.png) Spring Boot, ![MySQL](https://img.icons8.com/color/16/mysql-logo.png) MySQL, JPA/Hibernate  
+- **Frontend:** ![JS](https://img.icons8.com/color/16/javascript.png) JavaScript, ![React](https://img.icons8.com/color/16/react-native.png) React (Vite), Axios  
 - **Authentication:** JWT  
-- **Styling & Tools:** CSS
+- **Styling & Tools:** ![CSS](https://img.icons8.com/color/16/css3.png) CSS
 
 ## Repository Structure
 
